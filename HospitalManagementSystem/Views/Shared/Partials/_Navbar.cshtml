@@ -1,0 +1,35 @@
+﻿<header class="bg-gray-800 border-b border-gray-700">
+    <div class="container mx-auto flex items-center justify-between p-4">
+        <a class="text-2xl font-bold text-white" asp-area="" asp-controller="Home" asp-action="Index">
+            HospitalManagementSystem
+        </a>
+
+        <nav>
+            <ul class="flex space-x-4">
+                <li>
+                    <a class="hover:text-red-500 transition-colors" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                </li>
+                <li>
+                    <a class="hover:text-red-500 transition-colors" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                </li>
+
+                @if (Context.Session.GetString("UserId") != null)
+                {
+                    <li>
+                        <form method="post" asp-controller="User" asp-action="Logout">
+                            <button type="submit" class="hover:text-red-500 transition-colors bg-red-600 px-3 py-1 rounded">
+                                Logout
+                            </button>
+                        </form>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a class="hover:text-red-500 transition-colors" asp-controller="User" asp-action="Login">Login</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+</header>

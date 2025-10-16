@@ -1,0 +1,53 @@
+# Build outputs
+bin/
+obj/
+Debug/
+Release/
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.cache
+*.pdb
+bin/
+obj/
+*.log
+
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# Visual Studio Code
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# NuGet packages
+*.nupkg
+# Don't ignore package references, only cache
+packages/
+
+# ASP.NET / IIS files
+wwwroot/node_modules/
+*.log
+appsettings.*.json
+
+# Azure / deployment files
+*.publishsettings
+*.azurePubxml
+
+# JetBrains Rider
+.idea/
+
+# Local database / EF migrations cache (optional)
+*.mdf
+*.ldf

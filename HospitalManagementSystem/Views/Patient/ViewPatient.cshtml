@@ -1,0 +1,250 @@
+﻿@using HMS.Application.DTO.Patient
+@model PatientDto
+
+<div class="min-h-screen bg-gray-900 text-gray-200 flex flex-col items-center justify-center p-6">
+    <div class="w-full max-w-3xl bg-gray-800 shadow-2xl rounded-2xl overflow-hidden border border-gray-700">
+        <div class="bg-red-600 text-white text-center py-4 text-2xl font-semibold">
+             Patient Details
+        </div>
+
+        <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+            <div>
+                <p class="text-gray-400 text-sm">Patient Code</p>
+                <p class="text-lg font-medium">@Model.PatientCode</p>
+            </div>
+
+            <div>
+                <p class="text-gray-400 text-sm">Full Name</p>
+                <p class="text-lg font-medium">@Model.FullName</p>
+            </div>
+
+            <div>
+                <p class="text-gray-400 text-sm">Gender</p>
+                <p class="text-lg font-medium">@Model.Gender</p>
+            </div>
+
+            <div>
+                <p class="text-gray-400 text-sm">Date of Birth</p>
+                <p class="text-lg font-medium">@Model.DateOfBirth.ToShortDateString()</p>
+            </div>
+
+            <div>
+                <p class="text-gray-400 text-sm">Email</p>
+                <p class="text-lg font-medium">@Model.Email</p>
+            </div>
+
+            <div>
+                <p class="text-gray-400 text-sm">Contact Number</p>
+                <p class="text-lg font-medium">@Model.ContactNumber</p>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.AlternateContactNumber))
+            {
+                <div>
+                    <p class="text-gray-400 text-sm">Alternate Contact</p>
+                    <p class="text-lg font-medium">@Model.AlternateContactNumber</p>
+                </div>
+            }
+
+            <div class="sm:col-span-2">
+                <p class="text-gray-400 text-sm">Address</p>
+                <p class="text-lg font-medium">@Model.Address, @Model.City, @Model.State - @Model.ZipCode</p>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.BloodGroup))
+            {
+                <div>
+                    <p class="text-gray-400 text-sm">Blood Group</p>
+                    <p class="text-lg font-medium">@Model.BloodGroup</p>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.EmergencyContactName))
+            {
+                <div class="sm:col-span-2">
+                    <p class="text-gray-400 text-sm">Emergency Contact</p>
+                    <p class="text-lg font-medium">
+                        @Model.EmergencyContactName
+                        (@Model.RelationshipWithEmergencyContact) —
+                        @Model.EmergencyContactNumber
+                    </p>
+                </div>
+            }
+
+            <div>
+                <p class="text-gray-400 text-sm">Created At</p>
+                <p class="text-lg font-medium">@Model.CreatedAt.ToString("g")</p>
+            </div>
+
+            <div>
+                <p class="text-gray-400 text-sm">Updated At</p>
+                <p class="text-lg font-medium">@(Model.UpdatedAt?.ToString("g") ?? "-")</p>
+            </div>
+
+            <div>
+                <p class="text-gray-400 text-sm">Status</p>
+                <span class="px-3 py-1 rounded-full text-sm font-semibold
+                             @(Model.IsActive ? "bg-green-600 text-white" : "bg-gray-600 text-gray-300")">
+                    @(Model.IsActive ? "Active" : "Inactive")
+                </span>
+            </div>
+        </div>
+
+        <div class="flex justify-between px-6 py-4 border-t border-gray-700 bg-gray-850">
+            <a href="/User/AdminDashboard"
+               class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition">
+                ← Back to List
+            </a>
+
+
+            <!-- Add Medical History Button -->
+            <div class="flex gap-3">
+                <button id="addHistoryBtn"
+                        class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition">
+                    + Add Medical History
+                </button>
+            </div>
+
+            @* <div class="flex gap-3">
+                <button class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition">
+                    Edit
+                </button>
+                <button class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition">
+                    Delete
+                </button>
+            </div> *@
+        </div>
+    </div>
+</div>
+
+
+<!-- Hidden Modal -->
+<div id="medicalHistoryModal"
+     class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+    <div class="bg-gray-800 text-gray-200 w-full max-w-lg rounded-2xl shadow-2xl p-6 relative">
+
+        <!-- Close Button -->
+        <button id="closeModal"
+                class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl font-bold">
+            &times;
+        </button>
+
+        <h2 class="text-xl font-semibold text-center text-red-500 mb-4">
+            Add Medical History
+        </h2>
+
+        <form id="medicalHistoryForm" class="space-y-4">
+
+            <!-- Hidden PatientId -->
+            <input type="hidden" id="patientId" name="PatientId" value="@Model.Id" />
+
+            <div>
+                <label class="block text-sm text-gray-400">Condition</label>
+                <input type="text" id="condition" name="Condition"
+                       class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500"
+                       required />
+            </div>
+
+            <div>
+                <label class="block text-sm text-gray-400">Diagnosis</label>
+                <input type="text" id="diagnosis" name="Diagnosis"
+                       class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500" />
+            </div>
+
+            <div>
+                <label class="block text-sm text-gray-400">Treatment</label>
+                <input type="text" id="treatment" name="Treatment"
+                       class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500" />
+            </div>
+
+            <div>
+                <label class="block text-sm text-gray-400">Medications</label>
+                <input type="text" id="medications" name="Medications"
+                       class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500" />
+            </div>
+
+            <div>
+                <label class="block text-sm text-gray-400">Notes</label>
+                <textarea id="notes" name="Notes"
+                          class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500"
+                          rows="3"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-sm text-gray-400">Record Date</label>
+                <input type="date" id="recordDate" name="RecordDate"
+                       value="@DateTime.UtcNow.ToString("yyyy-MM-dd")"
+                       class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500" />
+            </div>
+
+            <div>
+                <label class="block text-sm text-gray-400">Attending Physician</label>
+                <input type="text" id="attendingPhysician" name="AttendingPhysician"
+                       class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500" />
+            </div>
+
+            <div class="flex justify-end mt-6">
+                <button type="submit"
+                        class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition">
+                    Save
+                </button>
+            </div>
+
+            <p id="formMessage" class="text-center text-sm mt-3"></p>
+        </form>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        // Show modal
+        $('#addHistoryBtn').on('click', function () {
+            $('#medicalHistoryModal').removeClass('hidden').hide().fadeIn(200);
+        });
+
+        // Hide modal
+        $('#closeModal').on('click', function () {
+            $('#medicalHistoryModal').fadeOut(200, function () {
+                $(this).addClass('hidden');
+            });
+        });
+
+        // Submit form
+        $('#medicalHistoryForm').on('submit', function (e) {
+            e.preventDefault();
+
+            var formData = {
+                PatientId: $('#patientId').val(),
+                Condition: $('#condition').val(),
+                Diagnosis: $('#diagnosis').val(),
+                Treatment: $('#treatment').val(),
+                Medications: $('#medications').val(),
+                Notes: $('#notes').val(),
+                RecordDate: $('#recordDate').val(),
+                AttendingPhysician: $('#attendingPhysician').val()
+            };
+
+            $.ajax({
+                url: '/MedicalHistory/AddMedicalHistory',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    $('#formMessage')
+                        .text('✅ Medical history added successfully!')
+                        .removeClass('text-red-500')
+                        .addClass('text-green-500');
+                    console.log('Success:', response);
+
+                    // Hide modal after 2 seconds
+                    setTimeout(() => $('#medicalHistoryModal').fadeOut(200).addClass('hidden'), 1500);
+                },
+                error: function (xhr) {
+                    $('#formMessage')
+                        .text('❌ Failed to add medical history. Check console for details.')
+                        .removeClass('text-green-500')
+                        .addClass('text-red-500');
+                    console.error('Error:', xhr.responseText);
+                }
+            });
+        });
+    });
+</script>

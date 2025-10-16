@@ -1,0 +1,80 @@
+﻿<div x-data="{
+        sidebarOpen: false,
+        activePartial: '',
+
+        toggleSidebar() {
+            this.sidebarOpen = !this.sidebarOpen;
+        },
+
+        loadPartial(name) {
+            this.activePartial = name;
+        }
+    }"
+     @@click.outside="sidebarOpen = false"
+     class="relative bg-gray-900 text-gray-100 min-h-screen flex">
+
+    <!-- Sidebar Toggle Button -->
+    <button @@click="toggleSidebar"
+            class="fixed top-4 right-4 z-50 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md shadow-md focus:outline-none">
+        ☰
+    </button>
+
+    <!-- Sidebar -->
+    <aside x-show="sidebarOpen" @@click.stop
+           x-transition:enter="transition ease-out duration-300"
+           x-transition:enter-start="-translate-x-full"
+           x-transition:enter-end="translate-x-0"
+           x-transition:leave="transition ease-in duration-200"
+           x-transition:leave-start="translate-x-0"
+           x-transition:leave-end="-translate-x-full"
+           class="fixed md:static inset-y-0 left-0 w-64 flex-none bg-gray-800 shadow-lg z-40 md:translate-x-0 transform">
+
+        <div class="flex flex-col h-full">
+            <!-- Top menu buttons -->
+            <div class="p-4 border-b border-gray-700 flex justify-between items-center md:hidden">
+                <h2 class="text-lg font-bold">Menu</h2>
+                <button @@click="toggleSidebar" class="text-gray-400 hover:text-red-500">✖</button>
+            </div>
+
+            <!-- Sidebar links -->
+            <div class="flex-1 p-6 space-y-3">
+                <button @@click="loadPartial('roles')"
+                        class="w-full text-left px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md font-semibold transition">
+                    Roles List
+                </button>
+
+                <button @@click="loadPartial('admins')"
+                        class="w-full text-left px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md font-semibold transition">
+                    Admin List
+                </button>
+
+                <button @@click="loadPartial('patients')"
+                        class="w-full text-left px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md font-semibold transition">
+                    Patients List
+                </button>
+            </div>
+        </div>
+
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col justify-center items-center min-h-screen p-4" @@click="sidebarOpen = false">
+        <h1 class="text-3xl font-bold mb-6">Admin Dashboard</h1>
+
+        <div x-show="activePartial === ''" class="text-gray-400">
+            <p>Select an option from the sidebar to view details.</p>
+        </div>
+
+        <div x-show="activePartial === 'roles'" x-cloak class="w-full">
+            @await Html.PartialAsync("~/Views/Shared/Partials/AdminDashboard/_RolesList.cshtml")
+        </div>
+
+        <div x-show="activePartial === 'admins'" x-cloak class="w-full">
+            @await Html.PartialAsync("~/Views/Shared/Partials/AdminDashboard/_AdminList.cshtml")
+        </div>
+
+        <div x-show="activePartial === 'patients'" x-cloak class="w-full">
+            @await Html.PartialAsync("~/Views/Shared/Partials/AdminDashboard/_Patients.cshtml")
+        </div>
+    </div>
+</div>

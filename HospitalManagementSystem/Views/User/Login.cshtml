@@ -1,0 +1,63 @@
+﻿@model HMS.Application.DTOs.LoginDto
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="min-h-screen flex items-center justify-center bg-gray-900 text-gray-100">
+    <div class="w-full max-w-md p-8 bg-gray-800 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold mb-6 text-center">Login to HMS</h2>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="bg-red-700 text-white p-3 mb-4 rounded">
+                Please fix the errors below.
+            </div>
+        }
+
+        @if (ViewData.ModelState.ErrorCount > 0)
+        {
+            foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div class="bg-red-700 text-white p-2 mb-2 rounded">
+                    @error.ErrorMessage
+                </div>
+            }
+        }
+
+        <form asp-action="Login" method="post" class="space-y-4">
+            <div>
+                <label asp-for="UsernameOrEmail" class="block mb-1">Username or Email</label>
+                <input asp-for="UsernameOrEmail"
+                       class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                       placeholder="Enter username or email" />
+            </div>
+
+            <div>
+                <label asp-for="Password" class="block mb-1">Password</label>
+                <input asp-for="Password" type="password"
+                       class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                       placeholder="Enter password" />
+            </div>
+
+            <div class="flex items-center justify-between">
+                <label class="flex items-center">
+                    <input asp-for="RememberMe" type="checkbox" class="mr-2">
+                    Remember Me
+                </label>
+                <a href="#" class="text-red-500 hover:text-red-400 text-sm">Forgot password?</a>
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors">
+                Login
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Optional: add small Alpine.js interactivity if needed
+    </script>
+}
