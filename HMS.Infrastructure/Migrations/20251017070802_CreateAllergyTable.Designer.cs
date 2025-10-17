@@ -4,6 +4,7 @@ using HMS.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251017070802_CreateAllergyTable")]
+    partial class CreateAllergyTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,44 +61,6 @@ namespace HMS.Infrastructure.Migrations
                     b.HasIndex("PatientId");
 
                     b.ToTable("Allergies");
-                });
-
-            modelBuilder.Entity("HMS.Domain.Entities.Insurance", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PatientId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PolicyNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProviderName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PatientId");
-
-                    b.ToTable("Insurance");
                 });
 
             modelBuilder.Entity("HMS.Domain.Entities.MedicalHistory", b =>
@@ -319,17 +284,6 @@ namespace HMS.Infrastructure.Migrations
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("HMS.Domain.Entities.Insurance", b =>
-                {
-                    b.HasOne("HMS.Domain.Entities.Patient", "Patient")
-                        .WithMany("Insurances")
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Patient");
-                });
-
             modelBuilder.Entity("HMS.Domain.Entities.MedicalHistory", b =>
                 {
                     b.HasOne("HMS.Domain.Entities.Patient", "Patient")
@@ -363,8 +317,6 @@ namespace HMS.Infrastructure.Migrations
             modelBuilder.Entity("HMS.Domain.Entities.Patient", b =>
                 {
                     b.Navigation("Allergies");
-
-                    b.Navigation("Insurances");
 
                     b.Navigation("MedicalHistories");
                 });

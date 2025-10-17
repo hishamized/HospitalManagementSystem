@@ -15,6 +15,8 @@ namespace HMS.Infrastructure.Repositories
         private IUserRepository _userRepository;
         private IPatientRepository _patientRepository;
         private IMedicalHistoryRepository _medicalHistoryRepository;
+        private IAllergyRepository _allergyRepository;
+        private IInsuranceRepository _insuranceRepository;
 
 
         public UnitOfWork(ApplicationDbContext context, DapperContext dapperContext)
@@ -29,6 +31,10 @@ namespace HMS.Infrastructure.Repositories
 
         public IMedicalHistoryRepository MedicalHistories =>
      _medicalHistoryRepository ??= new MedicalHistoryRepository(this, _dapperContext);
+
+        public IAllergyRepository Allergies => _allergyRepository ??= new AllergyRepository(_dapperContext, this);
+
+        public IInsuranceRepository Insurances => _insuranceRepository ??= new InsuranceRepository(this, _dapperContext);
 
 
         // Commit method (optional for Dapper, but required if EF changes are tracked)

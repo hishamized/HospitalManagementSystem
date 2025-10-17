@@ -1,250 +1,465 @@
-﻿@using HMS.Application.DTO.Patient
-@model PatientDto
+﻿    @using HMS.Application.DTO.Patient
+    @model PatientDto
 
-<div class="min-h-screen bg-gray-900 text-gray-200 flex flex-col items-center justify-center p-6">
-    <div class="w-full max-w-3xl bg-gray-800 shadow-2xl rounded-2xl overflow-hidden border border-gray-700">
-        <div class="bg-red-600 text-white text-center py-4 text-2xl font-semibold">
-             Patient Details
-        </div>
 
-        <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
-            <div>
-                <p class="text-gray-400 text-sm">Patient Code</p>
-                <p class="text-lg font-medium">@Model.PatientCode</p>
+    <div class="min-h-screen bg-gray-900 text-gray-200 flex flex-col items-center justify-center p-6">
+        <div class="w-full max-w-3xl bg-gray-800 shadow-2xl rounded-2xl overflow-hidden border border-gray-700">
+            <div class="bg-red-600 text-white text-center py-4 text-2xl font-semibold">
+                 Patient Details
             </div>
 
-            <div>
-                <p class="text-gray-400 text-sm">Full Name</p>
-                <p class="text-lg font-medium">@Model.FullName</p>
-            </div>
-
-            <div>
-                <p class="text-gray-400 text-sm">Gender</p>
-                <p class="text-lg font-medium">@Model.Gender</p>
-            </div>
-
-            <div>
-                <p class="text-gray-400 text-sm">Date of Birth</p>
-                <p class="text-lg font-medium">@Model.DateOfBirth.ToShortDateString()</p>
-            </div>
-
-            <div>
-                <p class="text-gray-400 text-sm">Email</p>
-                <p class="text-lg font-medium">@Model.Email</p>
-            </div>
-
-            <div>
-                <p class="text-gray-400 text-sm">Contact Number</p>
-                <p class="text-lg font-medium">@Model.ContactNumber</p>
-            </div>
-
-            @if (!string.IsNullOrEmpty(Model.AlternateContactNumber))
-            {
+            <div class="p-6 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
                 <div>
-                    <p class="text-gray-400 text-sm">Alternate Contact</p>
-                    <p class="text-lg font-medium">@Model.AlternateContactNumber</p>
+                    <p class="text-gray-400 text-sm">Patient Code</p>
+                    <p class="text-lg font-medium">@Model.PatientCode</p>
                 </div>
-            }
 
-            <div class="sm:col-span-2">
-                <p class="text-gray-400 text-sm">Address</p>
-                <p class="text-lg font-medium">@Model.Address, @Model.City, @Model.State - @Model.ZipCode</p>
-            </div>
-
-            @if (!string.IsNullOrEmpty(Model.BloodGroup))
-            {
                 <div>
-                    <p class="text-gray-400 text-sm">Blood Group</p>
-                    <p class="text-lg font-medium">@Model.BloodGroup</p>
+                    <p class="text-gray-400 text-sm">Full Name</p>
+                    <p class="text-lg font-medium">@Model.FullName</p>
                 </div>
-            }
 
-            @if (!string.IsNullOrEmpty(Model.EmergencyContactName))
-            {
+                <div>
+                    <p class="text-gray-400 text-sm">Gender</p>
+                    <p class="text-lg font-medium">@Model.Gender</p>
+                </div>
+
+                <div>
+                    <p class="text-gray-400 text-sm">Date of Birth</p>
+                    <p class="text-lg font-medium">@Model.DateOfBirth.ToShortDateString()</p>
+                </div>
+
+                <div>
+                    <p class="text-gray-400 text-sm">Email</p>
+                    <p class="text-lg font-medium">@Model.Email</p>
+                </div>
+
+                <div>
+                    <p class="text-gray-400 text-sm">Contact Number</p>
+                    <p class="text-lg font-medium">@Model.ContactNumber</p>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.AlternateContactNumber))
+                {
+                    <div>
+                        <p class="text-gray-400 text-sm">Alternate Contact</p>
+                        <p class="text-lg font-medium">@Model.AlternateContactNumber</p>
+                    </div>
+                }
+
                 <div class="sm:col-span-2">
-                    <p class="text-gray-400 text-sm">Emergency Contact</p>
-                    <p class="text-lg font-medium">
-                        @Model.EmergencyContactName
-                        (@Model.RelationshipWithEmergencyContact) —
-                        @Model.EmergencyContactNumber
-                    </p>
+                    <p class="text-gray-400 text-sm">Address</p>
+                    <p class="text-lg font-medium">@Model.Address, @Model.City, @Model.State - @Model.ZipCode</p>
                 </div>
-            }
 
-            <div>
-                <p class="text-gray-400 text-sm">Created At</p>
-                <p class="text-lg font-medium">@Model.CreatedAt.ToString("g")</p>
+                @if (!string.IsNullOrEmpty(Model.BloodGroup))
+                {
+                    <div>
+                        <p class="text-gray-400 text-sm">Blood Group</p>
+                        <p class="text-lg font-medium">@Model.BloodGroup</p>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.EmergencyContactName))
+                {
+                    <div class="sm:col-span-2">
+                        <p class="text-gray-400 text-sm">Emergency Contact</p>
+                        <p class="text-lg font-medium">
+                            @Model.EmergencyContactName
+                            (@Model.RelationshipWithEmergencyContact) —
+                            @Model.EmergencyContactNumber
+                        </p>
+                    </div>
+                }
+
+                <div>
+                    <p class="text-gray-400 text-sm">Created At</p>
+                    <p class="text-lg font-medium">@Model.CreatedAt.ToString("g")</p>
+                </div>
+
+                <div>
+                    <p class="text-gray-400 text-sm">Updated At</p>
+                    <p class="text-lg font-medium">@(Model.UpdatedAt?.ToString("g") ?? "-")</p>
+                </div>
+
+                <div>
+                    <p class="text-gray-400 text-sm">Status</p>
+                    <span class="px-3 py-1 rounded-full text-sm font-semibold
+                                 @(Model.IsActive ? "bg-green-600 text-white" : "bg-gray-600 text-gray-300")">
+                        @(Model.IsActive ? "Active" : "Inactive")
+                    </span>
+                </div>
             </div>
 
-            <div>
-                <p class="text-gray-400 text-sm">Updated At</p>
-                <p class="text-lg font-medium">@(Model.UpdatedAt?.ToString("g") ?? "-")</p>
-            </div>
+            <div class="flex justify-between px-6 py-4 border-t border-gray-700 bg-gray-850">
+               
 
-            <div>
-                <p class="text-gray-400 text-sm">Status</p>
-                <span class="px-3 py-1 rounded-full text-sm font-semibold
-                             @(Model.IsActive ? "bg-green-600 text-white" : "bg-gray-600 text-gray-300")">
-                    @(Model.IsActive ? "Active" : "Inactive")
-                </span>
-            </div>
-        </div>
-
-        <div class="flex justify-between px-6 py-4 border-t border-gray-700 bg-gray-850">
-            <a href="/User/AdminDashboard"
-               class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition">
-                ← Back to List
-            </a>
-
-
-            <!-- Add Medical History Button -->
-            <div class="flex gap-3">
+            <!-- Medical History & Allergies Buttons -->
+            <div class="flex flex-wrap gap-3 items-center">
+                <a href="/User/AdminDashboard"
+                   class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition">
+                    ← Back to List
+                </a>
+                <!-- Add Medical History -->
                 <button id="addHistoryBtn"
-                        class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition">
+                        class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition duration-200 h-10">
                     + Add Medical History
                 </button>
+
+                <!-- Add Allergy -->
+                <button id="addAllergyBtn"
+                        class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition duration-200 h-10">
+                    + Add Allergy
+                </button>
+
+                <!-- View Medical History -->
+                <button id="viewHistoryBtn"
+                        class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition duration-200 h-10">
+                    👁 View Medical History
+                </button>
+
+                <!-- View Allergies -->
+                <button id="viewAllergiesBtn"
+                        class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition duration-200 h-10">
+                    👁 View Allergies
+                </button>
+
+                <!-- Add Insurance -->
+                <button id="addInsuranceBtn"
+                        class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition duration-200 h-10">
+                    + Add Insurance
+                </button>
+
+                <!-- Toggle Insurance Table -->
+                <button id="toggleInsuranceBtn"
+                        data-patient-id="@Model.Id"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition duration-200 h-10 mb-4">
+                    Show / Hide Insurance
+                </button>
+
             </div>
 
-            @* <div class="flex gap-3">
-                <button class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition">
-                    Edit
-                </button>
-                <button class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition">
-                    Delete
-                </button>
-            </div> *@
+
+
+                @* <div class="flex gap-3">
+                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition">
+                        Edit
+                    </button>
+                    <button class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition">
+                        Delete
+                    </button>
+                </div> *@
+            </div>
+        </div>
+
+
+        <!-- Medical History Table (Hidden Initially) -->
+        <div id="medicalHistorySection" class="hidden w-full max-w-4xl mt-8 bg-gray-800 rounded-2xl shadow-lg border border-gray-700 overflow-x-auto my-4">
+            <div class="bg-gray-900 text-white text-center py-3 text-lg font-semibold border-b border-gray-700">
+                Patient Medical History
+            </div>
+
+            <table class="min-w-full text-gray-300 text-sm">
+                <thead class="bg-gray-700 text-gray-100">
+                    <tr>
+                        <th class="px-4 py-2 text-left">Condition</th>
+                        <th class="px-4 py-2 text-left">Diagnosis</th>
+                        <th class="px-4 py-2 text-left">Treatment</th>
+                        <th class="px-4 py-2 text-left">Medications</th>
+                        <th class="px-4 py-2 text-left">Date</th>
+                        <th class="px-4 py-2 text-left">Physician</th>
+                        <th class="px-4 py-2 text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="medicalHistoryTableBody">
+                    <!-- Rows will be appended here dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+    <!-- Container for the allergies table -->
+    <div id="allergiesTableContainer" class="hidden mt-6 overflow-x-auto">
+        <table class="w-full max-w-4xl border border-gray-700 rounded-lg shadow-md overflow-hidden bg-gray-800 text-gray-200">
+            <thead class="bg-red-600 text-white text-left uppercase text-sm font-semibold">
+                <tr>
+                    <th class="px-6 py-3">Allergen</th>
+                    <th class="px-6 py-3">Reaction</th>
+                    <th class="px-6 py-3">Notes</th>
+                    <th class="px-6 py-3">Created At</th>
+                    <th class="px-6 py-3 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="allergiesTableBody" class="divide-y divide-gray-700">
+                <!-- Rows will be populated via AJAX -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Insurance Table (hidden by default) -->
+    <div id="insuranceTableContainer" class="hidden overflow-x-auto">
+        <table id="insuranceTable" class="min-w-full border border-gray-300 bg-white shadow rounded">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    <th class="px-4 py-2 text-left">#</th>
+                    <th class="px-4 py-2 text-left">Provider Name</th>
+                    <th class="px-4 py-2 text-left">Policy Number</th>
+                    <th class="px-4 py-2 text-left">Start Date</th>
+                    <th class="px-4 py-2 text-left">End Date</th>
+                    <th class="px-4 py-2 text-left">Created At</th>
+                    <th class="px-4 py-2 text-left">Updated At</th>
+                    <!-- Optional: Edit/Delete buttons can go here -->
+                </tr>
+            </thead>
+            <tbody id="insuranceTableBody" class="bg-white">
+                <!-- Rows will be populated dynamically via AJAX -->
+            </tbody>
+        </table>
+    </div>
+
+
+
+    </div>
+
+
+    <!-- Hidden Modal -->
+    <div id="medicalHistoryModal"
+         class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+        <div class="bg-gray-800 text-gray-200 w-full max-w-lg rounded-2xl shadow-2xl p-6 relative">
+
+            <!-- Close Button -->
+            <button id="closeModal"
+                    class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl font-bold">
+                &times;
+            </button>
+
+            <h2 class="text-xl font-semibold text-center text-red-500 mb-4">
+                Add Medical History
+            </h2>
+
+            <form id="medicalHistoryForm" class="space-y-4">
+
+                <!-- Hidden PatientId -->
+                <input type="hidden" id="patientId" name="PatientId" value="@Model.Id" />
+
+                <div>
+                    <label class="block text-sm text-gray-400">Condition</label>
+                    <input type="text" id="condition" name="Condition"
+                           class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500"
+                           required />
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400">Diagnosis</label>
+                    <input type="text" id="diagnosis" name="Diagnosis"
+                           class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500" />
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400">Treatment</label>
+                    <input type="text" id="treatment" name="Treatment"
+                           class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500" />
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400">Medications</label>
+                    <input type="text" id="medications" name="Medications"
+                           class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500" />
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400">Notes</label>
+                    <textarea id="notes" name="Notes"
+                              class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500"
+                              rows="3"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400">Record Date</label>
+                    <input type="date" id="recordDate" name="RecordDate"
+                           value="@DateTime.UtcNow.ToString("yyyy-MM-dd")"
+                           class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500" />
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-400">Attending Physician</label>
+                    <input type="text" id="attendingPhysician" name="AttendingPhysician"
+                           class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500" />
+                </div>
+
+                <div class="flex justify-end mt-6">
+                    <button type="submit"
+                            class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition">
+                        Save
+                    </button>
+                </div>
+
+                <p id="formMessage" class="text-center text-sm mt-3"></p>
+            </form>
         </div>
     </div>
-</div>
 
+    <div id="editHistoryModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-gray-800 p-6 rounded shadow-lg w-96">
+            <h2 class="text-white text-lg mb-4">Edit Medical History</h2>
+            <form id="editHistoryForm" class="space-y-3">
+                <input type="hidden" id="editHistoryId" />
+                <div>
+                    <label class="text-gray-200">Condition</label>
+                    <input type="text" id="editCondition" class="w-full p-2 rounded bg-gray-700 text-white" />
+                </div>
+                <div>
+                    <label class="text-gray-200">Diagnosis</label>
+                    <input type="text" id="editDiagnosis" class="w-full p-2 rounded bg-gray-700 text-white" />
+                </div>
+                <div>
+                    <label class="text-gray-200">Treatment</label>
+                    <input type="text" id="editTreatment" class="w-full p-2 rounded bg-gray-700 text-white" />
+                </div>
+                <div>
+                    <label class="text-gray-200">Medications</label>
+                    <input type="text" id="editMedications" class="w-full p-2 rounded bg-gray-700 text-white" />
+                </div>
+                <div>
+                    <label class="text-gray-200">Notes</label>
+                    <textarea id="editNotes" class="w-full p-2 rounded bg-gray-700 text-white"></textarea>
+                </div>
+                <div>
+                    <label class="text-gray-200">Record Date</label>
+                    <input type="date" id="editRecordDate" class="w-full p-2 rounded bg-gray-700 text-white" />
+                </div>
+                <div>
+                    <label class="text-gray-200">Attending Physician</label>
+                    <input type="text" id="editPhysician" class="w-full p-2 rounded bg-gray-700 text-white" />
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" id="closeEditModal" class="bg-gray-500 px-3 py-1 rounded">Cancel</button>
+                    <button type="submit" class="bg-red-500 px-3 py-1 rounded text-white">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-<!-- Hidden Modal -->
-<div id="medicalHistoryModal"
-     class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-    <div class="bg-gray-800 text-gray-200 w-full max-w-lg rounded-2xl shadow-2xl p-6 relative">
-
-        <!-- Close Button -->
-        <button id="closeModal"
-                class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl font-bold">
-            &times;
-        </button>
-
-        <h2 class="text-xl font-semibold text-center text-red-500 mb-4">
-            Add Medical History
-        </h2>
-
-        <form id="medicalHistoryForm" class="space-y-4">
-
-            <!-- Hidden PatientId -->
-            <input type="hidden" id="patientId" name="PatientId" value="@Model.Id" />
-
-            <div>
-                <label class="block text-sm text-gray-400">Condition</label>
-                <input type="text" id="condition" name="Condition"
-                       class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500"
-                       required />
-            </div>
-
-            <div>
-                <label class="block text-sm text-gray-400">Diagnosis</label>
-                <input type="text" id="diagnosis" name="Diagnosis"
-                       class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500" />
-            </div>
-
-            <div>
-                <label class="block text-sm text-gray-400">Treatment</label>
-                <input type="text" id="treatment" name="Treatment"
-                       class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500" />
-            </div>
-
-            <div>
-                <label class="block text-sm text-gray-400">Medications</label>
-                <input type="text" id="medications" name="Medications"
-                       class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500" />
-            </div>
-
-            <div>
-                <label class="block text-sm text-gray-400">Notes</label>
-                <textarea id="notes" name="Notes"
-                          class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500"
-                          rows="3"></textarea>
-            </div>
+<!-- Add Allergy Modal -->
+<div id="addAllergyModal" class="fixed inset-0 backdrop-blur-sm hidden items-center justify-center z-50">
+    <div class="bg-gray-800 p-6 rounded-xl shadow-xl w-96">
+        <h2 class="text-white text-lg mb-4">Add Allergy</h2>
+        <form id="addAllergyForm" class="space-y-3">
+            <input type="hidden" id="allergyPatientId" value="@Model.Id" />
 
             <div>
-                <label class="block text-sm text-gray-400">Record Date</label>
-                <input type="date" id="recordDate" name="RecordDate"
-                       value="@DateTime.UtcNow.ToString("yyyy-MM-dd")"
-                       class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500" />
+                <label class="text-gray-200">Allergen</label>
+                <input type="text" id="allergen" class="w-full p-2 rounded bg-gray-700 text-white" required />
             </div>
-
             <div>
-                <label class="block text-sm text-gray-400">Attending Physician</label>
-                <input type="text" id="attendingPhysician" name="AttendingPhysician"
-                       class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:outline-none focus:border-red-500" />
+                <label class="text-gray-200">Reaction</label>
+                <input type="text" id="reaction" class="w-full p-2 rounded bg-gray-700 text-white" required />
             </div>
-
-            <div class="flex justify-end mt-6">
-                <button type="submit"
-                        class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition">
-                    Save
-                </button>
+            <div>
+                <label class="text-gray-200">Notes</label>
+                <textarea id="allergyNotes" class="w-full p-2 rounded bg-gray-700 text-white"></textarea>
             </div>
-
-            <p id="formMessage" class="text-center text-sm mt-3"></p>
+            <div class="flex justify-end gap-2">
+                <button type="button" id="closeAddAllergyModal" class="bg-gray-500 px-3 py-1 rounded">Cancel</button>
+                <button type="submit" class="bg-green-500 px-3 py-1 rounded text-white">Add</button>
+            </div>
         </form>
     </div>
 </div>
-<script>
-    $(document).ready(function () {
-        // Show modal
-        $('#addHistoryBtn').on('click', function () {
-            $('#medicalHistoryModal').removeClass('hidden').hide().fadeIn(200);
-        });
 
-        // Hide modal
-        $('#closeModal').on('click', function () {
-            $('#medicalHistoryModal').fadeOut(200, function () {
-                $(this).addClass('hidden');
-            });
-        });
+<!-- Edit Allergy Modal -->
+<div id="editAllergyModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50">
+    <div class="bg-gray-800 text-gray-200 rounded-lg p-6 w-full max-w-md shadow-lg">
+        <h2 class="text-xl font-semibold mb-4 text-center text-red-500">Edit Allergy</h2>
+        <form id="editAllergyForm" class="space-y-4">
+            <input type="hidden" id="editAllergyId" name="id" />
+            <input type="hidden" id="editPatientId" name="patientId" value="@Model.Id" />
 
-        // Submit form
-        $('#medicalHistoryForm').on('submit', function (e) {
-            e.preventDefault();
+            <div>
+                <label class="block mb-1 text-sm font-medium">Allergen</label>
+                <input type="text" id="editAllergen" name="allergen" class="w-full px-3 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-red-500" required />
+            </div>
 
-            var formData = {
-                PatientId: $('#patientId').val(),
-                Condition: $('#condition').val(),
-                Diagnosis: $('#diagnosis').val(),
-                Treatment: $('#treatment').val(),
-                Medications: $('#medications').val(),
-                Notes: $('#notes').val(),
-                RecordDate: $('#recordDate').val(),
-                AttendingPhysician: $('#attendingPhysician').val()
-            };
+            <div>
+                <label class="block mb-1 text-sm font-medium">Reaction</label>
+                <input type="text" id="editReaction" name="reaction" class="w-full px-3 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-red-500" required />
+            </div>
 
-            $.ajax({
-                url: '/MedicalHistory/AddMedicalHistory',
-                type: 'POST',
-                data: formData,
-                success: function (response) {
-                    $('#formMessage')
-                        .text('✅ Medical history added successfully!')
-                        .removeClass('text-red-500')
-                        .addClass('text-green-500');
-                    console.log('Success:', response);
+            <div>
+                <label class="block mb-1 text-sm font-medium">Notes</label>
+                <textarea id="editAllergyNotes" name="notes" rows="3" class="w-full px-3 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-red-500"></textarea>
+            </div>
 
-                    // Hide modal after 2 seconds
-                    setTimeout(() => $('#medicalHistoryModal').fadeOut(200).addClass('hidden'), 1500);
-                },
-                error: function (xhr) {
-                    $('#formMessage')
-                        .text('❌ Failed to add medical history. Check console for details.')
-                        .removeClass('text-green-500')
-                        .addClass('text-red-500');
-                    console.error('Error:', xhr.responseText);
-                }
-            });
-        });
-    });
-</script>
+            <div class="flex justify-end gap-3 mt-4">
+                <button type="button" id="cancelEditBtn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded transition duration-200">Cancel</button>
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition duration-200">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Add Insurance Form Modal -->
+<div id="insuranceModal"
+     class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center hidden z-50">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg p-6 relative">
+
+        <!-- Close Button -->
+        <button id="closeInsuranceModal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
+            ✖
+        </button>
+
+        <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Add Insurance</h2>
+
+        <!-- Form -->
+        <form id="addInsuranceForm" class="space-y-4">
+            <!-- Patient Id -->
+            <div>
+                <input type="hidden" id="PatientId" name="PatientId" value="@Model.Id"
+                       class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                       required>
+            </div>
+
+            <!-- Provider Name -->
+            <div>
+                <label for="ProviderName" class="block text-gray-700 dark:text-gray-300">Provider Name</label>
+                <input type="text" id="ProviderName" name="ProviderName" maxlength="100"
+                       class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                       required>
+            </div>
+
+            <!-- Policy Number -->
+            <div>
+                <label for="PolicyNumber" class="block text-gray-700 dark:text-gray-300">Policy Number</label>
+                <input type="text" id="PolicyNumber" name="PolicyNumber" maxlength="50"
+                       class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                       required>
+            </div>
+
+            <!-- Start Date -->
+            <div>
+                <label for="StartDate" class="block text-gray-700 dark:text-gray-300">Start Date</label>
+                <input type="date" id="StartDate" name="StartDate"
+                       class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                       required>
+            </div>
+
+            <!-- End Date -->
+            <div>
+                <label for="EndDate" class="block text-gray-700 dark:text-gray-300">End Date</label>
+                <input type="date" id="EndDate" name="EndDate"
+                       class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+                       required>
+            </div>
+
+            <div class="flex justify-end mt-4">
+                <button type="submit"
+                        class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg transition duration-200">
+                    Save Insurance
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+    <script src="/js/Patient/ViewPatient.js"></script>

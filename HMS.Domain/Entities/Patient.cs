@@ -41,6 +41,9 @@ namespace HMS.Domain.Entities
         public bool IsActive { get; set; } = true;
 
         public ICollection<MedicalHistory>? MedicalHistories { get; set; }
+        public ICollection<Allergy> Allergies { get; set; } = new List<Allergy>();
+        public virtual ICollection<Insurance> Insurances { get; set; } = new List<Insurance>();
+
 
     }
 }

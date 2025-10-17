@@ -19,6 +19,23 @@ namespace HMS.Infrastructure.Repositories
             _context = context;
         }
 
+
+        public async Task<IEnumerable<MedicalHistory>> GetPatientMedicalHistoryAsync(int patientId)
+        {
+            using var connection = _context.CreateConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@PatientId", patientId, DbType.Int32);
+
+            var histories = await connection.QueryAsync<MedicalHistory>(
+                "sp_GetPatientMedicalHistory",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return histories;
+        }
+
         public async Task<int> AddAsync(CreateMedicalHistoryDto dto)
         {
             using var conn = _context.CreateConnection();
@@ -33,6 +50,32 @@ namespace HMS.Infrastructure.Repositories
 
             return newId;
         }
+        public async Task<int> UpdateMedicalHistoryAsync(EditMedicalHistoryDto medicalHistory)
+        {
+            using var conn = _context.CreateConnection();
 
+            var parameters = new DynamicParameters(medicalHistory);
+            return await conn.ExecuteAsync(
+                "sp_UpdateMedicalHistory",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+        }
+        public async Task<int> DeleteMedicalHistoryAsync(int id)
+        {
+            using var conn = _context.CreateConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", id, DbType.Int32);
+
+            var rowsAffected = await conn.QueryFirstAsync<dynamic>(
+                 "sp_DeleteMedicalHistory",
+                 parameters,
+                 commandType: CommandType.StoredProcedure
+             );
+
+            return (int)rowsAffected.RowsAffected;
+
+        }
     }
 }
