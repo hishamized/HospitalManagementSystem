@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Patient List";
+}
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="header-title">Patient List (AG Grid)</h4>
+        <div id="myGrid" class="ag-theme-alpine" style="height: 500px; width: 100%;"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const columnDefs = [
+            { headerName: "ID", field: "id" },
+            { headerName: "Full Name", field: "fullName" },
+            { headerName: "Email", field: "email" },
+        ];
+
+        const rowData = [
+            { id: 1, fullName: "John Doe", email: "john@example.com" },
+            { id: 2, fullName: "Jane Smith", email: "jane@example.com" },
+        ];
+
+        const gridOptions = {
+            columnDefs,
+            rowData,
+        };
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const gridDiv = document.querySelector('#myGrid');
+            new agGrid.Grid(gridDiv, gridOptions);
+        });
+    </script>
+}

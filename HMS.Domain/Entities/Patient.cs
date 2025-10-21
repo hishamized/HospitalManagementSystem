@@ -43,7 +43,6 @@ namespace HMS.Domain.Entities
         public ICollection<MedicalHistory>? MedicalHistories { get; set; }
         public ICollection<Allergy> Allergies { get; set; } = new List<Allergy>();
         public virtual ICollection<Insurance> Insurances { get; set; } = new List<Insurance>();
-
-
+        public virtual ICollection<PatientVisit> PatientVisits { get; set; } = new List<PatientVisit>();
     }
 }

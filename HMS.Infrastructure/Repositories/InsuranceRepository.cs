@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using HMS.Application.DTO;
 using HMS.Application.DTO.Insurance;
 using HMS.Application.Interfaces;
 using HMS.Domain.Entities;
@@ -51,33 +52,19 @@ namespace HMS.Infrastructure.Repositories
             return insurances;
         }
 
-        //public async Task<int> UpdateInsuranceAsync(EditInsuranceDto dto)
-        //{
-        //    using var conn = _context.CreateConnection();
+        public async Task<bool> UpdateInsuranceAsync(EditInsuranceDto dto)
+        {
+            using var connection = _context.CreateConnection();
 
-        //    var parameters = new DynamicParameters(dto);
+            var parameters = new DynamicParameters(dto);
 
-        //    return await conn.ExecuteAsync(
-        //        "sp_UpdateInsurance",
-        //        parameters,
-        //        commandType: CommandType.StoredProcedure
-        //    );
-        //}
+            var rowsAffected = await connection.ExecuteAsync(
+                "sp_UpdateInsurance",
+                parameters,
+                commandType: System.Data.CommandType.StoredProcedure
+            );
 
-        //public async Task<int> DeleteInsuranceAsync(int id)
-        //{
-        //    using var conn = _context.CreateConnection();
-
-        //    var parameters = new DynamicParameters();
-        //    parameters.Add("@Id", id, DbType.Int32);
-
-        //    var rowsAffected = await conn.QueryFirstAsync<dynamic>(
-        //         "sp_DeleteInsurance",
-        //         parameters,
-        //         commandType: CommandType.StoredProcedure
-        //     );
-
-        //    return (int)rowsAffected.RowsAffected;
-        //}
+            return rowsAffected > 0;
+        }
     }
 }

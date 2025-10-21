@@ -1,4 +1,5 @@
-﻿using HMS.Application.DTO.Insurance;
+﻿using HMS.Application.DTO;
+using HMS.Application.DTO.Insurance;
 using HMS.Domain.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace HMS.Application.Interfaces
     {
         Task<int> AddAsync(AddInsuranceDto dto);
         Task<IEnumerable<Insurance>> GetByPatientIdAsync(int patientId);
+        Task<bool> UpdateInsuranceAsync(EditInsuranceDto dto);
 
     }
 }

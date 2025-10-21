@@ -4,60 +4,70 @@
     ViewData["Title"] = "Login";
 }
 
-<div class="min-h-screen flex items-center justify-center bg-gray-900 text-gray-100">
-    <div class="w-full max-w-md p-8 bg-gray-800 rounded-lg shadow-lg">
-        <h2 class="text-2xl font-bold mb-6 text-center">Login to HMS</h2>
+<div class="container-fluid">
+    <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
+        <div class="col-md-5 col-lg-4">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4">
+                    <h4 class="text-center mb-4 text-uppercase fw-bold text-dark">Login to HMS</h4>
 
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <div class="bg-red-700 text-white p-3 mb-4 rounded">
-                Please fix the errors below.
-            </div>
-        }
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger mb-3">
+                            Please fix the errors below.
+                        </div>
+                    }
 
-        @if (ViewData.ModelState.ErrorCount > 0)
-        {
-            foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-            {
-                <div class="bg-red-700 text-white p-2 mb-2 rounded">
-                    @error.ErrorMessage
+                    @if (ViewData.ModelState.ErrorCount > 0)
+                    {
+                        foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <div class="alert alert-danger py-2 mb-2">
+                                @error.ErrorMessage
+                            </div>
+                        }
+                    }
+
+                    <form asp-action="Login" method="post">
+                        <div class="mb-3">
+                            <label asp-for="UsernameOrEmail" class="form-label fw-semibold">Username or Email</label>
+                            <input asp-for="UsernameOrEmail" class="form-control" placeholder="Enter username or email" />
+                            <span asp-validation-for="UsernameOrEmail" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label fw-semibold">Password</label>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="Enter password" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="form-check">
+                                <input asp-for="RememberMe" type="checkbox" class="form-check-input" id="rememberMeCheck" />
+                                <label class="form-check-label" for="rememberMeCheck">Remember Me</label>
+                            </div>
+                            <a href="#" class="text-danger small text-decoration-none">Forgot password?</a>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger fw-bold">
+                                <i class="mdi mdi-login me-1"></i> Login
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            }
-        }
-
-        <form asp-action="Login" method="post" class="space-y-4">
-            <div>
-                <label asp-for="UsernameOrEmail" class="block mb-1">Username or Email</label>
-                <input asp-for="UsernameOrEmail"
-                       class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-                       placeholder="Enter username or email" />
             </div>
 
-            <div>
-                <label asp-for="Password" class="block mb-1">Password</label>
-                <input asp-for="Password" type="password"
-                       class="w-full p-2 rounded bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500"
-                       placeholder="Enter password" />
+            <div class="text-center mt-3">
+                <small class="text-muted">© @DateTime.Now.Year HMS Admin Portal</small>
             </div>
-
-            <div class="flex items-center justify-between">
-                <label class="flex items-center">
-                    <input asp-for="RememberMe" type="checkbox" class="mr-2">
-                    Remember Me
-                </label>
-                <a href="#" class="text-red-500 hover:text-red-400 text-sm">Forgot password?</a>
-            </div>
-
-            <button type="submit"
-                    class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition-colors">
-                Login
-            </button>
-        </form>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        // Optional: add small Alpine.js interactivity if needed
+        // AG Grid JS can live globally in layout; nothing to override here
+        // Optional small page scripts (e.g. animations, validation highlights)
     </script>
 }

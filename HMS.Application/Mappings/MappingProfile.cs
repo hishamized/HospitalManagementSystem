@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HMS.Application.DTO;
 using HMS.Application.DTO.Allergy;
 using HMS.Application.DTO.Insurance;
 using HMS.Application.DTO.MedicalHistory;
@@ -25,6 +26,7 @@ namespace HMS.Application.Mappings
             CreateMap<AddAllergyDto, Allergy>().ReverseMap();
             CreateMap<AddInsuranceDto, Insurance>().ReverseMap();
             CreateMap<Insurance, ViewInsuranceDto>().ReverseMap();
+            CreateMap<Insurance, EditInsuranceDto>().ReverseMap();
             // You can add more later (e.g., PatientDto for reads)
         }
     }

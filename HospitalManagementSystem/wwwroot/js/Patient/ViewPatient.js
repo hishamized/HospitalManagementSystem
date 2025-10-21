@@ -1,13 +1,16 @@
 ﻿$(document).ready(function () {
     // Show modal
     $('#addHistoryBtn').on('click', function () {
-        $('#medicalHistoryModal').removeClass('hidden').hide().fadeIn(200);
+        // Requires Bootstrap 5 JS
+        var modal = new bootstrap.Modal(document.getElementById('medicalHistoryModal'));
+        modal.show();
+
     });
 
     // Hide modal
     $('#closeModal').on('click', function () {
         $('#medicalHistoryModal').fadeOut(200, function () {
-            $(this).addClass('hidden');
+            $(this).addClass('d-none');
         });
     });
 
@@ -38,7 +41,7 @@
                 console.log('Success:', response);
 
                 // Hide modal after 2 seconds
-                setTimeout(() => $('#medicalHistoryModal').fadeOut(200).addClass('hidden'), 1500);
+                setTimeout(() => $('#medicalHistoryModal').fadeOut(200).addClass('d-none'), 1500);
             },
             error: function (xhr) {
                 $('#formMessage')
@@ -52,9 +55,9 @@
     // Toggle Medical History Table
     $('#viewHistoryBtn').on('click', function () {
         const section = $('#medicalHistorySection');
-        section.toggleClass('hidden');
+        section.toggleClass('d-none');
 
-        if (!section.hasClass('hidden')) {
+        if (!section.hasClass('d-none')) {
             const patientId = $('#patientId').val();
 
             $.ajax({
@@ -109,6 +112,8 @@
 
     // Open modal and fill data
     $(document).on('click', '.editHistoryBtn', function () {
+        var modal = new bootstrap.Modal(document.getElementById('editHistoryModal'));
+        modal.show();
         const btn = $(this);
 
         $('#editHistoryId').val(btn.data('id'));
@@ -120,12 +125,13 @@
         $('#editRecordDate').val(new Date(btn.data('recorddate')).toISOString().split('T')[0]);
         $('#editPhysician').val(btn.data('physician'));
 
-        $('#editHistoryModal').removeClass('hidden').addClass('flex');
+
     });
 
     // Close modal
     $('#closeEditModal').on('click', function () {
-        $('#editHistoryModal').addClass('hidden').removeClass('flex');
+        var modal = new bootstrap.Modal(document.getElementById('editHistoryModal'));
+        modal.hide();
     });
 
     // Submit edit form
@@ -150,7 +156,7 @@
             data: JSON.stringify(dto),
             success: function (res) {
                 alert(res.message);
-                $('#editHistoryModal').addClass('hidden').removeClass('flex');
+                $('#editHistoryModal').addClass('d-none').removeClass('flex');
                 $('#viewHistoryBtn').click(); // Refresh table
             },
             error: function (xhr) {
@@ -186,11 +192,13 @@
 
     // Toggle modal
     $('#addAllergyBtn').on('click', function () {
-        $('#addAllergyModal').removeClass('hidden').addClass('flex');
+        var modal = new bootstrap.Modal(document.getElementById('addAllergyModal'));
+        modal.show();
     });
 
     $('#closeAddAllergyModal').on('click', function () {
-        $('#addAllergyModal').addClass('hidden').removeClass('flex');
+        var modal = new bootstrap.Modal(document.getElementById('addAllergyModal'));
+        modal.hide();
     });
 
     // Submit form
@@ -211,7 +219,7 @@
             data: JSON.stringify(dto),
             success: function (res) {
                 alert(res.message);
-                $('#addAllergyModal').addClass('hidden').removeClass('flex');
+                $('#addAllergyModal').addClass('d-none').removeClass('flex');
                 // Optionally refresh allergy table
             },
             error: function (xhr) {
@@ -222,13 +230,13 @@
     });
 
     $(document).on('click', '#viewAllergiesBtn', function () {
-        const patientId = $('#patientId').val(); // lowercase 'p', matches the hidden input
+        const patientId = $('#patientId').val(); // lowercase 'p', matches the d-none input
         const container = $('#allergiesTableContainer');
         const button = $(this);
 
         // If table is already visible, just hide it
-        if (!container.hasClass('hidden')) {
-            container.addClass('hidden');
+        if (!container.hasClass('d-none')) {
+            container.addClass('d-none');
             button.text('👁 View Allergies'); // reset button text
             return;
         }
@@ -272,7 +280,7 @@
                     tbody.append(`<tr><td colspan="4" class="text-center py-4">No allergies found.</td></tr>`);
                 }
 
-                container.removeClass('hidden');
+                container.removeClass('d-none');
                 button.text('Hide Allergies'); // change button text
             },
             error: function (xhr) {
@@ -284,7 +292,8 @@
 
     // Show modal and populate fields
     $(document).on('click', '.editAllergyBtn', function () {
-        $('#editAllergyModal').removeClass('hidden flex').addClass('flex');
+        var modal = new bootstrap.Modal(document.getElementById('editAllergyModal'));
+        modal.show();
         $('#editAllergyId').val($(this).data('id'));
         $('#editAllergen').val($(this).data('allergen'));
         $('#editReaction').val($(this).data('reaction'));
@@ -293,7 +302,9 @@
 
     // Hide modal
     $('#cancelEditBtn').on('click', function () {
-        $('#editAllergyModal').addClass('hidden').removeClass('flex');
+        $('#editAllergyModal').addClass('d-none').removeClass('flex');
+        var modal = new bootstrap.Modal(document.getElementById('editAllergyModal'));
+        modal.hide();
     });
 
     // Submit edit form
@@ -315,7 +326,7 @@
             data: JSON.stringify(updatedData), // convert JS object to JSON
             success: function (res) {
                 alert('Allergy updated successfully!');
-                $('#editAllergyModal').addClass('hidden').removeClass('flex');
+                $('#editAllergyModal').addClass('d-none').removeClass('flex');
                 $('#viewAllergiesBtn').trigger('click'); // refresh table
             },
             error: function (xhr) {
@@ -352,12 +363,14 @@
     $(document).ready(function () {
         // Open modal
         $('#addInsuranceBtn').on('click', function () {
-            $('#insuranceModal').removeClass('hidden');
+            var modal = new bootstrap.Modal(document.getElementById('insuranceModal'));
+            modal.show();
         });
 
         // Close modal
         $('#closeInsuranceModal').on('click', function () {
-            $('#insuranceModal').addClass('hidden');
+            var modal = new bootstrap.Modal(document.getElementById('insuranceModal'));
+            modal.hide(); 
         });
 
         // Submit form via AJAX
@@ -379,8 +392,10 @@
                 success: function (response) {
                     if (response.success) {
                         alert('Insurance added successfully! ID: ' + response.insuranceId);
-                        $('#insuranceModal').addClass('hidden');
+                        $('#insuranceModal').addClass('d-none');
                         $('#addInsuranceForm')[0].reset();
+                        var modal = new bootstrap.Modal(document.getElementById('insuranceModal'));
+                        modal.hide(); 
                     } else {
                         alert('Error: ' + response.message);
                     }
@@ -399,8 +414,8 @@
 
     // Toggle table visibility
     $('#toggleInsuranceBtn').on('click', function () {
-        $('#insuranceTableContainer').toggleClass('hidden');
-        if (!$('#insuranceTableContainer').hasClass('hidden')) {
+        $('#insuranceTableContainer').toggleClass('d-none');
+        if (!$('#insuranceTableContainer').hasClass('d-none')) {
             loadInsuranceData();
         }
     });
@@ -433,9 +448,22 @@
                             '<td class="px-4 py-2">' + formatDate(insurance.endDate) + '</td>' +
                             '<td class="px-4 py-2">' + formatDateTime(insurance.createdAt) + '</td>' +
                             '<td class="px-4 py-2">' + formatDateTime(insurance.updatedAt) + '</td>' +
+                            '<td class="px-4 py-2">' +
+                            '<button class="btn btn-success btn-sm me-2 edit-insurance my-2" ' +
+                            'data-id="' + insurance.id + '" ' +
+                            'data-provider="' + insurance.providerName + '" ' +
+                            'data-policy="' + insurance.policyNumber + '" ' +
+                            'data-start="' + insurance.startDate + '" ' +
+                            'data-end="' + insurance.endDate + '">' +
+                            'Edit' +
+                            '</button>' +
+                            '<button class="btn btn-danger btn-sm delete-insurance" data-id="' + insurance.id + '">Delete</button>' +
+                            '</td>' +
                             '</tr>'
                         );
                     });
+
+
                 }
             },
             error: function (err) {
@@ -444,6 +472,27 @@
             }
         });
     }
+    $(document).on('click', '.edit-insurance', function () {
+        // Extract data attributes from button
+        var id = $(this).data('id');
+        var provider = $(this).data('provider');
+        var policy = $(this).data('policy');
+        var start = $(this).data('start');
+        var end = $(this).data('end');
+
+        // Prefill modal fields
+        $('#insuranceId').val(id);
+        $('#providerName').val(provider);
+        $('#policyNumber').val(policy);
+        $('#startDate').val(start.split('T')[0]); // remove time if present
+        $('#endDate').val(end.split('T')[0]);
+
+        // Show modal
+        var modal = new bootstrap.Modal(document.getElementById('editInsuranceModal'));
+        modal.show();
+    });
+
+
 
     // Helper functions to format dates
     function formatDate(dateString) {
@@ -455,4 +504,45 @@
         var date = new Date(dateString);
         return date.toLocaleString();
     }
+});  // --- EDIT INSURANCE MODAL LOGIC --- //
+
+var editModal = new bootstrap.Modal(document.getElementById('editInsuranceModal'));
+
+// Populate modal when Edit button is clicked
+$(document).on('click', '.btn-success[data-id]', function () {
+    var row = $(this).closest('tr');
+    $('#insuranceId').val($(this).data('id'));
+    $('#providerName').val(row.find('td:eq(1)').text());
+    $('#policyNumber').val(row.find('td:eq(2)').text());
+    $('#startDate').val(row.find('td:eq(3)').text());
+    $('#endDate').val(row.find('td:eq(4)').text());
+
+    editModal.show();
+});
+
+// Save changes via AJAX
+$('#saveInsuranceChanges').on('click', function () {
+    var dto = {
+        Id: $('#insuranceId').val(),
+        ProviderName: $('#providerName').val(),
+        PolicyNumber: $('#policyNumber').val(),
+        StartDate: $('#startDate').val(),
+        EndDate: $('#endDate').val()
+    };
+
+    $.ajax({
+        url: '/Insurance/EditInsurance',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(dto),
+        success: function (response) {
+            editModal.hide();
+            alert(response.message);
+            location.reload(); // Or update the row dynamically if you prefer
+        },
+        error: function (xhr) {
+            var msg = xhr.responseJSON?.message || 'An error occurred';
+            alert(msg);
+        }
+    });
 });

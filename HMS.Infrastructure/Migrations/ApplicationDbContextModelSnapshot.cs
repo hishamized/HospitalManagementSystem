@@ -217,6 +217,61 @@ namespace HMS.Infrastructure.Migrations
                     b.ToTable("Patients");
                 });
 
+            modelBuilder.Entity("HMS.Domain.Entities.PatientVisit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("AdmissionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DischargeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DoctorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DoctorName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RoomNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TreatmentDetails")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("VisitDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("VisitType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("PatientVisits");
+                });
+
             modelBuilder.Entity("HMS.Domain.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -341,6 +396,17 @@ namespace HMS.Infrastructure.Migrations
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("HMS.Domain.Entities.PatientVisit", b =>
+                {
+                    b.HasOne("HMS.Domain.Entities.Patient", "Patient")
+                        .WithMany("PatientVisits")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Patient");
+                });
+
             modelBuilder.Entity("HMS.Domain.Entities.UserRole", b =>
                 {
                     b.HasOne("HMS.Domain.Entities.Role", "Role")
@@ -367,6 +433,8 @@ namespace HMS.Infrastructure.Migrations
                     b.Navigation("Insurances");
 
                     b.Navigation("MedicalHistories");
+
+                    b.Navigation("PatientVisits");
                 });
 
             modelBuilder.Entity("HMS.Domain.Entities.Role", b =>

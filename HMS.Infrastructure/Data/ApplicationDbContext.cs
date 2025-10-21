@@ -12,6 +12,8 @@ namespace HMS.Infrastructure.Data
         public DbSet<Patient> Patients { get; set; }
         public DbSet<MedicalHistory> MedicalHistories { get; set; }
         public DbSet<Allergy> Allergies { get; set; }
+        public DbSet<PatientVisit> PatientVisits { get; set; }
+
 
 
         public DbSet<User> Users { get; set; } = null!;
@@ -73,6 +75,16 @@ namespace HMS.Infrastructure.Data
              .WithMany(p => p.Insurances)
              .HasForeignKey(i => i.PatientId)
              .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PatientVisit>()
+            .HasKey(i => i.Id);
+
+            modelBuilder.Entity<PatientVisit>()
+                .HasOne(i => i.Patient)
+                .WithMany(p => p.PatientVisits)
+                .HasForeignKey(e => e.PatientId)
+                .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

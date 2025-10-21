@@ -1,5 +1,6 @@
 ﻿using HMS.Application.Commands;
 using HMS.Application.Commands.Insurance;
+using HMS.Application.DTO;
 using HMS.Application.DTO.Allergy;
 using HMS.Application.DTO.Insurance;
 using HMS.Application.DTO.MedicalHistory;
@@ -8,6 +9,7 @@ using HMS.Application.Queries;
 using HMS.Application.Queries.Insurance;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 namespace HMS.Web.Controllers
 {
@@ -76,6 +78,31 @@ namespace HMS.Web.Controllers
                     success = false,
                     message = "Error fetching insurance data",
                     details = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditInsurance([FromBody] EditInsuranceDto dto)
+        {
+
+            try
+            {
+                var command = new EditInsuranceCommand(dto);
+                var result = await _mediator.Send(command);
+
+                if (result)
+                    return Ok(new { message = "Insurance updated successfully." });
+
+                return StatusCode(500, new { message = "Failed to update insurance." });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = ex.Message,
                 });
             }
         }

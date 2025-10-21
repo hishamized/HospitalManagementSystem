@@ -17,6 +17,11 @@ namespace HMS.Web.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public IActionResult Patients() {
+            return View();
+        }
         [HttpGet]
         public async Task<IActionResult> GetAllPatients()
         {
