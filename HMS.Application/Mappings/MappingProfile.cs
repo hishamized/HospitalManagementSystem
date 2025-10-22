@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using HMS.Application.Dto;
 using HMS.Application.DTO;
 using HMS.Application.DTO.Allergy;
 using HMS.Application.DTO.Insurance;
 using HMS.Application.DTO.MedicalHistory;
 using HMS.Application.DTO.Patient;
+using HMS.Application.DTOs.PatientVisitDtos;
 using HMS.Domain.Entities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -27,6 +29,11 @@ namespace HMS.Application.Mappings
             CreateMap<AddInsuranceDto, Insurance>().ReverseMap();
             CreateMap<Insurance, ViewInsuranceDto>().ReverseMap();
             CreateMap<Insurance, EditInsuranceDto>().ReverseMap();
+            CreateMap<AddPatientVisitDto, PatientVisit>().ReverseMap();
+            CreateMap<PatientVisit, PatientVisitDto>()
+                .ForMember(dest => dest.PatientName, opt => opt.MapFrom(src => src.Patient.FullName));
+            CreateMap<PatientVisitUpdateDto, PatientVisit>()
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             // You can add more later (e.g., PatientDto for reads)
         }
     }

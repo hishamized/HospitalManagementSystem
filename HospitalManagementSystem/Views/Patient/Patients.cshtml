@@ -5,65 +5,156 @@
 <h1 class="text-3xl font-bold mb-6">Patient Management</h1>
 
 <!-- Add Patient Button -->
-<button id="addPatientBtn" class="mb-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Add Patient</button>
+<button id="addPatientBtn" class="btn btn-primary my-2">
+    Add Patient
+</button>
+
 
 <!-- AG Grid Container -->
 <div id="PatientsGrid" class="ag-theme-balham" style="height: 500px; width: 100%;"></div>
 
-<!-- Add Patient Modal -->
-<div id="addPatientModal" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center d-none">
-    <div class="bg-gray-900 text-gray-200 p-6 rounded w-3/4 max-h-[90vh] overflow-y-auto shadow-lg">
-        <h2 class="text-2xl mb-4 font-bold">Add Patient</h2>
-        <div class="grid grid-cols-2 gap-4">
-            <input type="text" id="fullName" placeholder="Full Name" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="gender" placeholder="Gender" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="date" id="dob" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="email" id="email" placeholder="Email" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="contactNumber" placeholder="Contact Number" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="alternateContactNumber" placeholder="Alternate Contact" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="address" placeholder="Address" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="city" placeholder="City" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="state" placeholder="State" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="zipCode" placeholder="Zip Code" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="bloodGroup" placeholder="Blood Group" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="emergencyContactName" placeholder="Emergency Contact Name" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="emergencyContactNumber" placeholder="Emergency Contact Number" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="relationshipWithEmergencyContact" placeholder="Relationship with Emergency Contact" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-        </div>
-        <div class="mt-4 flex justify-end gap-2">
-            <button id="closeAddModal" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">Cancel</button>
-            <button id="savePatientBtn" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Save</button>
+<!-- Add Patient Modal (Light Mode) -->
+<div class="modal fade" id="addPatientModal" tabindex="-1" aria-labelledby="addPatientModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-white text-dark border border-secondary shadow-lg">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold" id="addPatientModalLabel">
+                    <i class="bi bi-person-plus me-2 text-primary"></i> Add Patient
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <input type="text" id="fullName" class="form-control" placeholder="Full Name" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="gender" class="form-control" placeholder="Gender" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="date" id="dob" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="email" id="email" class="form-control" placeholder="Email" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="contactNumber" class="form-control" placeholder="Contact Number" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="alternateContactNumber" class="form-control" placeholder="Alternate Contact" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="address" class="form-control" placeholder="Address" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="city" class="form-control" placeholder="City" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="state" class="form-control" placeholder="State" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="zipCode" class="form-control" placeholder="Zip Code" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="bloodGroup" class="form-control" placeholder="Blood Group" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="emergencyContactName" class="form-control" placeholder="Emergency Contact Name" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="emergencyContactNumber" class="form-control" placeholder="Emergency Contact Number" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="relationshipWithEmergencyContact" class="form-control" placeholder="Relationship with Emergency Contact" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="savePatientBtn" type="button" class="btn btn-primary">
+                    <i class="bi bi-save me-1"></i> Save
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
+
 <!-- Edit Patient Modal -->
-<div id="editPatientModal" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center d-none">
-    <div class="bg-gray-900 text-gray-200 p-6 rounded w-3/4 max-h-[90vh] overflow-y-auto shadow-lg">
-        <h2 class="text-2xl mb-4 font-bold">Edit Patient</h2>
-        <input type="hidden" id="editId" />
-        <div class="grid grid-cols-2 gap-4">
-            <input type="text" id="editFullName" placeholder="Full Name" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="editGender" placeholder="Gender" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="date" id="editDob" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="email" id="editEmail" placeholder="Email" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="editContactNumber" placeholder="Contact Number" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="editAlternateContactNumber" placeholder="Alternate Contact" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="editAddress" placeholder="Address" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="editCity" placeholder="City" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="editState" placeholder="State" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="editZipCode" placeholder="Zip Code" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="editBloodGroup" placeholder="Blood Group" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="editEmergencyContactName" placeholder="Emergency Contact Name" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="editEmergencyContactNumber" placeholder="Emergency Contact Number" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-            <input type="text" id="editRelationshipWithEmergencyContact" placeholder="Relationship with Emergency Contact" class="border border-gray-700 p-2 rounded bg-gray-800 text-gray-200" />
-        </div>
-        <div class="mt-4 flex justify-end gap-2">
-            <button id="closeEditModal" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">Cancel</button>
-            <button id="updatePatientBtn" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Update</button>
+<div class="modal fade" id="editPatientModal" tabindex="-1" aria-labelledby="editPatientModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content border border-secondary shadow-lg">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title fw-bold" id="editPatientModalLabel">
+                    <i class="bi bi-person-lines-fill me-2 text-primary"></i> Edit Patient
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="editId" />
+                <div class="container-fluid">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <input type="text" id="editFullName" class="form-control" placeholder="Full Name" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="editGender" class="form-control" placeholder="Gender" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="date" id="editDob" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="email" id="editEmail" class="form-control" placeholder="Email" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="editContactNumber" class="form-control" placeholder="Contact Number" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="editAlternateContactNumber" class="form-control" placeholder="Alternate Contact" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="editAddress" class="form-control" placeholder="Address" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="editCity" class="form-control" placeholder="City" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="editState" class="form-control" placeholder="State" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="editZipCode" class="form-control" placeholder="Zip Code" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="editBloodGroup" class="form-control" placeholder="Blood Group" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="editEmergencyContactName" class="form-control" placeholder="Emergency Contact Name" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="editEmergencyContactNumber" class="form-control" placeholder="Emergency Contact Number" />
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" id="editRelationshipWithEmergencyContact" class="form-control" placeholder="Relationship with Emergency Contact" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="updatePatientBtn" type="button" class="btn btn-primary">
+                    <i class="bi bi-save me-1"></i> Update
+                </button>
+            </div>
         </div>
     </div>
 </div>
+
 
 
 @section scripts {

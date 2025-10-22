@@ -74,7 +74,7 @@ function addPatient() {
         contentType: 'application/json',
         data: JSON.stringify(dto),
         success: () => {
-            $('#addPatientModal').addClass('d-none');
+            $('#addPatientModal').modal('hide');
             fetchPatientList();
         }
     });
@@ -132,7 +132,7 @@ function updatePatient() {
         contentType: 'application/json',
         data: JSON.stringify(dto),
         success: () => {
-            $('#editPatientModal').addClass('d-none');
+            $('#editPatientModal').modal('hide');
             fetchPatientList();
         }
     });
@@ -155,15 +155,17 @@ $(document).ready(function () {
     fetchPatientList();
 
     // Modals
-    $('#addPatientBtn').click(() => $('#addPatientModal').removeClass('d-none'));
-    $('#closeAddModal').click(() => $('#addPatientModal').addClass('d-none'));
+    // Show modal (like AG Grid popup)
+    $('#addPatientBtn').on('click', function () {
+        $('#addPatientModal').modal('show');
+    });
+
     $('#savePatientBtn').click(addPatient);
 
-    $('#closeEditModal').click(() => $('#editPatientModal').addClass('d-none'));
     $('#updatePatientBtn').click(updatePatient);
 
     // Dynamic buttons (edit, delete, view)
-    $(document).on('click', '.edit-btn', function () { loadPatientForEdit($(this).data('id')); });
+    $(document).on('click', '.edit-btn', function () { $('#editPatientModal').modal('show'); loadPatientForEdit($(this).data('id')); });
     $(document).on('click', '.delete-btn', function () { deletePatient($(this).data('id')); });
     $(document).on('click', '.view-btn', function () { window.location.href = '/Patient/ViewPatient?id=' + $(this).data('id'); });
 });

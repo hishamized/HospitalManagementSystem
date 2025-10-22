@@ -1,0 +1,196 @@
+﻿@{
+    ViewData["Title"] = "Patient Visits";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold">Patient Visits</h4>
+        <button id="btnAddVisit" class="btn btn-primary">
+            <i class="mdi mdi-plus"></i> Add Patient Visit
+        </button>
+    </div>
+
+    <!-- AG Grid Placeholder -->
+    <div id="patientVisitGrid" class="ag-theme-alpine" style="height: 500px; width: 100%;"></div>
+
+</div>
+
+<!-- Add/Edit Visit Modal -->
+<div class="modal fade" id="visitModal" tabindex="-1" aria-labelledby="visitModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="visitModalLabel">Add Patient Visit</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <div id="ErrorContainer" class="alert alert-danger mt-3 d-none" role="alert">
+                </div>
+
+                <form id="visitForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="patientId" class="form-label fw-semibold">Patient</label>
+                            <select id="patientId" name="PatientId" class="form-select" required>
+                                <option value="">Select Patient</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="visitType" class="form-label fw-semibold">Visit Type</label>
+                            <select id="visitType" name="VisitType" class="form-select" required>
+                                <option value="">Select Type</option>
+                                <option value="Inpatient">Inpatient</option>
+                                <option value="Outpatient">Outpatient</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="visitDate" class="form-label fw-semibold">Visit Date</label>
+                            <input type="date" id="visitDate" name="VisitDate" class="form-control" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="doctorName" class="form-label fw-semibold">Doctor Name</label>
+                            <input type="text" id="doctorName" name="DoctorName" class="form-control" placeholder="Optional" />
+                        </div>
+
+                        <div class="col-md-6 inpatient-field">
+                            <label for="admissionDate" class="form-label fw-semibold">Admission Date</label>
+                            <input type="date" id="admissionDate" name="AdmissionDate" class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 inpatient-field">
+                            <label for="dischargeDate" class="form-label fw-semibold">Discharge Date</label>
+                            <input type="date" id="dischargeDate" name="DischargeDate" class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 inpatient-field">
+                            <label for="roomNumber" class="form-label fw-semibold">Room Number</label>
+                            <input type="text" id="roomNumber" name="RoomNumber" class="form-control" placeholder="Optional" />
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="treatmentDetails" class="form-label fw-semibold">Treatment Details</label>
+                            <textarea id="treatmentDetails" name="TreatmentDetails" class="form-control" rows="2" placeholder="Describe treatment"></textarea>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="notes" class="form-label fw-semibold">Additional Notes</label>
+                            <textarea id="notes" name="Notes" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="saveVisitBtn" class="btn btn-success">
+                    <i class="mdi mdi-content-save"></i> Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Visit Modal -->
+<div class="modal fade" id="editVisitModal" tabindex="-1" aria-labelledby="editVisitModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editVisitModalLabel">Edit Patient Visit</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="editVisitForm">
+                    <div id="editVisitError" class="text-danger mb-3"></div>
+
+                    <input type="hidden" id="editVisitId" name="Id" />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="editPatientId" class="form-label fw-semibold">Patient</label>
+                            <select id="editPatientId" name="PatientId" class="form-select" required></select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="editVisitType" class="form-label fw-semibold">Visit Type</label>
+                            <select id="editVisitType" name="VisitType" class="form-select" required>
+                                <option value="">Select Type</option>
+                                <option value="Inpatient">Inpatient</option>
+                                <option value="Outpatient">Outpatient</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="editVisitDate" class="form-label fw-semibold">Visit Date</label>
+                            <input type="date" id="editVisitDate" name="VisitDate" class="form-control" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="editDoctorName" class="form-label fw-semibold">Doctor Name</label>
+                            <input type="text" id="editDoctorName" name="DoctorName" class="form-control" placeholder="Optional" />
+                        </div>
+
+                        <div class="col-md-6 inpatient-field">
+                            <label for="editAdmissionDate" class="form-label fw-semibold">Admission Date</label>
+                            <input type="date" id="editAdmissionDate" name="AdmissionDate" class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 inpatient-field">
+                            <label for="editDischargeDate" class="form-label fw-semibold">Discharge Date</label>
+                            <input type="date" id="editDischargeDate" name="DischargeDate" class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 inpatient-field">
+                            <label for="editRoomNumber" class="form-label fw-semibold">Room Number</label>
+                            <input type="text" id="editRoomNumber" name="RoomNumber" class="form-control" placeholder="Optional" />
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="editTreatmentDetails" class="form-label fw-semibold">Treatment Details</label>
+                            <textarea id="editTreatmentDetails" name="TreatmentDetails" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="editNotes" class="form-label fw-semibold">Notes</label>
+                            <textarea id="editNotes" name="Notes" class="form-control" rows="2"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="updatePatientVisitBtn" class="btn btn-success">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteVisitModal" tabindex="-1" aria-labelledby="deleteVisitModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteVisitModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this patient visit?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="confirmDeleteVisitBtn" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/Patient/PatientVisits.js">  </script>
+}
