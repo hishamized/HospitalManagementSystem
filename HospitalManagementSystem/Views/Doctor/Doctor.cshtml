@@ -1,0 +1,110 @@
+﻿
+@{
+    ViewData["Title"] = "Doctor";
+}
+
+<!-- Add Doctor Button -->
+<button id="btnAddDoctor" class="btn btn-primary my-3">Add Doctor</button>
+
+<!-- Add Doctor Modal -->
+<div class="modal fade" id="addDoctorModal" tabindex="-1" aria-labelledby="addDoctorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addDoctorModalLabel">Add Doctor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Error container -->
+                <div id="doctorFormErrors" class="alert alert-danger d-none"></div>
+
+                <form id="addDoctorForm">
+                    <input type="hidden" id="DoctorCode" name="DoctorCode" value="DOC001" />
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>First Name</label>
+                            <input type="text" name="FirstName" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Last Name</label>
+                            <input type="text" name="LastName" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Gender</label>
+                            <select name="Gender" class="form-select" required>
+                                <option value="">Select</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Date of Birth</label>
+                            <input type="date" name="DateOfBirth" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Email</label>
+                            <input type="email" name="Email" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Phone Number</label>
+                            <input type="text" name="PhoneNumber" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Specialization</label>
+                            <input type="text" name="Specialization" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Qualification</label>
+                            <input type="text" name="Qualification" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Experience Years</label>
+                            <input type="number" name="ExperienceYears" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Address</label>
+                            <input type="text" name="Address" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label>City</label>
+                            <input type="text" name="City" class="form-control">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>State</label>
+                            <input type="text" name="State" class="form-control">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Zip Code</label>
+                            <input type="text" name="ZipCode" class="form-control">
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="saveDoctorBtn" class="btn btn-primary">Save Doctor</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/Doctor/doctor.js">  </script>
+}

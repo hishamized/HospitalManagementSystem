@@ -4,6 +4,7 @@ using HMS.Application.Behaviors;
 using HMS.Application.Handlers;
 using HMS.Application.Mappings;
 using HMS.Application.Validators.PatientVisit;
+using HMS.Application.Validators.Doctor;
 using HMS.Infrastructure;
 using HMS.Infrastructure.Data;
 using MediatR;
@@ -17,6 +18,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddValidatorsFromAssemblyContaining<AddPatientVisitCommandValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<UpdatePatientVisitCommandValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<AddDoctorCommandValidator>();
 
 // MediatR
 builder.Services.AddMediatR(cfg =>
