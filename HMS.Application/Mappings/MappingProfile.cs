@@ -8,7 +8,9 @@ using HMS.Application.DTO.Doctor;
 using HMS.Application.DTO.Insurance;
 using HMS.Application.DTO.MedicalHistory;
 using HMS.Application.DTO.Patient;
+using HMS.Application.DTO.Slot;
 using HMS.Application.DTOs.PatientVisitDtos;
+using HMS.Application.DTOs.Slot;
 using HMS.Domain.Entities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -50,6 +52,8 @@ namespace HMS.Application.Mappings
             CreateMap<AddDepartmentsDto, Department>().ReverseMap();
             CreateMap<Department, DepartmentDto>().ReverseMap();
             CreateMap<Department, EditDepartmentDto>().ReverseMap();
+            CreateMap<AddSlotDto, Slot>().ReverseMap();
+            CreateMap<SlotDto, SlotDto>().ReverseMap();
         }
     }
 }

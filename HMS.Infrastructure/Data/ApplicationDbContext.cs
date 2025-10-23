@@ -16,6 +16,7 @@ namespace HMS.Infrastructure.Data
 
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<Department> Departments { get; set; } = null!;
+        public DbSet<Slot> Slots { get; set; }
 
 
 
@@ -92,6 +93,15 @@ namespace HMS.Infrastructure.Data
             modelBuilder.Entity<Doctor>(entity =>
             {
                 entity.HasKey(d => d.Id);
+            });
+
+            modelBuilder.Entity<Slot>(entity =>
+            {
+                entity.ToTable("Slots");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ReportingTime).IsRequired();
+                entity.Property(e => e.LeavingTime).IsRequired();
+                entity.Property(e => e.DaysOfWeek).IsRequired();
             });
 
         }

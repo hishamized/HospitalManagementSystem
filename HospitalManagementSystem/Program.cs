@@ -6,6 +6,7 @@ using HMS.Application.Mappings;
 using HMS.Application.Validators.Department;
 using HMS.Application.Validators.Doctor;
 using HMS.Application.Validators.PatientVisit;
+using HMS.Application.Validators.Slot;
 using HMS.Infrastructure;
 using HMS.Infrastructure.Data;
 using MediatR;
@@ -24,6 +25,9 @@ builder.Services.AddValidatorsFromAssemblyContaining<AddDoctorCommandValidator>(
 builder.Services.AddValidatorsFromAssemblyContaining<EditDoctorCommandValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<AddDepartmentCommandValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<EditDepartmentCommandValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<AddSlotCommandValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<EditSlotCommandValidator>();
+
 
 // MediatR
 builder.Services.AddMediatR(cfg =>

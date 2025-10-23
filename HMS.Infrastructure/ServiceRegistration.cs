@@ -20,6 +20,7 @@ namespace HMS.Infrastructure
             services.AddScoped<IPatientVisitRepository, PatientVisitRepository>();
             services.AddScoped<IDoctorRepository, DoctorRepository>();
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            services.AddScoped<ISlotRepository, SlotRepository>();
         }
     }
 }
