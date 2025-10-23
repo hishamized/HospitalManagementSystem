@@ -14,12 +14,14 @@ using HMS.Application.Features.PatientVisits.Queries;
 using HMS.Application.Queries;
 using HMS.Application.Queries.Insurance;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 
 
 namespace HMS.Web.Controllers
 {
+    [Authorize]
     public class PatientVisitController : Controller
 
     {

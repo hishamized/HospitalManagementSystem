@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using HMS.Application.DTOs;
+﻿using HMS.Application.DTOs;
 using HMS.Application.Queries;
+using MediatR;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace HMS.Web.Controllers
 {
@@ -23,6 +26,7 @@ namespace HMS.Web.Controllers
             if (!ModelState.IsValid)
                 return View(dto);
 
+            // Validate user
             var query = new LoginQuery(dto);
             var user = await _mediator.Send(query);
 
@@ -32,35 +36,63 @@ namespace HMS.Web.Controllers
                 return View(dto);
             }
 
-            // Set session
+            // ----------------------------
+            // 1️⃣ Store info in session
+            // ----------------------------
             HttpContext.Session.SetString("UserId", user.UserId.ToString());
             HttpContext.Session.SetString("Username", user.Username);
             HttpContext.Session.SetString("Roles", string.Join(",", user.Roles));
 
-            // Set cookie if RememberMe
-            if (dto.RememberMe)
-                Response.Cookies.Append("HMSUser", user.Username, new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(7) });
+            // ----------------------------
+            // 2️⃣ Create claims for cookie
+            // ----------------------------
+            var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                    new Claim(ClaimTypes.Name, user.Username)
+                };
 
-            // Role-based redirect to actions within UserController
-            if (user.Roles.Contains("Admin"))
-                return RedirectToAction("AdminDashboard");
-            if (user.Roles.Contains("Doctor"))
-                return RedirectToAction("DoctorDashboard");
-            if (user.Roles.Contains("Nurse"))
-                return RedirectToAction("NurseDashboard");
-            if (user.Roles.Contains("Receptionist"))
-                return RedirectToAction("ReceptionistDashboard");
-            if (user.Roles.Contains("Pharmacist"))
-                return RedirectToAction("PharmacistDashboard");
+            foreach (var role in user.Roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
-            return RedirectToAction("Index"); // Default landing page
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = dto.RememberMe, // cookie persists if RememberMe checked
+                ExpiresUtc = dto.RememberMe ? DateTimeOffset.UtcNow.AddDays(7) : null
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties
+            );
+
+            // ----------------------------
+            // 3️⃣ Redirect based on role
+            // ----------------------------
+            if (user.Roles.Contains("Admin")) return RedirectToAction("AdminDashboard");
+            if (user.Roles.Contains("Doctor")) return RedirectToAction("DoctorDashboard");
+            if (user.Roles.Contains("Nurse")) return RedirectToAction("NurseDashboard");
+            if (user.Roles.Contains("Receptionist")) return RedirectToAction("ReceptionistDashboard");
+            if (user.Roles.Contains("Pharmacist")) return RedirectToAction("PharmacistDashboard");
+
+            return RedirectToAction("Login"); // fallback
         }
 
+
+
         [HttpPost]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
+            // Clear session
             HttpContext.Session.Clear();
-            Response.Cookies.Delete("HMSUser");
+
+            // Sign out the cookie-based authentication
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
             return RedirectToAction("Login");
         }
 

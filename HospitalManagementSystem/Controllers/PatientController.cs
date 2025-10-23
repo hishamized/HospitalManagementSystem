@@ -1,11 +1,13 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using HMS.Application.Queries;
-using HMS.Application.Commands;
+﻿using HMS.Application.Commands;
 using HMS.Application.DTO.Patient;
+using HMS.Application.Queries;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HMS.Web.Controllers
 {
+    [Authorize]
     public class PatientController : Controller
     {
         private readonly IMediator _mediator;

@@ -1,14 +1,16 @@
 ﻿using HMS.Application.Commands;
+using HMS.Application.Commands.MedicalHistory;
 using HMS.Application.DTO.MedicalHistory;
 using HMS.Application.DTO.Patient;
 using HMS.Application.Queries;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using HMS.Application.Commands.MedicalHistory;
 using HMS.Application.Queries.MedicalHistory;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HMS.Web.Controllers
 {
+    [Authorize]
     public class MedicalHistoryController : Controller
     {
         private readonly IMediator _mediator;

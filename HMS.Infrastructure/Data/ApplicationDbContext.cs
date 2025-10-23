@@ -15,6 +15,8 @@ namespace HMS.Infrastructure.Data
         public DbSet<PatientVisit> PatientVisits { get; set; }
 
         public DbSet<Doctor> Doctors { get; set; }
+        public DbSet<Department> Departments { get; set; } = null!;
+
 
 
 

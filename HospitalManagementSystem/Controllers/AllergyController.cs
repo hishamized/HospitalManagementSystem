@@ -6,11 +6,13 @@ using HMS.Application.DTO.Patient;
 using HMS.Application.Queries;
 using HMS.Application.Queries.Allergy;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace HMS.Web.Controllers
 {
+    [Authorize]
     public class AllergyController : Controller
     {
         private readonly IMediator _mediator;
