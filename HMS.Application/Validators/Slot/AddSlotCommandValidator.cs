@@ -14,11 +14,8 @@ namespace HMS.Application.Validators.Slot
         {
             RuleFor(x => x.Slot.ReportingTime)
                 .NotEmpty().WithMessage("Reporting time is required.");
-
             RuleFor(x => x.Slot.LeavingTime)
-                .NotEmpty().WithMessage("Leaving time is required.")
-                .GreaterThan(x => x.Slot.ReportingTime)
-                .WithMessage("Leaving time must be after reporting time.");
+                .NotEmpty().WithMessage("Leaving time is required.");
 
             RuleFor(x => x.Slot.DaysOfWeek)
                 .GreaterThan(0).WithMessage("At least one day must be selected.");

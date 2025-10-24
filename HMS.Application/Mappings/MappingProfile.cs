@@ -3,6 +3,7 @@ using HMS.Application.Dto;
 using HMS.Application.Dto.Doctor;
 using HMS.Application.DTO;
 using HMS.Application.DTO.Allergy;
+using HMS.Application.DTO.Appointment;
 using HMS.Application.DTO.Department;
 using HMS.Application.DTO.Doctor;
 using HMS.Application.DTO.Insurance;
@@ -11,6 +12,7 @@ using HMS.Application.DTO.Patient;
 using HMS.Application.DTO.Slot;
 using HMS.Application.DTOs.PatientVisitDtos;
 using HMS.Application.DTOs.Slot;
+using HMS.Application.ViewModel.Appointment;
 using HMS.Domain.Entities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -54,6 +56,8 @@ namespace HMS.Application.Mappings
             CreateMap<Department, EditDepartmentDto>().ReverseMap();
             CreateMap<AddSlotDto, Slot>().ReverseMap();
             CreateMap<SlotDto, SlotDto>().ReverseMap();
+            CreateMap<AddAppointmentDTO, Appointment>().ReverseMap();
+            CreateMap<AppointmentViewModel, AppointmentViewModel>().ReverseMap();
         }
     }
 }

@@ -12,5 +12,7 @@ namespace HMS.Domain.Entities
 
         // Navigation Property: One Department can have many Doctors
         public virtual ICollection<Doctor>? Doctors { get; set; }
+
+
     }
 }

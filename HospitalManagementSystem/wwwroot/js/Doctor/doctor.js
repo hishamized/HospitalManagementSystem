@@ -15,6 +15,8 @@
         { headerName: "Email", field: "email", sortable: true, filter: true, resizable: true },
         { headerName: "Phone", field: "phoneNumber", sortable: true, filter: true, resizable: true },
         { headerName: "City", field: "city", sortable: true, filter: true, resizable: true },
+        { headerName: "Slot", field: "slotName", sortable: true, filter: true, resizable: true },           // 🆕
+        { headerName: "Department", field: "departmentName", sortable: true, filter: true, resizable: true }, // 🆕
         {
             headerName: "Actions",
             cellRenderer: function (params) {
@@ -102,21 +104,14 @@
     });
 
     function handleEdit(id) {
-        // Get the row data from AG Grid API
         const rowNode = gridOptions.api.getRowNode(id.toString());
-        if (!rowNode) {
-            showMessage('Unable to find doctor record in grid.', 'danger');
-            return;
-        }
+        if (!rowNode) return;
 
         const doctor = rowNode.data;
 
-        // Pre-fill modal fields with row data
         $('#editDoctorId').val(doctor.id);
-        $('#editDoctorCode').val(doctor.doctorCode);
-        $('#editFullName').val(doctor.fullName);
-        const names = doctor.fullName.split(' ');  // Split string into array
-        $('#editFirstName').val(names[0] || '');  // First name
+        const names = doctor.fullName.split(' ');
+        $('#editFirstName').val(names[0] || '');
         $('#editLastName').val(names.slice(1).join(' ') || '');
         $('#editGender').val(doctor.gender);
         $('#editEmail').val(doctor.email);
@@ -126,10 +121,14 @@
         $('#editExperienceYears').val(doctor.experienceYears);
         $('#editCity').val(doctor.city);
 
+        // Load slots and departments with current selections
+        loadSlotsAndDepartments(doctor.slotId, doctor.departmentId);
+
         // Show modal
         const modal = new bootstrap.Modal(document.getElementById('editDoctorModal'));
         modal.show();
     }
+
 
 
     function handleDelete(id) {
@@ -183,12 +182,57 @@
     // Initialize Bootstrap modal
     var addDoctorModal = new bootstrap.Modal(document.getElementById('addDoctorModal'));
 
+function loadSlotsAndDepartments(selectedSlotId = null, selectedDeptId = null) {
+    // Load Slots
+    $.ajax({
+        url: '/Slot/GetAllSlots',
+        type: 'GET',
+        success: function (res) {
+            if (res.success) {
+                const slotSelect = $('#editSlotId');
+                slotSelect.empty().append('<option value="">Select Slot</option>');
+                res.data.forEach(slot => {
+                    const selected = slot.id == selectedSlotId ? 'selected' : '';
+                    slotSelect.append(`<option value="${slot.id}" ${selected}>${slot.reportingTime} (${slot.daysOfWeek})</option>`);
+                });
+            }
+        },
+        error: function () {
+            console.error('Failed to load slots');
+        }
+    });
+
+    // Load Departments
+    $.ajax({
+        url: '/Department/GetAll',
+        type: 'GET',
+        success: function (res) {
+            if (res.success) {
+                const deptSelect = $('#editDepartmentId');
+                deptSelect.empty().append('<option value="">Select Department</option>');
+                res.data.forEach(dep => {
+                    const selected = dep.id == selectedDeptId ? 'selected' : '';
+                    deptSelect.append(`<option value="${dep.id}" ${selected}>${dep.name}</option>`);
+                });
+            }
+        },
+        error: function () {
+            console.error('Failed to load departments');
+        }
+    });
+}
+
+
     // Show modal on Add button click
     $('#btnAddDoctor').click(function () {
         $('#addDoctorForm')[0].reset();      // Reset form
         $('#doctorFormErrors').addClass('d-none').text(''); // Clear previous errors
         addDoctorModal.show();
+
+        // Populate dropdowns
+        loadSlotsAndDepartments();
     });
+
 
     // Handle Save button click
     $('#saveDoctorBtn').click(function () {
@@ -217,7 +261,7 @@
     $('#editDoctorBtn').on('click', function () {
         const dto = {
             id: $('#editDoctorId').val(),
-            firstName: $('#editFirstName').val(),   // simple split
+            firstName: $('#editFirstName').val(),
             lastName: $('#editLastName').val(),
             gender: $('#editGender').val(),
             email: $('#editEmail').val(),
@@ -225,8 +269,11 @@
             specialization: $('#editSpecialization').val(),
             qualification: $('#editQualification').val(),
             experienceYears: parseInt($('#editExperienceYears').val()) || 0,
-            city: $('#editCity').val()
+            city: $('#editCity').val(),
+            slotId: parseInt($('#editSlotId').val()) || null,
+            departmentId: parseInt($('#editDepartmentId').val()) || null
         };
+
 
         // Clear previous errors
         $('#editDoctorErrors').html('').addClass('d-none');

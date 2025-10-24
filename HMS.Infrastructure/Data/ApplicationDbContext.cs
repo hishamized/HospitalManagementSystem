@@ -18,6 +18,7 @@ namespace HMS.Infrastructure.Data
         public DbSet<Department> Departments { get; set; } = null!;
         public DbSet<Slot> Slots { get; set; }
 
+        public DbSet<Appointment> Appointments { get; set; }
 
 
 
@@ -93,7 +94,20 @@ namespace HMS.Infrastructure.Data
             modelBuilder.Entity<Doctor>(entity =>
             {
                 entity.HasKey(d => d.Id);
+
+                // Doctor → Department (many doctors per department)
+                entity.HasOne(d => d.Department)
+                      .WithMany(dep => dep.Doctors)
+                      .HasForeignKey(d => d.DepartmentId)
+                      .OnDelete(DeleteBehavior.Restrict); // prevents cascading deletes
+
+                // Doctor → Slot (many doctors can share slot if logic allows)
+                entity.HasOne(d => d.Slot)
+                      .WithMany(s => s.Doctors)
+                      .HasForeignKey(d => d.SlotId)
+                      .OnDelete(DeleteBehavior.Restrict);
             });
+
 
             modelBuilder.Entity<Slot>(entity =>
             {
@@ -103,6 +117,16 @@ namespace HMS.Infrastructure.Data
                 entity.Property(e => e.LeavingTime).IsRequired();
                 entity.Property(e => e.DaysOfWeek).IsRequired();
             });
+
+            modelBuilder.Entity<Department>(entity =>
+            {
+                entity.ToTable("Departments");  // optional, explicit table name
+                entity.HasKey(d => d.Id);
+                entity.Property(d => d.Name)
+                      .IsRequired()
+                      .HasMaxLength(100);        // optional length constraint
+            });
+
 
         }
     }

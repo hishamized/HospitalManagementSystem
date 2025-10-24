@@ -2,7 +2,20 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="d-flex align-items-center justify-content-center vh-100 bg-light">
+    <div class="card shadow-lg p-5 text-center" style="max-width: 500px; border-radius: 1rem;">
+        <h1 class="display-4 text-danger mb-4">Welcome to HMS</h1>
+        <p class="text-secondary mb-4">
+            Manage hospital operations efficiently with our ASP.NET Core web application,
+            built using <strong>Onion Architecture</strong> for scalable and maintainable code.
+        </p>
+
+        <a asp-controller="User" asp-action="Login" class="btn btn-danger btn-lg btn-block mb-3">
+            Login
+        </a>
+
+        <small class="text-muted">
+            Learn more about <a href="https://learn.microsoft.com/aspnet/core" class="text-danger">ASP.NET Core</a>.
+        </small>
+    </div>
 </div>

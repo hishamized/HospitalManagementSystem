@@ -18,8 +18,6 @@ namespace HMS.Domain.Entities
         // Using bitmask allows you to store multiple days in a single integer
         public int DaysOfWeek { get; set; } // Sunday = 1, Monday = 2, ..., Saturday = 64
 
-        // Optional: Navigation property if you link later
-        // public int DoctorId { get; set; }
-        // public Doctor Doctor { get; set; }
+        public ICollection<Doctor>? Doctors { get; set; }
     }
 }

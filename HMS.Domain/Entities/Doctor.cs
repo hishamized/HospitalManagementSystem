@@ -27,6 +27,13 @@ namespace HMS.Domain.Entities
         public bool IsActive { get; set; } = true;          // For soft delete / status
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }            // Nullable, updated when edited
+
+        public int? SlotId { get; set; }           // optional (nullable) for safety
+        public int? DepartmentId { get; set; }     // optional (nullable) for safety
+
+        // 🧭 Navigation Properties
+        public Slot? Slot { get; set; }
+        public Department? Department { get; set; }
     }
 
 }

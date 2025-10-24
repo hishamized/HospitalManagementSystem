@@ -2,75 +2,67 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="min-h-screen bg-gray-900 text-gray-200 flex flex-col">
+<div class="content-page">
+    <div class="content">
 
-    <!-- Header -->
-    <header class="bg-gray-800 shadow py-4 px-6 flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-red-500">Admin Dashboard</h1>
-        <div class="flex items-center gap-4">
-            <form method="post" asp-controller="User" asp-action="Logout">
-                <button type="submit" class="hover:text-red-500 transition-colors bg-red-600 px-3 py-1 rounded">
-                    Logout
-                </button>
-            </form>
-        </div>
-    </header>
+        <!-- Start Content-->
+        <div class="container-fluid">
 
-    <!-- Main Section -->
-    <main class="flex-grow p-10">
-        <div class="max-w-3xl mx-auto">
-            <h2 class="text-3xl font-bold mb-4 text-dark text-center">You’re successfully logged in!</h2>
-            <p class="text-gray-400 mb-8 text-center">Manage your hospital system efficiently using the features below.</p>
+            <!-- Page Title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box">
+                        <h4 class="page-title">Admin Dashboard</h4>
+                    </div>
+                </div>
+            </div>
 
-            <!-- Feature List -->
-            <ul class="space-y-4 border border-gray-700">
-                <li class="flex justify-between items-center bg-gray-800 rounded-lg p-4 hover:border-red-500 transition-all">
-                    <span class="font-semibold text-dark">Patient Management</span>
-                    <button class="bg-red-600 hover:bg-red-700 text-dark px-4 py-2 rounded-md text-sm font-semibold">
-                        Manage
+            <div class="px-3 my-4">
+                <form method="post" asp-controller="User" asp-action="Logout">
+                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 rounded-lg shadow-md transition duration-300">
+                        Logout
                     </button>
-                </li>
+                </form>
+            </div>
 
-                <li class="flex justify-between items-center bg-gray-800  rounded-lg p-4 hover:border-red-500 transition-all">
-                    <span class="font-semibold text-dark">Allergy Records</span>
-                    <button class="bg-red-600 hover:bg-red-700 text-dark px-4 py-2 rounded-md text-sm font-semibold">
-                        Manage
-                    </button>
-                </li>
 
-                <li class="flex justify-between items-center bg-gray-800  rounded-lg p-4 hover:border-red-500 transition-all">
-                    <span class="font-semibold text-dark">Medical History</span>
-                    <button class="bg-red-600 hover:bg-red-700 text-dark px-4 py-2 rounded-md text-sm font-semibold">
-                        View
-                    </button>
-                </li>
 
-                <li class="flex justify-between items-center bg-gray-800  rounded-lg p-4 hover:border-red-500 transition-all">
-                    <span class="font-semibold text-dark">Roles & Permissions</span>
-                    <button class="bg-red-600 hover:bg-red-700 text-dark px-4 py-2 rounded-md text-sm font-semibold">
-                        Manage
-                    </button>
-                </li>
+            <!-- Dashboard Info -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
 
-                <li class="flex justify-between items-center bg-gray-800  rounded-lg p-4 hover:border-red-500 transition-all">
-                    <span class="font-semibold text-dark">Admin Accounts</span>
-                    <button class="bg-red-600 hover:bg-red-700 text-dark px-4 py-2 rounded-md text-sm font-semibold">
-                        View
-                    </button>
-                </li>
+                            <h4 class="header-title">Welcome to the Hospital Management System</h4>
+                            <p class="text-muted">
+                                This application is built using <strong>ASP.NET Core</strong> with <strong>Onion Layered Architecture</strong>, enabling clean separation of concerns and maintainable code.
+                            </p>
 
-                <li class="flex justify-between items-center bg-gray-800  rounded-lg p-4 hover:border-red-500 transition-all">
-                    <span class="font-semibold text-dark">Reports & Analytics</span>
-                    <button class="bg-red-600 hover:bg-red-700 text-dark px-4 py-2 rounded-md text-sm font-semibold">
-                        View
-                    </button>
-                </li>
-            </ul>
-        </div>
-    </main>
+                            <p class="text-muted">
+                                Features include managing <strong>patients, doctors, appointments, departments, slots</strong>, and monitoring <strong>reports and analytics</strong>.
+                                The system is designed for easy extensibility and robust performance in a hospital environment.
+                            </p>
 
+                            <p class="text-muted mb-0">
+                                Built with modern web technologies, it leverages <strong>Bootstrap 5, jQuery, AG Grid</strong> for tables and data grids, and a responsive admin layout powered by the Ubold theme.
+                            </p>
+
+                        </div> <!-- end card-body-->
+                    </div> <!-- end card-->
+                </div> <!-- end col-->
+            </div> <!-- end row-->
+
+        </div> <!-- container-fluid -->
+    </div> <!-- content -->
     <!-- Footer -->
-    <footer class="bg-gray-800 py-4 text-center text-gray-500 text-sm border-t border-gray-700">
-        © 2025 Hospital Management System — Admin Panel
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    © 2025 Hospital Management System — Admin Panel
+                </div>
+            </div>
+        </div>
     </footer>
+
 </div>

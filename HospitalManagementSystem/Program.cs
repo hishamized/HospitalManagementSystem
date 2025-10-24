@@ -1,8 +1,10 @@
 using AutoMapper;
 using FluentValidation;
 using HMS.Application.Behaviors;
+using HMS.Application.Features.Appointments.Validators;
 using HMS.Application.Handlers;
 using HMS.Application.Mappings;
+using HMS.Application.Validators.Appointment;
 using HMS.Application.Validators.Department;
 using HMS.Application.Validators.Doctor;
 using HMS.Application.Validators.PatientVisit;
@@ -27,6 +29,8 @@ builder.Services.AddValidatorsFromAssemblyContaining<AddDepartmentCommandValidat
 builder.Services.AddValidatorsFromAssemblyContaining<EditDepartmentCommandValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<AddSlotCommandValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<EditSlotCommandValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<AddAppointmentCommandValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<RescheduleAppointmentCommandValidator>();
 
 
 // MediatR

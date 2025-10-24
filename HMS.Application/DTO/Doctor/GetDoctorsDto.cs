@@ -16,5 +16,15 @@ namespace HMS.Application.Dto.Doctor
         public int ExperienceYears { get; set; }
         public string City { get; set; }
         public bool IsActive { get; set; }
+
+        // 🆕 Foreign Keys
+        public int? SlotId { get; set; }
+        public int? DepartmentId { get; set; }
+
+        // 🆕 Optional navigation/display fields
+        public string? SlotName { get; set; }
+
+        public string? DaysOfWeek {get; set; }
+        public string? DepartmentName { get; set; }
     }
 }

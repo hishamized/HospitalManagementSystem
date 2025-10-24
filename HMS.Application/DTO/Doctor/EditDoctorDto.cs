@@ -14,5 +14,9 @@ namespace HMS.Application.Dto.Doctor
         public string Qualification { get; set; }
         public int ExperienceYears { get; set; }
         public string City { get; set; }
+
+        // 🆕 Foreign Keys
+        public int SlotId { get; set; }
+        public int DepartmentId { get; set; }
     }
 }

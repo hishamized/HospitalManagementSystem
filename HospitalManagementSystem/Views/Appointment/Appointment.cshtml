@@ -1,0 +1,122 @@
+﻿@{
+    ViewData["Title"] = "Appointment";
+}
+
+<h1>Appointment</h1>
+
+<!-- Add Appointment Button -->
+<button class="btn btn-primary mb-3" id="btnAddAppointment">
+    <i class="fa fa-plus"></i> Add Appointment
+</button>
+
+<!-- AG Grid Table -->
+<div class="ag-theme-alpine" style="height: 500px; width: 100%;" id="appointmentGrid"></div>
+
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="addAppointmentModal" tabindex="-1" aria-labelledby="addAppointmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addAppointmentModalLabel">Add Appointment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="appointmentForm">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="PatientId" class="form-label">Patient</label>
+                            <select class="form-select" id="PatientId" name="PatientId" required>
+                                <option value="">Select Patient</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="DoctorId" class="form-label">Doctor</label>
+                            <select class="form-select" id="DoctorId" name="DoctorId" required>
+                                <option value="">Select Doctor</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3" id="doctorSlotsContainer" style="display:none;">
+                        <label class="form-label">Available Slots</label>
+                        <div id="doctorSlots" class="d-flex flex-wrap gap-2">
+                            <!-- Slots will be displayed here -->
+                        </div>
+                    </div>
+
+
+                    <div class="row mb-3">
+
+                        <div class="col-md-6">
+                            <label for="AppointmentDate" class="form-label">Appointment Date & Time</label>
+                            <input type="datetime-local" class="form-control" id="AppointmentDate" name="AppointmentDate" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="Status" class="form-label">Status</label>
+                            <select class="form-select" id="Status" name="Status" required>
+                                <option value="Scheduled">Scheduled</option>
+                                <option value="Cancelled">Cancelled</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Remarks" class="form-label">Remarks</label>
+                        <textarea class="form-control" id="Remarks" name="Remarks" rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-success">Save Appointment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Reschedule Modal -->
+<div class="modal fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="rescheduleForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="rescheduleModalLabel">Reschedule Appointment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="RescheduleAppointmentId" />
+
+                    <div class="mb-3">
+                        <label for="ReschedulePatient" class="form-label">Patient</label>
+                        <input type="text" class="form-control" id="ReschedulePatient" disabled />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="RescheduleDoctor" class="form-label">Doctor</label>
+                        <select class="form-control" id="RescheduleDoctor"></select>
+                        <div id="rescheduleDoctorSlots" class="mt-2"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="RescheduleDate" class="form-label">Appointment Date & Time</label>
+                        <input type="datetime-local" class="form-control" id="RescheduleDate" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="RescheduleRemarks" class="form-label">Remarks</label>
+                        <textarea class="form-control" id="RescheduleRemarks"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/Appointment/appointment.js"></script>
+}

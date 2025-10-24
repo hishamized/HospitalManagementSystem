@@ -4,6 +4,7 @@ using HMS.Application.Queries.Slot;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using FluentValidation;
 
 namespace HMS.Web.Controllers
 {
@@ -53,6 +54,23 @@ namespace HMS.Web.Controllers
                     return Json(new { success = false, message = "Failed to add slot." });
                 }
             }
+            catch (FluentValidation.ValidationException ex)
+            {
+                var errorDict = ex.Errors
+                    .GroupBy(e => e.PropertyName.Split('.').Last()) // "Slot.LeavingTime" → "LeavingTime"
+                    .ToDictionary(
+                        g => g.Key,
+                        g => g.First().ErrorMessage
+                    );
+
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Validation failed.",
+                    errors = errorDict
+                });
+            }
+
             catch (Exception ex)
             {
                 // Handle unexpected exceptions
