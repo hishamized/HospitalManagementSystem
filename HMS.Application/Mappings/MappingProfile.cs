@@ -13,7 +13,9 @@ using HMS.Application.DTO.Patient;
 using HMS.Application.DTO.Slot;
 using HMS.Application.DTOs.PatientVisitDtos;
 using HMS.Application.DTOs.Slot;
+using HMS.Application.DTOs.Users;
 using HMS.Application.ViewModel.Appointment;
+using HMS.Application.ViewModel.User;
 using HMS.Domain.Entities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -62,6 +64,24 @@ namespace HMS.Application.Mappings
             CreateMap<Role, GetRoleDto>().ReverseMap();
             CreateMap<AddRoleDto, Role>().ReverseMap();
             CreateMap<EditRoleDto, Role>().ReverseMap();
+            CreateMap<CreateAdminDto, User>()
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore()) // handled in handler
+                .ForMember(dest => dest.UserRoles, opt => opt.Ignore())    // handled separately in SP
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+            CreateMap<User, AdminListVm>()
+          .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id))
+          .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src =>
+              src.UserRoles.FirstOrDefault().RoleId))
+          .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src =>
+              src.UserRoles.FirstOrDefault().Role.Name))
+          .ForMember(dest => dest.RoleDescription, opt => opt.MapFrom(src =>
+              src.UserRoles.FirstOrDefault().Role.Description))
+          .ForMember(dest => dest.UserRoleUserId, opt => opt.MapFrom(src =>
+              src.UserRoles.FirstOrDefault().UserId))
+          .ForMember(dest => dest.UserRoleRoleId, opt => opt.MapFrom(src =>
+              src.UserRoles.FirstOrDefault().RoleId))
+          .ReverseMap();
 
         }
     }

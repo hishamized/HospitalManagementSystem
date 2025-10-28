@@ -46,61 +46,79 @@
             <ul id="side-menu">
 
                 <li class="menu-title">Navigation</li>
+                <li>
+                    <a href="#mainDashboards" data-bs-toggle="collapse">
+                        <i data-feather="airplay"></i>
+                        <span class="badge bg-success rounded-pill float-end">New</span>
+                        <span> Main Menu </span>
+                    </a>
+                    <div class="collapse" id="mainDashboards">
+                        <ul class="nav-second-level">
+                            @if (Context.Session.GetString("UserId") != null)
+                            {
+                                <li>
+                                    <form method="post" asp-controller="User" asp-action="Logout" class="d-inline">
+                                        <button type="submit" class="nav-link text-start border-0 bg-transparent">
+                                            Logout
+                                        </button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="User" asp-action="Create">
+                                        Admins
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="Role" asp-action="Role">
+                                        Roles
+                                    </a>
+                                </li>
 
-                @if (Context.Session.GetString("UserId") != null)
-                {
-                    <li>
-                        <form method="post" asp-controller="User" asp-action="Logout" class="d-inline">
-                            <button type="submit" class="nav-link text-start border-0 bg-transparent">
-                                Logout
-                            </button>
-                        </form>
-                    </li>
-                    <li>
-                        <a class="nav-link" asp-controller="Role" asp-action="Role">
-                            Roles
-                        </a>
-                    </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="Patient" asp-action="Patients">
+                                        View Patients
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="PatientVisit" asp-action="PatientVisits">
+                                        Manage Visits
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="Doctor" asp-action="Doctor">
+                                        Doctors
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="Department" asp-action="Department">
+                                        Departments
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="Slot" asp-action="Slot">
+                                        Slots
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="Appointment" asp-action="Appointment">
+                                        Appointments
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a class="nav-link" asp-controller="User" asp-action="Login">
+                                        Login
+                                    </a>
+                                </li>
+                            }
+                          
+                        </ul>
+                    </div>
+                </li>
 
-                    <li>
-                        <a class="nav-link" asp-controller="Patient" asp-action="Patients">
-                            View Patients
-                        </a>
-                    </li>
-                    <li>
-                        <a class="nav-link" asp-controller="PatientVisit" asp-action="PatientVisits">
-                            Manage Visits
-                        </a>
-                    </li>
-                    <li>
-                        <a class="nav-link" asp-controller="Doctor" asp-action="Doctor">
-                            Doctors
-                        </a>
-                    </li>
-                    <li>
-                        <a class="nav-link" asp-controller="Department" asp-action="Department">
-                            Departments
-                        </a>
-                    </li>
-                    <li>
-                        <a class="nav-link" asp-controller="Slot" asp-action="Slot">
-                            Slots
-                        </a>
-                    </li>
-                    <li>
-                        <a class="nav-link" asp-controller="Appointment" asp-action="Appointment">
-                            Appointments
-                        </a>
-                    </li>
-                }
-                else
-                {
-                    <li>
-                        <a class="nav-link" asp-controller="User" asp-action="Login">
-                            Login
-                        </a>
-                    </li>
-                }
+       
 
                 <li>
                     <a href="#sidebarDashboards" data-bs-toggle="collapse">

@@ -2,6 +2,7 @@ using AutoMapper;
 using FluentValidation;
 using HMS.Application.Behaviors;
 using HMS.Application.Features.Appointments.Validators;
+using HMS.Application.Features.Users.Commands.CreateAdmin;
 using HMS.Application.Handlers;
 using HMS.Application.Mappings;
 using HMS.Application.Validators.Appointment;
@@ -34,6 +35,8 @@ builder.Services.AddValidatorsFromAssemblyContaining<AddAppointmentCommandValida
 builder.Services.AddValidatorsFromAssemblyContaining<RescheduleAppointmentCommandValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<AddRoleCommandValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<EditRoleCommandValidator>();
+builder.Services.AddValidatorsFromAssembly(typeof(CreateAdminCommandValidator).Assembly);
+
 
 
 

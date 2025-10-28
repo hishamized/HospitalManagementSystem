@@ -1,0 +1,106 @@
+﻿@{
+    ViewData["Title"] = "Manage Admins";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold">Admin Management</h4>
+        <button id="btnAddAdmin" class="btn btn-danger">
+            <i class="bi bi-person-plus"></i> Add Admin
+        </button>
+    </div>
+
+    <div class="mb-3">
+        <input type="text" id="quickSearch" class="form-control" placeholder="Search admin...">
+    </div>
+
+    <div id="adminGrid" class="ag-theme-quartz" style="height: 520px; width: 100%;"></div>
+</div>
+
+<!-- Add Admin Modal -->
+<div class="modal fade" id="addAdminModal" tabindex="-1" aria-labelledby="addAdminLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow-lg">
+            <div class="modal-header bg-danger text-white rounded-top-4">
+                <h5 class="modal-title" id="addAdminLabel">Add New Admin</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="addAdminForm">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" name="FullName" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="Email" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Contact Number</label>
+                        <input type="text" name="ContactNumber" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" name="DateOfBirth" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Gender</label>
+                        <select name="Gender" class="form-select" required>
+                            <option value="">-- Select Gender --</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" name="UserName" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" name="Password" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Role</label>
+                        <select name="RoleId" id="roleSelect" class="form-select" required>
+                            <option value="">-- Select Role --</option>
+                        </select>
+                    </div>
+                </form>
+
+                <div id="formErrors" class="alert alert-danger d-none"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="btnSaveAdmin" class="btn btn-danger">Save Admin</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Context.Session.GetString("UserId") != null)
+{
+    <script>
+        window.loggedInUserId = '@Context.Session.GetString("UserId")';
+    </script>
+}
+else
+{
+    <script>
+        console.warn("No logged-in UserId found in session!");
+    </script>
+}
+
+
+@section Scripts {
+    <script src="~/js/User/user.js"></script>
+}
