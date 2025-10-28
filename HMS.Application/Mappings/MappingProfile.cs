@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HMS.Application.Dto;
 using HMS.Application.Dto.Doctor;
+using HMS.Application.Dto.Role;
 using HMS.Application.DTO;
 using HMS.Application.DTO.Allergy;
 using HMS.Application.DTO.Appointment;
@@ -58,6 +59,10 @@ namespace HMS.Application.Mappings
             CreateMap<SlotDto, SlotDto>().ReverseMap();
             CreateMap<AddAppointmentDTO, Appointment>().ReverseMap();
             CreateMap<AppointmentViewModel, AppointmentViewModel>().ReverseMap();
+            CreateMap<Role, GetRoleDto>().ReverseMap();
+            CreateMap<AddRoleDto, Role>().ReverseMap();
+            CreateMap<EditRoleDto, Role>().ReverseMap();
+
         }
     }
 }

@@ -22,6 +22,8 @@ namespace HMS.Infrastructure
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddScoped<ISlotRepository, SlotRepository>();
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+
         }
     }
 }

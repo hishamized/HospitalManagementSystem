@@ -182,7 +182,7 @@
     // Initialize Bootstrap modal
     var addDoctorModal = new bootstrap.Modal(document.getElementById('addDoctorModal'));
 
-function loadSlotsAndDepartments(selectedSlotId = null, selectedDeptId = null) {
+    function loadSlotsAndDepartments(selectedSlotId = null, selectedDeptId = null) {
     // Load Slots
     $.ajax({
         url: '/Slot/GetAllSlots',
@@ -190,10 +190,18 @@ function loadSlotsAndDepartments(selectedSlotId = null, selectedDeptId = null) {
         success: function (res) {
             if (res.success) {
                 const slotSelect = $('#editSlotId');
+                const mainSlotSelect = $('#SlotId');
+
                 slotSelect.empty().append('<option value="">Select Slot</option>');
                 res.data.forEach(slot => {
                     const selected = slot.id == selectedSlotId ? 'selected' : '';
                     slotSelect.append(`<option value="${slot.id}" ${selected}>${slot.reportingTime} (${slot.daysOfWeek})</option>`);
+                });
+
+                mainSlotSelect.empty().append('<option value="">Select Slot</option>');
+                res.data.forEach(slot => {
+                    const selected = slot.id == selectedSlotId ? 'selected' : '';
+                    mainSlotSelect.append(`<option value="${slot.id}" ${selected}>${slot.reportingTime} (${slot.daysOfWeek})</option>`);
                 });
             }
         },
@@ -209,10 +217,19 @@ function loadSlotsAndDepartments(selectedSlotId = null, selectedDeptId = null) {
         success: function (res) {
             if (res.success) {
                 const deptSelect = $('#editDepartmentId');
+                const mainDeptSelect = $('#DepartmentId');
+
+
                 deptSelect.empty().append('<option value="">Select Department</option>');
                 res.data.forEach(dep => {
                     const selected = dep.id == selectedDeptId ? 'selected' : '';
                     deptSelect.append(`<option value="${dep.id}" ${selected}>${dep.name}</option>`);
+                });
+
+                mainDeptSelect.empty().append('<option value="">Select Department</option>');
+                res.data.forEach(dep => {
+                    const selected = dep.id == selectedDeptId ? 'selected' : '';
+                    mainDeptSelect.append(`<option value="${dep.id}" ${selected}>${dep.name}</option>`);
                 });
             }
         },
@@ -220,8 +237,7 @@ function loadSlotsAndDepartments(selectedSlotId = null, selectedDeptId = null) {
             console.error('Failed to load departments');
         }
     });
-}
-
+    }
 
     // Show modal on Add button click
     $('#btnAddDoctor').click(function () {
