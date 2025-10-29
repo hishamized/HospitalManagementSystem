@@ -7,14 +7,17 @@ using HMS.Application.DTO.Allergy;
 using HMS.Application.DTO.Appointment;
 using HMS.Application.DTO.Department;
 using HMS.Application.DTO.Doctor;
+using HMS.Application.DTO.DoctorDocument;
 using HMS.Application.DTO.Insurance;
 using HMS.Application.DTO.MedicalHistory;
 using HMS.Application.DTO.Patient;
 using HMS.Application.DTO.Slot;
+using HMS.Application.DTO.Ward;
 using HMS.Application.DTOs.PatientVisitDtos;
 using HMS.Application.DTOs.Slot;
 using HMS.Application.DTOs.Users;
 using HMS.Application.ViewModel.Appointment;
+using HMS.Application.ViewModel.DoctorDocument;
 using HMS.Application.ViewModel.User;
 using HMS.Domain.Entities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -82,6 +85,34 @@ namespace HMS.Application.Mappings
           .ForMember(dest => dest.UserRoleRoleId, opt => opt.MapFrom(src =>
               src.UserRoles.FirstOrDefault().RoleId))
           .ReverseMap();
+            CreateMap<DoctorDocument, DoctorDocumentDto>().ReverseMap();
+            CreateMap<DoctorDocument, DoctorDocumentWithDoctorViewModel>()
+            .ForMember(dest => dest.DocumentId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.DoctorCode, opt => opt.MapFrom(src => src.Doctor.DoctorCode))
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Doctor.FullName))
+            .ForMember(dest => dest.Specialization, opt => opt.MapFrom(src => src.Doctor.Specialization))
+            .ForMember(dest => dest.Qualification, opt => opt.MapFrom(src => src.Doctor.Qualification))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Doctor.Email))
+            .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Doctor.PhoneNumber))
+            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Doctor.City))
+            .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
+            .ForMember(dest => dest.FileType, opt => opt.MapFrom(src => src.FileType))
+            .ForMember(dest => dest.FileSize, opt => opt.MapFrom(src => src.FileSize))
+            .ForMember(dest => dest.UploadedAt, opt => opt.MapFrom(src => src.UploadedAt))
+            .ForMember(dest => dest.UploadedBy, opt => opt.MapFrom(src => src.UploadedBy));
+
+            CreateMap<EditDoctorDocumentDto, DoctorDocument>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.DoctorId, opt => opt.MapFrom(src => src.DoctorId))
+                .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
+                .ForMember(dest => dest.FilePath, opt => opt.MapFrom(src => src.FilePath))
+                .ForMember(dest => dest.FileType, opt => opt.MapFrom(src => src.FileType))
+                .ForMember(dest => dest.FileSize, opt => opt.MapFrom(src => src.FileSize))
+                .ForMember(dest => dest.UploadedBy, opt => opt.MapFrom(src => src.UploadedBy))
+                .ForMember(dest => dest.UploadedAt, opt => opt.Ignore())  // keep original
+                .ForMember(dest => dest.IsActive, opt => opt.Ignore());
+            CreateMap<Ward, UpdateWardDto>().ReverseMap();
+
 
         }
     }

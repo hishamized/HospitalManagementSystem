@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HMS.Web.Controllers
 {
+    [Authorize]
     public class RoleController : Controller
     {
         private readonly IMediator _mediator;

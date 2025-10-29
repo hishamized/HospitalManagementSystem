@@ -34,6 +34,9 @@ namespace HMS.Domain.Entities
         // 🧭 Navigation Properties
         public Slot? Slot { get; set; }
         public Department? Department { get; set; }
+        public ICollection<DoctorDocument> Documents { get; set; } = new List<DoctorDocument>();
+
+
     }
 
 }

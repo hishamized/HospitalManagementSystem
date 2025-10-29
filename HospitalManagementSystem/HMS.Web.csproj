@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\js\MedicalHistory\" />
+    <Folder Include="wwwroot\Uploads\Documents\doctors\" />
   </ItemGroup>
 
 </Project>

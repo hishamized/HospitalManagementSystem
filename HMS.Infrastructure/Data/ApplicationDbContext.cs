@@ -20,6 +20,10 @@ namespace HMS.Infrastructure.Data
 
         public DbSet<Appointment> Appointments { get; set; }
 
+        public DbSet<DoctorDocument> DoctorDocuments { get; set; }
+        public DbSet<Ward> Wards { get; set; }
+
+
 
 
         public DbSet<User> Users { get; set; } = null!;
@@ -125,6 +129,36 @@ namespace HMS.Infrastructure.Data
                 entity.Property(d => d.Name)
                       .IsRequired()
                       .HasMaxLength(100);        // optional length constraint
+            });
+
+            modelBuilder.Entity<Ward>(entity =>
+            {
+                entity.ToTable("Wards"); // Table name in DB
+
+                entity.HasKey(w => w.Id);
+
+                entity.Property(w => w.WardCode)
+                      .IsRequired()
+                      .HasMaxLength(50);
+
+                entity.Property(w => w.WardName)
+                      .IsRequired()
+                      .HasMaxLength(100);
+
+                entity.Property(w => w.WardType)
+                      .HasMaxLength(50);
+
+                entity.Property(w => w.Location)
+                      .HasMaxLength(100);
+
+                entity.Property(w => w.Description)
+                      .HasMaxLength(500);
+
+                entity.Property(w => w.IsActive)
+                      .HasDefaultValue(true);
+
+                entity.Property(w => w.CreatedAt)
+                      .HasDefaultValueSql("GETUTCDATE()");
             });
 
 
