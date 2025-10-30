@@ -16,6 +16,7 @@ using HMS.Application.DTO.Ward;
 using HMS.Application.DTOs.PatientVisitDtos;
 using HMS.Application.DTOs.Slot;
 using HMS.Application.DTOs.Users;
+using HMS.Application.DTO.Feedback;
 using HMS.Application.ViewModel.Appointment;
 using HMS.Application.ViewModel.DoctorDocument;
 using HMS.Application.ViewModel.User;
@@ -121,18 +122,30 @@ namespace HMS.Application.Mappings
               .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
               .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
             CreateMap<DoctorWard, DoctorWardAssignmentViewModel>()
-          .ForMember(dest => dest.DoctorCode, opt => opt.MapFrom(src => src.Doctor.DoctorCode))
-          .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.Doctor.FullName))
-          .ForMember(dest => dest.Specialization, opt => opt.MapFrom(src => src.Doctor.Specialization))
-          .ForMember(dest => dest.WardCode, opt => opt.MapFrom(src => src.Ward.WardCode))
-          .ForMember(dest => dest.WardName, opt => opt.MapFrom(src => src.Ward.WardName))
-          .ForMember(dest => dest.WardType, opt => opt.MapFrom(src => src.Ward.WardType))
-          .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Ward.Location))
-          .ForMember(dest => dest.AssignedAt, opt => opt.MapFrom(src => src.AssignedAt))
-          .ForMember(dest => dest.Remarks, opt => opt.MapFrom(src => src.Remarks))
-          .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
-          .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
+              .ForMember(dest => dest.DoctorCode, opt => opt.MapFrom(src => src.Doctor.DoctorCode))
+              .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.Doctor.FullName))
+              .ForMember(dest => dest.Specialization, opt => opt.MapFrom(src => src.Doctor.Specialization))
+              .ForMember(dest => dest.WardCode, opt => opt.MapFrom(src => src.Ward.WardCode))
+              .ForMember(dest => dest.WardName, opt => opt.MapFrom(src => src.Ward.WardName))
+              .ForMember(dest => dest.WardType, opt => opt.MapFrom(src => src.Ward.WardType))
+              .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Ward.Location))
+              .ForMember(dest => dest.AssignedAt, opt => opt.MapFrom(src => src.AssignedAt))
+              .ForMember(dest => dest.Remarks, opt => opt.MapFrom(src => src.Remarks))
+              .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+              .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
 
+            CreateMap<CreateFeedbackDto, Feedback>()
+    .ForMember(dest => dest.Doctor, opt => opt.Ignore());
+
+            CreateMap<Feedback, FeedbackListDto>()
+                      .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.Doctor.FullName))
+                      .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating))
+                      .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments))
+                      .ForMember(dest => dest.SubmittedFromIP, opt => opt.MapFrom(src => src.SubmittedFromIP))
+                      .ForMember(dest => dest.SubmittedFromDevice, opt => opt.MapFrom(src => src.SubmittedFromDevice))
+                      .ForMember(dest => dest.SubmittedAt, opt => opt.MapFrom(src => src.SubmittedAt))
+                      .ForMember(dest => dest.IsVisible, opt => opt.MapFrom(src => src.IsVisible))
+                      .ReverseMap();
         }
     }
 }

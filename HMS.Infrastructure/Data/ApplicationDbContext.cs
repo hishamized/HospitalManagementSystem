@@ -24,6 +24,8 @@ namespace HMS.Infrastructure.Data
         public DbSet<Ward> Wards { get; set; }
         public DbSet<DoctorWard> DoctorWards { get; set; }
 
+        public DbSet<Feedback> Feedback { get; set; }
+
 
 
 

@@ -74,56 +74,6 @@
                                     </a>
                                 </li>
 
-                                <li>
-                                    <a class="nav-link" asp-controller="Patient" asp-action="Patients">
-                                        View Patients
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" asp-controller="PatientVisit" asp-action="PatientVisits">
-                                        Manage Visits
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" asp-controller="Doctor" asp-action="Doctor">
-                                        Doctors
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" asp-controller="Department" asp-action="Department">
-                                        Departments
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" asp-controller="Slot" asp-action="Slot">
-                                        Slots
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" asp-controller="Appointment" asp-action="Appointment">
-                                        Appointments
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" asp-controller="DoctorDocument" asp-action="Document">
-                                        Doctor Documents
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" asp-controller="DoctorDocument" asp-action="ViewDocument">
-                                        View Doctor Documents
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" asp-controller="Ward" asp-action="Ward">
-                                        Wards
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="nav-link" asp-controller="Ward" asp-action="Assignment">
-                                        Assign Doctor To Wards
-                                    </a>
-                                </li>
                             }
                             else
                             {
@@ -137,37 +87,121 @@
                         </ul>
                     </div>
                 </li>
+                @if (Context.Session.GetString("UserId") != null)
+                {
 
-       
+                    <li>
+                        <a href="#patients" data-bs-toggle="collapse">
+                            <i data-feather="airplay"></i>
+                            <span class="badge bg-success rounded-pill float-end">4</span>
+                            <span> Patients </span>
+                        </a>
+                        <div class="collapse" id="patients">
+                            <ul class="nav-second-level">
+                          
 
-                <li class="d-none">
-                    <a href="#sidebarDashboards" data-bs-toggle="collapse">
-                        <i data-feather="airplay"></i>
-                        <span class="badge bg-success rounded-pill float-end">4</span>
-                        <span> Dashboards </span>
-                    </a>
-                    <div class="collapse" id="sidebarDashboards">
-                        <ul class="nav-second-level">
-                         
-                            <li>
-                                <a class="nav-link" asp-controller="Employee" asp-action="Create">
-                                    Add Employee
-                                </a>
-                            </li>
-                            <li>
-                                <a class="nav-link" asp-controller="Employee" asp-action="Index">
-                                    Employee (Default)
-                                </a>
-                            </li>
-                            <li>
-                                <a href="dashboard-3.html">Dashboard 3</a>
-                            </li>
-                            <li>
-                                <a href="dashboard-4.html">Dashboard 4</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+                                    <li>
+                                        <a class="nav-link" asp-controller="Patient" asp-action="Patients">
+                                            View Patients
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link" asp-controller="PatientVisit" asp-action="PatientVisits">
+                                            Manage Visits
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a class="nav-link" asp-controller="Appointment" asp-action="Appointment">
+                                            Appointments
+                                        </a>
+                                    </li>
+                                
+
+                            </ul>
+                        </div>
+                    </li>
+
+
+                    <li>
+                        <a href="#doctors" data-bs-toggle="collapse">
+                            <i data-feather="airplay"></i>
+                            <span class="badge bg-success rounded-pill float-end">4</span>
+                            <span> Doctors </span>
+                        </a>
+                        <div class="collapse" id="doctors">
+                            <ul class="nav-second-level">
+                          
+                                    <li>
+                                        <a class="nav-link" asp-controller="Doctor" asp-action="Doctor">
+                                            Doctors
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link" asp-controller="Department" asp-action="Department">
+                                            Departments
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link" asp-controller="Slot" asp-action="Slot">
+                                            Slots
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link" asp-controller="DoctorDocument" asp-action="Document">
+                                            Doctor Documents
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link" asp-controller="DoctorDocument" asp-action="ViewDocument">
+                                            View Doctor Documents
+                                        </a>
+                                    </li>
+                                
+
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li>
+                        <a href="#wards" data-bs-toggle="collapse">
+                            <i data-feather="airplay"></i>
+                            <span class="badge bg-success rounded-pill float-end">4</span>
+                            <span> Wards </span>
+                        </a>
+                        <div class="collapse" id="wards">
+                            <ul class="nav-second-level">
+                                <li>
+                                    <a class="nav-link" asp-controller="Ward" asp-action="Ward">
+                                        Wards
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="Ward" asp-action="Assignment">
+                                        Assign Doctor To Wards
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li>
+                        <a href="#feedback" data-bs-toggle="collapse">
+                            <i data-feather="airplay"></i>
+                            <span class="badge bg-success rounded-pill float-end">4</span>
+                            <span> Feedback </span>
+                        </a>
+                        <div class="collapse" id="feedback">
+                            <ul class="nav-second-level">
+                                <li>
+                                    <a class="nav-link" asp-controller="Feedback" asp-action="Index">
+                                        Give Feedback To Doctor
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                }
 
                 <li class="menu-title mt-2 d-none">Apps</li>
 

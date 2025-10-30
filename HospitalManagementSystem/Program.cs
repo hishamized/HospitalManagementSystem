@@ -9,6 +9,7 @@ using HMS.Application.Validators.Appointment;
 using HMS.Application.Validators.Department;
 using HMS.Application.Validators.Doctor;
 using HMS.Application.Validators.DoctorDocument;
+using HMS.Application.Validators.Feedback;
 using HMS.Application.Validators.PatientVisit;
 using HMS.Application.Validators.Role;
 using HMS.Application.Validators.Slot;
@@ -41,6 +42,7 @@ builder.Services.AddValidatorsFromAssembly(typeof(CreateAdminCommandValidator).A
 builder.Services.AddValidatorsFromAssemblyContaining<AddDoctorDocumentCommandValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateWardValidator>();
 builder.Services.AddValidatorsFromAssembly(typeof(UpdateWardCommandValidator).Assembly);
+builder.Services.AddValidatorsFromAssembly(typeof(CreateFeedbackCommandValidator).Assembly);
 
 
 // MediatR

@@ -1,0 +1,131 @@
+﻿@{
+    ViewData["Title"] = "Feedback";
+}
+
+<h1 class="mb-4">Patient Feedback</h1>
+
+<div id="messageContainer" class="mb-3"></div>
+
+<div class="mb-3 d-flex justify-content-between align-items-center">
+    <div>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addFeedbackModal">
+            + Add Feedback
+        </button>
+
+    </div>
+
+    <div>
+        <!-- Optional quick filters / search can go here -->
+    </div>
+</div>
+
+<!-- AG Grid container -->
+<div id="feedbackGrid" style="height:520px;width:100%;" class="ag-theme-alpine"></div>
+
+<!-- Add Feedback Modal -->
+<div class="modal fade" id="addFeedbackModal" tabindex="-1" aria-labelledby="addFeedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-3 shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addFeedbackModalLabel">Submit Anonymous Feedback</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="addFeedbackForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="doctorId" class="form-label">Doctor</label>
+                        <select id="doctorId" name="DoctorId" class="form-select" required></select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="rating" class="form-label">Rating</label>
+                        <select id="rating" name="Rating" class="form-select" required>
+                            <option value="">-- Select Rating --</option>
+                            <option value="1">1 - Very Poor (Unprofessional or unsatisfactory experience)</option>
+                            <option value="2">2 - Poor (Needs improvement in service or communication)</option>
+                            <option value="3">3 - Average (Acceptable but not impressive)</option>
+                            <option value="4">4 - Good (Satisfied with the experience)</option>
+                            <option value="5">5 - Excellent (Outstanding care and professionalism)</option>
+                        </select>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label for="comments" class="form-label">Comments</label>
+                        <textarea id="comments" name="Comments" class="form-control" rows="3" placeholder="Enter feedback..."></textarea>
+                    </div>
+
+                    <input type="hidden" id="submittedFromIP" name="SubmittedFromIP">
+                    <input type="hidden" id="submittedFromDevice" name="SubmittedFromDevice">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Feedback Modal (re-uses same fields but prefilled) -->
+<div class="modal fade" id="editFeedbackModal" tabindex="-1" aria-labelledby="editFeedbackModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <form id="editFeedbackForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editFeedbackModalLabel">Edit Feedback</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div id="editFeedbackErrors" class="alert alert-danger d-none"></div>
+
+                    <input type="hidden" id="editFeedbackId" name="Id" />
+
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label for="editDoctorSelect" class="form-label">Doctor</label>
+                            <select id="editDoctorSelect" name="DoctorId" class="form-select" required>
+                                <option value="">Loading doctors...</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="editRatingSelect" class="form-label">Rating</label>
+                            <select id="editRatingSelect" name="Rating" class="form-select" required>
+                                <option value="">Select rating</option>
+                                <option value="1">1 - Very poor</option>
+                                <option value="2">2 - Poor</option>
+                                <option value="3">3 - Fair</option>
+                                <option value="4">4 - Good</option>
+                                <option value="5">5 - Excellent</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="editComments" class="form-label">Comments</label>
+                            <textarea id="editComments" name="Comments" class="form-control" rows="4"></textarea>
+                        </div>
+
+                        <input type="hidden" id="editSubmittedFromIP" name="SubmittedFromIP" />
+                        <input type="hidden" id="editSubmittedFromDevice" name="SubmittedFromDevice" />
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button id="updateFeedbackBtn" type="submit" class="btn btn-primary">Update Feedback</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Link the feedback-specific script. Keep this path consistent with your wwwroot layout. -->
+    <script src="~/js/Feedback/feedback.js"></script>
+}
+
