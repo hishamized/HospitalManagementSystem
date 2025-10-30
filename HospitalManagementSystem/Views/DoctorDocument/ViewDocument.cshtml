@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Doctor List";
+}
+
+<div class="container-fluid mt-4">
+    <h4 class="mb-3 fw-bold text-primary">Doctors</h4>
+
+    <!-- ✅ AG Grid container -->
+    <div id="doctorGrid" class="ag-theme-alpine" style="height: 500px; width: 100%;"></div>
+</div>
+
+<!-- 🧾 Modal for Doctor Documents -->
+<div class="modal fade" id="doctorDocumentsModal" tabindex="-1" aria-labelledby="doctorDocumentsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="doctorDocumentsLabel">Doctor Documents</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="doctorDocumentsContainer" class="row g-3">
+                    <!-- Document cards will be inserted here dynamically -->
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/Doctor/viewDoctor.js"></script>
+}

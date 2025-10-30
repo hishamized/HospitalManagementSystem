@@ -97,6 +97,21 @@ namespace HMS.Infrastructure.Repositories
 
             return rowsAffected > 0;
         }
+        public async Task<IEnumerable<GetDoctorDocumentsDto>> GetDoctorDocumentsByDoctorIdAsync(int doctorId)
+        {
+            using var connection = _context.CreateConnection();
 
+            var parameters = new DynamicParameters();
+            parameters.Add("@DoctorId", doctorId, DbType.Int32);
+
+            // Call stored procedure
+            var result = await connection.QueryAsync<GetDoctorDocumentsDto>(
+                "sp_GetDoctorDocumentsByDoctorId",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return result;
+        }
     }
 }

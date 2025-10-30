@@ -2,6 +2,7 @@
 using Dapper;
 using HMS.Application.DTO.Ward;
 using HMS.Application.Interfaces;
+using HMS.Application.ViewModels.Ward;
 using HMS.Domain.Interfaces;
 using Microsoft.Data.SqlClient;
 using System;
@@ -87,6 +88,55 @@ namespace HMS.Infrastructure.Repositories
             );
 
             return result; // ✅ Correctly returns 1 if row deleted, 0 if not found
+        }
+
+        public async Task<(bool IsSuccess, string Message)> AssignDoctorToWardAsync(AssignDoctorWardDto dto)
+        {
+            using var connection = _context.CreateConnection();
+            var parameters = new DynamicParameters(dto); // just the 4 inputs
+
+            var result = await connection.QueryFirstOrDefaultAsync<dynamic>(
+                "sp_AssignDoctorToWard",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            if (result == null)
+                return (false, "No response from database.");
+
+            int dbResult = result.Result;
+            string message = result.Message;
+
+            return (dbResult > 0, message);
+        }
+
+        public async Task<IEnumerable<DoctorWardAssignmentViewModel>> GetAllDoctorWardAssignmentsAsync()
+        {
+            var query = "sp_GetDoctorWardAssignments"; // Stored procedure name
+            using var connection = _context.CreateConnection();
+
+            var result = await connection.QueryAsync<DoctorWardAssignmentViewModel>(
+                query,
+                commandType: CommandType.StoredProcedure
+            );
+
+            // If you expect data transformations, use AutoMapper; otherwise, direct return is fine
+            return _mapper.Map<IEnumerable<DoctorWardAssignmentViewModel>>(result);
+        }
+        public async Task<int> DeleteDoctorWardAssignmentAsync(int id)
+        {
+            using var connection = _context.CreateConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", id);
+
+            var result = await connection.ExecuteAsync(
+                "sp_DeleteDoctorWardAssignment",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return result;
         }
 
     }

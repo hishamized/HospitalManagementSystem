@@ -19,6 +19,7 @@ using HMS.Application.DTOs.Users;
 using HMS.Application.ViewModel.Appointment;
 using HMS.Application.ViewModel.DoctorDocument;
 using HMS.Application.ViewModel.User;
+using HMS.Application.ViewModels.Ward;
 using HMS.Domain.Entities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -112,7 +113,25 @@ namespace HMS.Application.Mappings
                 .ForMember(dest => dest.UploadedAt, opt => opt.Ignore())  // keep original
                 .ForMember(dest => dest.IsActive, opt => opt.Ignore());
             CreateMap<Ward, UpdateWardDto>().ReverseMap();
-
+            CreateMap<AssignDoctorWardDto, DoctorWard>()
+              .ForMember(dest => dest.AssignedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+              .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => true))
+              .ForMember(dest => dest.UnassignedAt, opt => opt.Ignore())
+              .ForMember(dest => dest.UnassignedBy, opt => opt.Ignore())
+              .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+              .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
+            CreateMap<DoctorWard, DoctorWardAssignmentViewModel>()
+          .ForMember(dest => dest.DoctorCode, opt => opt.MapFrom(src => src.Doctor.DoctorCode))
+          .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.Doctor.FullName))
+          .ForMember(dest => dest.Specialization, opt => opt.MapFrom(src => src.Doctor.Specialization))
+          .ForMember(dest => dest.WardCode, opt => opt.MapFrom(src => src.Ward.WardCode))
+          .ForMember(dest => dest.WardName, opt => opt.MapFrom(src => src.Ward.WardName))
+          .ForMember(dest => dest.WardType, opt => opt.MapFrom(src => src.Ward.WardType))
+          .ForMember(dest => dest.Location, opt => opt.MapFrom(src => src.Ward.Location))
+          .ForMember(dest => dest.AssignedAt, opt => opt.MapFrom(src => src.AssignedAt))
+          .ForMember(dest => dest.Remarks, opt => opt.MapFrom(src => src.Remarks))
+          .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+          .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
 
         }
     }

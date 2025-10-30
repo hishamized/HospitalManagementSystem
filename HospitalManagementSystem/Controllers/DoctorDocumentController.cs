@@ -31,6 +31,11 @@ namespace HMS.Web.Controllers
             return View();
         }
 
+      
+        public IActionResult ViewDocument() {
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> UploadDocument(IFormFile file, int doctorId)
         {
@@ -183,7 +188,19 @@ namespace HMS.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetDoctorDocumentsByDoctorId(int doctorId)
+        {
+            if (doctorId <= 0)
+                return BadRequest("Invalid Doctor ID");
 
+            var documents = await _mediator.Send(new GetDoctorDocumentsByDoctorIdCommand(doctorId));
+
+            if (documents == null)
+                return NotFound("No documents found for this doctor.");
+
+            return Json(documents);
+        }
 
     }
 }

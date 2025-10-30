@@ -1,4 +1,5 @@
 ﻿using HMS.Application.DTO.Ward;
+using HMS.Application.ViewModels.Ward;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,10 @@ namespace HMS.Application.Interfaces
         Task<IEnumerable<WardDto>> GetAllWardsAsync();
         Task<int> UpdateWardAsync(UpdateWardDto ward);
         Task<int> DeleteWardAsync(int wardId);
+        Task<(bool IsSuccess, string Message)> AssignDoctorToWardAsync(AssignDoctorWardDto dto);
+        Task<IEnumerable<DoctorWardAssignmentViewModel>> GetAllDoctorWardAssignmentsAsync();
+        Task<int> DeleteDoctorWardAssignmentAsync(int id);
+
+
     }
 }

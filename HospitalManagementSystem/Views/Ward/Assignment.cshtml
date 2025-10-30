@@ -1,0 +1,83 @@
+﻿@{
+    ViewData["Title"] = "Doctor–Ward Assignment";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Doctor–Ward Assignments</h4>
+            <button id="refreshBtn" class="btn btn-light btn-sm">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
+        </div>
+
+        <div class="card-body">
+            <div id="assignmentGrid" class="ag-theme-quartz" style="height: 550px; width: 100%;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Assign Doctor to Ward</h5>
+            <button type="button" class="btn btn-light btn-sm" id="refreshBtn">
+                <i class="bi bi-arrow-clockwise"></i> Refresh Lists
+            </button>
+        </div>
+
+        <div class="card-body">
+            <form id="assignForm">
+                <div class="row g-3">
+                    <!-- Doctor Selection -->
+                    <div class="col-md-4">
+                        <label for="doctorSelect" class="form-label fw-bold">Select Doctor</label>
+                        <select id="doctorSelect" class="form-select">
+                            <option value="">-- Choose Doctor --</option>
+                        </select>
+                    </div>
+
+                    <!-- Ward Selection -->
+                    <div class="col-md-4">
+                        <label for="wardSelect" class="form-label fw-bold">Select Ward</label>
+                        <select id="wardSelect" class="form-select">
+                            <option value="">-- Choose Ward --</option>
+                        </select>
+                    </div>
+
+                    <!-- Remarks Field -->
+                    <div class="col-md-4">
+                        <label for="remarks" class="form-label fw-bold">Remarks</label>
+                        <input type="text" id="remarks" class="form-control" placeholder="Optional notes (e.g. Night Shift)">
+                    </div>
+                </div>
+
+                <!-- Hidden Field for AssignedBy -->
+                @if (Context.Session.GetString("UserId") != null)
+                {
+                    <input type="hidden" id="assignedBy" value="@Context.Session.GetString("UserId")" />
+                }
+
+                <div class="mt-4 text-end">
+                    <button type="submit" class="btn btn-success px-4">
+                        <i class="bi bi-check2-circle"></i> Assign
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast" class="toast align-items-center text-white bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMsg">Assignment successful!</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/Ward/assignment.js"></script>
+}

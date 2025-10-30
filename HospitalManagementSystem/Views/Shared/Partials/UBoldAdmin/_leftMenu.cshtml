@@ -110,8 +110,18 @@
                                     </a>
                                 </li>
                                 <li>
+                                    <a class="nav-link" asp-controller="DoctorDocument" asp-action="ViewDocument">
+                                        View Doctor Documents
+                                    </a>
+                                </li>
+                                <li>
                                     <a class="nav-link" asp-controller="Ward" asp-action="Ward">
                                         Wards
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="Ward" asp-action="Assignment">
+                                        Assign Doctor To Wards
                                     </a>
                                 </li>
                             }
@@ -130,7 +140,7 @@
 
        
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarDashboards" data-bs-toggle="collapse">
                         <i data-feather="airplay"></i>
                         <span class="badge bg-success rounded-pill float-end">4</span>
@@ -159,23 +169,23 @@
                     </div>
                 </li>
 
-                <li class="menu-title mt-2">Apps</li>
+                <li class="menu-title mt-2 d-none">Apps</li>
 
-                <li>
+                <li class="d-none">
                     <a href="apps-calendar.html">
                         <i data-feather="calendar"></i>
                         <span> Calendar </span>
                     </a>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="apps-chat.html">
                         <i data-feather="message-square"></i>
                         <span> Chat </span>
                     </a>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarEcommerce" data-bs-toggle="collapse">
                         <i data-feather="shopping-cart"></i>
                         <span> Ecommerce </span>
@@ -217,7 +227,7 @@
                     </div>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarCrm" data-bs-toggle="collapse">
                         <i data-feather="users"></i>
                         <span> CRM </span>
@@ -244,7 +254,7 @@
                     </div>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarEmail" data-bs-toggle="collapse">
                         <i data-feather="mail"></i>
                         <span> Email </span>
@@ -268,7 +278,7 @@
                     </div>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="apps-social-feed.html">
                         <span class="badge bg-pink float-end">Hot</span>
                         <i data-feather="rss"></i>
@@ -276,14 +286,14 @@
                     </a>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="apps-companies.html">
                         <i data-feather="activity"></i>
                         <span> Companies </span>
                     </a>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarProjects" data-bs-toggle="collapse">
                         <i data-feather="briefcase"></i>
                         <span> Projects </span>
@@ -304,7 +314,7 @@
                     </div>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarTasks" data-bs-toggle="collapse">
                         <i data-feather="clipboard"></i>
                         <span> Tasks </span>
@@ -325,7 +335,7 @@
                     </div>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarContacts" data-bs-toggle="collapse">
                         <i data-feather="book"></i>
                         <span> Contacts </span>
@@ -343,7 +353,7 @@
                     </div>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarTickets" data-bs-toggle="collapse">
                         <i data-feather="aperture"></i>
                         <span> Tickets </span>
@@ -361,16 +371,16 @@
                     </div>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="apps-file-manager.html">
                         <i data-feather="folder-plus"></i>
                         <span> File Manager </span>
                     </a>
                 </li>
 
-                <li class="menu-title mt-2">Custom</li>
+                <li class="menu-title mt-2 d-none">Custom</li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarAuth" data-bs-toggle="collapse">
                         <i data-feather="file-text"></i>
                         <span> Auth Pages </span>
@@ -424,7 +434,7 @@
                     </div>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarExpages" data-bs-toggle="collapse">
                         <i data-feather="package"></i>
                         <span> Extra Pages </span>
@@ -481,7 +491,7 @@
                     </div>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarLayouts" data-bs-toggle="collapse">
                         <i data-feather="layout"></i>
                         <span class="badge bg-blue float-end">New</span>
@@ -508,9 +518,9 @@
                     </div>
                 </li>
 
-                <li class="menu-title mt-2">Components</li>
+                <li class="menu-title mt-2 d-none">Components</li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarBaseui" data-bs-toggle="collapse">
                         <i data-feather="pocket"></i>
                         <span> Base UI </span>
@@ -582,7 +592,7 @@
                     </div>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarExtendedui" data-bs-toggle="collapse">
                         <i data-feather="layers"></i>
                         <span class="badge bg-info float-end">Hot</span>
@@ -618,14 +628,14 @@
                     </div>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="widgets.html">
                         <i data-feather="gift"></i>
                         <span> Widgets </span>
                     </a>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarIcons" data-bs-toggle="collapse">
                         <i data-feather="cpu"></i>
                         <span> Icons </span>
@@ -661,7 +671,7 @@
                     </div>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarForms" data-bs-toggle="collapse">
                         <i data-feather="bookmark"></i>
                         <span> Forms </span>
@@ -703,7 +713,7 @@
                     </div>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarTables" data-bs-toggle="collapse">
                         <i data-feather="grid"></i>
                         <span> Tables </span>
@@ -739,7 +749,7 @@
                     </div>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarCharts" data-bs-toggle="collapse">
                         <i data-feather="bar-chart-2"></i>
                         <span> Charts </span>
@@ -778,7 +788,7 @@
                     </div>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarMaps" data-bs-toggle="collapse">
                         <i data-feather="map"></i>
                         <span> Maps </span>
@@ -799,7 +809,7 @@
                     </div>
                 </li>
 
-                <li>
+                <li class="d-none">
                     <a href="#sidebarMultilevel" data-bs-toggle="collapse">
                         <i data-feather="share-2"></i>
                         <span> Multi Level </span>

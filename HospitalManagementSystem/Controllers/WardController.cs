@@ -19,7 +19,11 @@ namespace HMS.Web.Controllers
         {
             return View();
         }
-
+        [HttpGet]
+        public IActionResult Assignment()
+        {
+            return View();
+        }
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateWardDto dto)
         {
@@ -144,6 +148,83 @@ namespace HMS.Web.Controllers
                     message = "An unexpected error occurred while deleting the ward.",
                     details = ex.Message
                 });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AssignDoctorToWard([FromBody] AssignDoctorWardDto dto)
+        {
+            try
+            {
+                if (dto == null || dto.DoctorId <= 0 || dto.WardId <= 0)
+                {
+                    return BadRequest(new { success = false, message = "Invalid input data." });
+                }
+
+                // Send command to MediatR
+                var command = new AssignDoctorWardCommand(dto);
+                var result = await _mediator.Send(command);
+
+                if (result.IsSuccess == false)
+                {
+                    return StatusCode(500, new { success = false, message = "Unexpected error occurred." });
+                }
+
+                // Return JSON response for frontend AJAX
+                return Json(new
+                {
+                    success = result.IsSuccess,
+                    message = result.Message
+                });
+            } catch (Exception e)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = e.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllDoctorWardAssignments()
+        {
+            try
+            {
+                var result = await _mediator.Send(new GetAllDoctorWardAssignmentsQuery());
+
+                if (result == null || result.Count() == 0)
+                    return Json(new { success = false, message = "No doctor–ward assignments found." });
+
+                return Json(new { success = true, data = result });
+            }
+            catch (Exception e)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = e.Message
+                });
+            }
+        }
+        [HttpDelete]
+        public async Task<IActionResult> UnassignDoctor(int id)
+        {
+            try
+            {
+                if (id <= 0)
+                    return BadRequest(new { success = false, message = "Invalid assignment ID." });
+
+                var result = await _mediator.Send(new DeleteDoctorWardAssignmentCommand(id));
+
+                if (result.Success == false)
+                    return Ok(new { success = true, message = "Doctor unassigned successfully." });
+                else
+                    return NotFound(new { success = false, message = "Assignment not found or already removed." });
+            }
+            catch (Exception ex)
+            {
+                // Optional: log error here if you have ILogger injected
+                return StatusCode(500, new { success = false, message = $"An error occurred: {ex.Message}" });
             }
         }
 

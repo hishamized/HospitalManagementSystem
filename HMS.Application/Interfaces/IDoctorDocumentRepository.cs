@@ -16,5 +16,7 @@ namespace HMS.Application.Interfaces
 
         Task<bool> DeleteDoctorDocumentAsync(int documentId);
 
+        Task<IEnumerable<GetDoctorDocumentsDto>> GetDoctorDocumentsByDoctorIdAsync(int doctorId);
+
     }
 }
