@@ -74,5 +74,25 @@ namespace HMS.Infrastructure.Repositories
 
             return rowsAffected;
         }
+        public async Task<IEnumerable<DoctorFeedbackDto>> GetFeedbackByDoctorIdAsync(int doctorId)
+        {
+            using var connection = _context.CreateConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@DoctorId", doctorId, DbType.Int32);
+
+            // Execute stored procedure using Dapper
+            var feedbackData = await connection.QueryAsync<DoctorFeedbackDto>(
+                "sp_GetDoctorFeedback",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            // Optional AutoMapper step:
+            // In case you ever change the SP to return entities instead of DTO fields.
+            var mappedFeedback = _mapper.Map<IEnumerable<DoctorFeedbackDto>>(feedbackData);
+
+            return mappedFeedback;
+        }
     }
 }

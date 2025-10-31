@@ -51,3 +51,4 @@ appsettings.*.json
 # Local database / EF migrations cache (optional)
 *.mdf
 *.ldf
+/HospitalManagementSystem/emailsettings.private.json

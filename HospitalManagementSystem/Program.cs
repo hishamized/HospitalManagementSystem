@@ -1,48 +1,24 @@
 using AutoMapper;
 using FluentValidation;
 using HMS.Application.Behaviors;
-using HMS.Application.Features.Appointments.Validators;
-using HMS.Application.Features.Users.Commands.CreateAdmin;
 using HMS.Application.Handlers;
 using HMS.Application.Mappings;
-using HMS.Application.Validators.Appointment;
-using HMS.Application.Validators.Department;
-using HMS.Application.Validators.Doctor;
-using HMS.Application.Validators.DoctorDocument;
-using HMS.Application.Validators.Feedback;
-using HMS.Application.Validators.PatientVisit;
-using HMS.Application.Validators.Role;
-using HMS.Application.Validators.Slot;
-using HMS.Application.Validators.Ward;
 using HMS.Infrastructure;
 using HMS.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using HMS.Application.Extensions;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // MVC + FluentValidation
 builder.Services.AddControllersWithViews();
-builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-builder.Services.AddValidatorsFromAssemblyContaining<AddPatientVisitCommandValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<UpdatePatientVisitCommandValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<AddDoctorCommandValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<EditDoctorCommandValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<AddDepartmentCommandValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<EditDepartmentCommandValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<AddSlotCommandValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<EditSlotCommandValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<AddAppointmentCommandValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<RescheduleAppointmentCommandValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<AddRoleCommandValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<EditRoleCommandValidator>();
-builder.Services.AddValidatorsFromAssembly(typeof(CreateAdminCommandValidator).Assembly);
-builder.Services.AddValidatorsFromAssemblyContaining<AddDoctorDocumentCommandValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CreateWardValidator>();
-builder.Services.AddValidatorsFromAssembly(typeof(UpdateWardCommandValidator).Assembly);
-builder.Services.AddValidatorsFromAssembly(typeof(CreateFeedbackCommandValidator).Assembly);
+builder.Services.AddApplicationValidators();
+builder.Configuration.AddJsonFile("emailsettings.private.json", optional: true, reloadOnChange: true);
+
+Console.WriteLine("SMTP User loaded: " + builder.Configuration["SmtpUser"]);
 
 
 // MediatR

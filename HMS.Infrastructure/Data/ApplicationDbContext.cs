@@ -26,6 +26,8 @@ namespace HMS.Infrastructure.Data
 
         public DbSet<Feedback> Feedback { get; set; }
 
+        public DbSet<UserOtp> UserOtp { get; set; }
+
 
 
 

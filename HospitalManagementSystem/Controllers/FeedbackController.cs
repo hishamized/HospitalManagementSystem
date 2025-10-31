@@ -40,6 +40,14 @@ namespace HMS.Web.Controllers
             return View("Feedback");
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult CheckFeedback()
+        {
+            return View();
+        }
+
+
         // Accepts feedback submission and returns JSON result
         [HttpPost]
         [AllowAnonymous]
@@ -124,6 +132,36 @@ namespace HMS.Web.Controllers
                     success = false,
                     message = "An unexpected error occurred while deleting feedback.",
                     error = ex.Message
+                });
+            }
+        }
+        // GET: /Feedback/GetDoctorFeedback?doctorId=1
+        [HttpGet]
+        public async Task<IActionResult> GetDoctorFeedback(int doctorId)
+        {
+            try
+            {
+                if (doctorId <= 0)
+                    return BadRequest(new { success = false, message = "Invalid doctor ID." });
+
+                var query = new GetDoctorFeedbackQuery(doctorId);
+                var feedbackList = await _mediator.Send(query);
+
+                if (feedbackList == null)
+                    return NotFound(new { success = false, message = "No feedback found for this doctor." });
+
+                return Ok(new { success = true, data = feedbackList });
+            }
+            catch (Exception ex)
+            {
+                // Log error if you have a logger service (recommended)
+                // _logger.LogError(ex, "Error fetching feedback for doctorId: {doctorId}", doctorId);
+
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "An error occurred while fetching feedback. Please try again later.",
+                    details = ex.Message // you can remove this in production
                 });
             }
         }

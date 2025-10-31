@@ -146,6 +146,18 @@ namespace HMS.Application.Mappings
                       .ForMember(dest => dest.SubmittedAt, opt => opt.MapFrom(src => src.SubmittedAt))
                       .ForMember(dest => dest.IsVisible, opt => opt.MapFrom(src => src.IsVisible))
                       .ReverseMap();
+
+
+            CreateMap<Feedback, DoctorFeedbackDto>()
+                .ForMember(dest => dest.FeedbackId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.DoctorId, opt => opt.MapFrom(src => src.DoctorId))
+                .ForMember(dest => dest.Rating, opt => opt.MapFrom(src => src.Rating))
+                .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments))
+                .ForMember(dest => dest.SubmittedFromIP, opt => opt.MapFrom(src => src.SubmittedFromIP))
+                .ForMember(dest => dest.SubmittedFromDevice, opt => opt.MapFrom(src => src.SubmittedFromDevice))
+                .ForMember(dest => dest.SubmittedAt, opt => opt.MapFrom(src => src.SubmittedAt))
+                .ForMember(dest => dest.IsVisible, opt => opt.MapFrom(src => src.IsVisible)).ReverseMap();
+
         }
     }
 }

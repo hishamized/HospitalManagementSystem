@@ -2,6 +2,7 @@
 using HMS.Domain.Interfaces;
 using HMS.Infrastructure.Data;
 using HMS.Infrastructure.Repositories;
+using HMS.Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HMS.Infrastructure
@@ -27,6 +28,7 @@ namespace HMS.Infrastructure
             services.AddScoped<IWardRepository, WardRepository>();
             services.AddScoped<IFeedbackRepository, FeedbackRepository>();
             services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
+            services.AddScoped<IEmailService, EmailService>();
         }
     }
 }

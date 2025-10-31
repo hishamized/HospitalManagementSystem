@@ -1,4 +1,5 @@
-﻿using HMS.Application.DTOs;
+﻿using HMS.Application.DTO.User;
+using HMS.Application.DTOs;
 using HMS.Application.DTOs.Users;
 using HMS.Application.ViewModel.User;
 using System.Threading.Tasks;
@@ -10,6 +11,10 @@ namespace HMS.Application.Interfaces
         Task<UserRoleDto?> GetUserWithRolesByUsernameOrEmailAsync(string usernameOrEmail);
         Task<int> CreateAdminAsync(CreateAdminDto dto, string passwordHash);
         Task<IEnumerable<AdminListVm>> GetAllAdminsAsync();
+        Task<UserOtpResultDto?> VerifyEmailPhoneAsync(VerifyEmailPhoneDto dto);
+
+        Task<UserOtpResultDto?> VerifyOtpAsync(string otpCode);
+        Task<string?> ResetPasswordAfterOtpAsync(int userId);
 
     }
 }

@@ -9,5 +9,6 @@ namespace HMS.Application.Interfaces
         Task<int> AddFeedbackAsync(CreateFeedbackDto dto);
         Task<IEnumerable<FeedbackListDto>> GetAllFeedbacksAsync();
         Task<int> DeleteFeedbackAsync(int id);
+        Task<IEnumerable<DoctorFeedbackDto>> GetFeedbackByDoctorIdAsync(int doctorId);
     }
 }

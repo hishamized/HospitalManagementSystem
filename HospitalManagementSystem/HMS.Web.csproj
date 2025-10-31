@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="emailsettings.private.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\HMS.Application\HMS.Application.csproj" />
     <ProjectReference Include="..\HMS.Infrastructure\HMS.Infrastructure.csproj" />
   </ItemGroup>
@@ -27,6 +31,10 @@
   <ItemGroup>
     <Folder Include="wwwroot\js\MedicalHistory\" />
     <Folder Include="wwwroot\Uploads\Documents\doctors\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="emailsettings.private.json" />
   </ItemGroup>
 
 </Project>

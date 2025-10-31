@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Check Feedback";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<div class="container py-4">
+    <div class="card shadow-sm p-4 mb-4">
+        <h3 class="mb-3 text-primary"><i class="fa-solid fa-comments"></i> Doctor Feedback</h3>
+        <div class="row g-3 align-items-end">
+            <div class="col-md-8">
+                <label for="doctorSelect" class="form-label fw-semibold">Select Doctor</label>
+                <select id="doctorSelect" class="form-select">
+                    <option value="">-- Select a Doctor --</option>
+                </select>
+            </div>
+            <div class="col-md-4 text-end">
+                <button id="checkFeedbackBtn" class="btn btn-success w-100">
+                    <i class="fa-solid fa-magnifying-glass"></i> Check Feedback
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="feedbackContainer" class="row gy-4">
+        <!-- Feedback cards will appear here dynamically -->
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/Feedback/checkfeedback.js"></script>
+}
+
+<style>
+    /* 🌟 Card Styling */
+    .feedback-card {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+
+        .feedback-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+    .feedback-header {
+        background: linear-gradient(90deg, #007bff, #6610f2);
+        color: white;
+        padding: 1rem;
+        border-radius: 1rem 1rem 0 0;
+    }
+
+    .feedback-rating i {
+        font-size: 1.2rem;
+        margin-right: 2px;
+        cursor: pointer;
+    }
+
+    .star-filled {
+        color: #ffb400; /* Orange stars */
+    }
+
+    .star-empty {
+        color: #ddd; /* Gray stars */
+    }
+
+    .feedback-body {
+        background-color: #fff;
+        padding: 1rem 1.2rem;
+        border-radius: 0 0 1rem 1rem;
+    }
+
+    .no-feedback {
+        text-align: center;
+        font-style: italic;
+        color: #6c757d;
+        margin-top: 2rem;
+    }
+</style>

@@ -1,4 +1,6 @@
-﻿using HMS.Application.DTOs;
+﻿using HMS.Application.Commands.User;
+using HMS.Application.DTO.User;
+using HMS.Application.DTOs;
 using HMS.Application.DTOs.Users;
 using HMS.Application.Features.Users.Commands.CreateAdmin;
 using HMS.Application.Features.Users.Queries.GetAllAdmins;
@@ -16,10 +18,12 @@ namespace HMS.Web.Controllers
     public class UserController : Controller
     {
         private readonly IMediator _mediator;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(IMediator mediator)
+        public UserController(IMediator mediator, ILogger<UserController> logger)
         {
             _mediator = mediator;
+            _logger = logger;
         }
 
         [Authorize(Roles = "Admin")]
@@ -194,6 +198,93 @@ namespace HMS.Web.Controllers
                 });
             }
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> VerifyEmailPhone([FromBody] VerifyEmailPhoneDto dto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogWarning("Invalid model state for VerifyEmailPhone: {@ModelState}", ModelState);
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Invalid input. Please check your entries and try again."
+                    });
+                }
+
+                var command = new VerifyEmailPhoneCommand(dto);
+                var result = await _mediator.Send(command);
+
+                if (result)
+                {
+                    _logger.LogInformation("OTP successfully sent to {Email}", dto.Email);
+                    return Json(new
+                    {
+                        success = true,
+                        message = "OTP sent successfully. Please check your email."
+                    });
+                }
+
+                _logger.LogWarning("No matching user found for Email: {Email}, Phone: {Phone}", dto.Email, dto.PhoneNumber);
+                return Json(new
+                {
+                    success = false,
+                    message = "Email and phone number do not match our records."
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while verifying email and phone for {Email}", dto?.Email);
+
+                // Return a safe error response to the client (no internal details)
+                return Json(new
+                {
+                    success = false,
+                    message = "An unexpected error occurred. Please try again later."
+                });
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> VerifyOtp([FromBody] UserOtpResultDto dto)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(dto.OtpCode))
+                {
+                    _logger.LogWarning("Empty OTP code received in VerifyOtp");
+                    return Json(new { success = false, message = "OTP is required." });
+                }
+
+                var command = new VerifyOtpCommand(dto.OtpCode);
+                var result = await _mediator.Send(command);
+
+                if (result.Success)
+                {
+                    _logger.LogInformation("OTP verified successfully. Password reset completed.");
+                    return Json(new
+                    {
+                        success = true,
+                        message = result.Message,
+                        newPassword = result.NewPassword
+                    });
+                }
+
+                _logger.LogWarning("Invalid or expired OTP entered: {OtpCode}", dto.OtpCode);
+                return Json(new { success = false, message = result.Message ?? "Invalid or expired OTP." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while verifying OTP: {OtpCode}", dto.OtpCode);
+                return Json(new { success = false, message = "An unexpected error occurred. Please try again later." });
+            }
+        }
+        
+
         // Role-based dashboard actions
         public IActionResult AdminDashboard()
         {
