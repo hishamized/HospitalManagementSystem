@@ -25,6 +25,12 @@ namespace HMS.Web.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult Availability()
+        {
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddDoctor([FromForm] AddDoctorDto doctorDto)
         {

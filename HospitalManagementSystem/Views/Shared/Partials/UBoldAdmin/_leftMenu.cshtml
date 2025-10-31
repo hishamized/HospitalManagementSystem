@@ -4,11 +4,11 @@
 
         <!-- User box -->
         <div class="user-box text-center">
-            <img src="../assets/images/users/user-6.jpg" alt="user-img" title="Mat Helme"
+            <img src="~/images/defaultPicture.png" alt="user-img" title="Mat Helme"
                  class="rounded-circle avatar-md">
             <div class="dropdown">
                 <a href="javascript: void(0);" class="text-dark dropdown-toggle h5 mt-2 mb-1 d-block"
-                   data-bs-toggle="dropdown">Stanley Parker</a>
+                   data-bs-toggle="dropdown"> @Context.Session.GetString("Username") </a>
                 <div class="dropdown-menu user-pro-dropdown">
 
                     <!-- item-->
@@ -37,7 +37,7 @@
 
                 </div>
             </div>
-            <p class="text-muted">Admin Head</p>
+            <p class="text-muted">@Context.Session.GetString("Roles")</p>
         </div>
 
         <!--- Sidemenu -->
@@ -137,6 +137,11 @@
                                             Doctors
                                         </a>
                                     </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="Doctor" asp-action="Availability">
+                                        Check Doctor Availability
+                                    </a>
+                                </li>
                                     <li>
                                         <a class="nav-link" asp-controller="Department" asp-action="Department">
                                             Departments
@@ -202,6 +207,22 @@
                         </div>
                     </li>
                 }
+                <li>
+                    <a href="#analytics" data-bs-toggle="collapse">
+                        <i data-feather="airplay"></i>
+                        <span class="badge bg-success rounded-pill float-end">4</span>
+                        <span> Analytics </span>
+                    </a>
+                    <div class="collapse" id="analytics">
+                        <ul class="nav-second-level">
+                            <li>
+                                <a class="nav-link" asp-controller="Analytics" asp-action="Analytics">
+                                    Analytics Dashboard
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
 
                 <li class="menu-title mt-2 d-none">Apps</li>
 

@@ -26,6 +26,7 @@ namespace HMS.Infrastructure
             services.AddScoped<IDoctorDocumentRepository, DoctorDocumentRepository>();
             services.AddScoped<IWardRepository, WardRepository>();
             services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+            services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
         }
     }
 }
