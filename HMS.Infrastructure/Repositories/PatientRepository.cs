@@ -6,6 +6,7 @@ using HMS.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace HMS.Infrastructure.Repositories
@@ -68,7 +69,7 @@ namespace HMS.Infrastructure.Repositories
             using var conn = _context.CreateConnection();
             return await conn.QueryFirstAsync<string>("sp_GeneratePatientCode", commandType: System.Data.CommandType.StoredProcedure);
         }
+   
 
-      
     }
 }

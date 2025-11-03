@@ -28,6 +28,7 @@ namespace HMS.Infrastructure.Data
 
         public DbSet<UserOtp> UserOtp { get; set; }
 
+        public DbSet<Bill> Bill { get; set; }
 
 
 

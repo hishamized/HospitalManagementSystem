@@ -1,0 +1,276 @@
+﻿@model HMS.Application.DTO.Patient.InpatientDetailsDto;
+
+@{
+    ViewData["Title"] = "Inpatient Visit Manager";
+    Layout = "_Layout";
+}
+
+
+<div class="card shadow-sm mt-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="card-title mb-0">Patient Bills</h5>
+            <button id="btnReloadBills" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+            </button>
+        </div>
+
+        <!-- AG Grid container -->
+        <div id="billsGrid" class="ag-theme-quartz" style="height: 400px; width: 100%;"></div>
+    </div>
+</div>
+
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <button id="btnAddBill" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i> Add Bill
+        </button>
+        <h4 class="fw-bold">Inpatient Visit Manager</h4>
+        <button class="btn btn-secondary" onclick="window.history.back();">← Back</button>
+    </div>
+
+    <div id="inpatient-details-section" class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Patient Information</h5>
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <strong>Patient Name:</strong> @Model.FullName
+                </div>
+                <div class="col-md-4">
+                    <strong>Gender:</strong> @Model.Gender
+                </div>
+                <div class="col-md-4">
+                    <strong>Contact:</strong> @Model.ContactNumber
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Visit Type:</strong> @Model.VisitType
+                </div>
+                <div class="col-md-3">
+                    <strong>Admission Date:</strong> @Model.AdmissionDate?.ToString("dd-MMM-yyyy")
+                </div>
+                <div class="col-md-3">
+                    <strong>Discharge Date:</strong> @Model.DischargeDate?.ToString("dd-MMM-yyyy")
+                </div>
+                <div class="col-md-3">
+                    <strong>Room No:</strong> @Model.RoomNumber
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mt-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Treatment Details</h5>
+            <p>@Model.TreatmentDetails</p>
+
+            <h6 class="fw-semibold">Notes</h6>
+            <p class="text-muted">@Model.Notes</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- Add Bill Modal -->
+<div class="modal fade" id="addBillModal" tabindex="-1" aria-labelledby="addBillModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addBillModalLabel">Add New Bill</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="addBillForm">
+                    @Html.AntiForgeryToken()
+                    <div class="row g-3">
+                        <!-- Hidden IDs -->
+                        <input type="hidden" id="PatientId" name="PatientId" value="@Model.PatientId" />
+                        <input type="hidden" id="VisitId" name="VisitId" value="@Model.VisitId" />
+                        <input type="hidden" id="VisitType" name="VisitType" value="@Model.VisitType" />
+
+                        <div class="col-md-6">
+                            <label class="form-label">Bill Date</label>
+                            <input type="date" class="form-control" id="BillDate" name="BillDate" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Total Amount</label>
+                            <input type="number" class="form-control" id="TotalAmount" name="TotalAmount" readonly>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Discount Amount</label>
+                            <input type="number" class="form-control" id="DiscountAmount" name="DiscountAmount" step="0.01">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Net Amount</label>
+                            <input type="number" class="form-control" id="NetAmount" name="NetAmount" readonly>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label class="form-label">Payment Status</label>
+                            <select class="form-select" id="PaymentStatus" name="PaymentStatus">
+                                <option value="Unpaid">Unpaid</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Partial">Partial</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Payment Mode</label>
+                            <select class="form-select" id="PaymentMode" name="PaymentMode">
+                                <option value="">-- Select --</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Card">Card</option>
+                                <option value="Insurance">Insurance</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Room Charges</label>
+                            <input type="number" class="form-control" id="RoomCharges" name="RoomCharges" step="0.01">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Procedure Charges</label>
+                            <input type="number" class="form-control" id="ProcedureCharges" name="ProcedureCharges" step="0.01">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Medication Charges</label>
+                            <input type="number" class="form-control" id="MedicationCharges" name="MedicationCharges" step="0.01">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Consultation Charges</label>
+                            <input type="number" class="form-control" id="ConsultationCharges" name="ConsultationCharges" step="0.01">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">OPD Consultation Fee</label>
+                            <input type="number" class="form-control" id="OpdConsultationFee" name="OpdConsultationFee" step="0.01">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" id="Notes" name="Notes" rows="2"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="btnSaveBill" class="btn btn-primary">Save Bill</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Bill Modal -->
+<div class="modal fade" id="editBillModal" tabindex="-1" aria-labelledby="editBillModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="editBillModalLabel">Edit Bill</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="editBillForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="EditBillId" name="Id" />
+                    <input type="hidden" id="EditPatientId" name="PatientId" />
+                    <input type="hidden" id="EditVisitId" name="VisitId" />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Bill Date</label>
+                            <input type="date" class="form-control" id="EditBillDate" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Payment Status</label>
+                            <select class="form-select" id="EditPaymentStatus">
+                                <option value="Unpaid">Unpaid</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Partial">Partial</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Payment Mode</label>
+                            <select class="form-select" id="EditPaymentMode">
+                                <option value="">-- Select --</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Card">Card</option>
+                                <option value="Insurance">Insurance</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Room Charges</label>
+                            <input type="number" class="form-control" id="EditRoomCharges" step="0.01">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Procedure Charges</label>
+                            <input type="number" class="form-control" id="EditProcedureCharges" step="0.01">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Medication Charges</label>
+                            <input type="number" class="form-control" id="EditMedicationCharges" step="0.01">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Consultation Charges</label>
+                            <input type="number" class="form-control" id="EditConsultationCharges" step="0.01">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">OPD Fee</label>
+                            <input type="number" class="form-control" id="EditOpdConsultationFee" step="0.01">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Discount</label>
+                            <input type="number" class="form-control" id="EditDiscountAmount" step="0.01">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Total Amount</label>
+                            <input type="number" class="form-control" id="EditTotalAmount" readonly>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Net Amount</label>
+                            <input type="number" class="form-control" id="EditNetAmount" readonly>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" id="EditNotes" rows="2"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="btnUpdateBill" class="btn btn-warning">Update Bill</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="/js/Patient/inpatientVisitManager.js"></script>
+}

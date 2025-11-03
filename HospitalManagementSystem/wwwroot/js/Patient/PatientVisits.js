@@ -1,6 +1,8 @@
 ﻿$(document).ready(function () {
     // 1️⃣ Column Definitions for AG Grid
     var columnDefs = [
+        { headerName: "Visit ID", field: "id", width: 100, filter: true, sortable: true },
+        { headerName: "Patient ID", field: "patientId", width: 100, filter: true, sortable: true },
         { headerName: "Patient", field: "patientName", width: 200, filter: true, sortable: true },
         { headerName: "Visit Type", field: "visitType", width: 150, filter: true, sortable: true },
         { headerName: "Visit Date", field: "visitDate", width: 150, filter: 'agDateColumnFilter', sortable: true },
@@ -16,6 +18,9 @@
             width: 150,
             cellRenderer: function (params) {
                 return `
+                <button class="btn btn-sm btn-info view-btn" data-id="${params.value}" data-patientid="${params.data.patientId}" data-visittype="${params.data.visitType}">
+                    View
+                </button>
                 <button class="btn btn-sm btn-warning edit-btn" data-id="${params.value}">Edit</button>
 
                 <button class="btn btn-sm btn-danger delete-btn" data-id="${params.value}">Delete</button>
@@ -74,8 +79,39 @@
         $('#deleteVisitModal').modal('show');
     });
 
+
+    function getDoctorList(selectId, selectedValue) {
+        console.log(selectedValue);
+        $.ajax({
+            url: '/Doctor/GetAllDoctors',
+            type: 'GET',
+            success: function (res) {
+                if (res.success) {
+                    var data = res.data;
+                    var select = $(selectId);
+                    select.empty().append('<option value="">Select Doctor</option>');
+
+                    $.each(data, function (i, doctor) {
+                        if (selectedValue == doctor.fullName) {
+                            select.append('<option selected value="' + doctor.fullName + '">' + doctor.fullName + '</option>');
+                        } else {
+                            select.append('<option value="' + doctor.fullName + '">' + doctor.fullName + '</option>');
+                        }
+                            
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error loading doctor list:', status, error);
+            }
+        });
+    }
+
     // 1️⃣ Show modal on button click
     $("#btnAddVisit").on("click", function () {
+
+        getDoctorList('#doctorName', '');
+
         $("#visitModalLabel").text("Add Patient Visit");
         $("#visitForm")[0].reset();
         $(".inpatient-field").hide();
@@ -199,6 +235,8 @@ $("#editVisitType").on("change", function () {
     $(document).on('click', '.edit-btn', function () {
         const visitId = $(this).data('id');
 
+
+
         // Find the row data
         let visitData;
         console.log(visitData);
@@ -209,6 +247,8 @@ $("#editVisitType").on("change", function () {
 
         // Populate modal fields
         $('#editVisitId').val(visitData.id);
+
+        getDoctorList('#editDoctorName', visitData.doctorName);
 
         // Fix Patient select
         const patientSelect = $('#editPatientId');
@@ -312,6 +352,36 @@ $("#editVisitType").on("change", function () {
 
         });
     });
+    document.addEventListener('click', function (e) {
+        // Handle View button
+        if (e.target.classList.contains('view-btn')) {
+            const id = e.target.getAttribute('data-id');
+            const patientId = e.target.getAttribute('data-patientid');
+            const visitType = e.target.getAttribute('data-visittype');
+
+            if (visitType.toLowerCase() === 'inpatient') {
+                handleInpatientView(id, patientId);
+            } else if (visitType.toLowerCase() === 'outpatient') {
+                handleOutpatientView(id, patientId);
+            } else {
+                console.warn("Unknown visit type:", visitType);
+            }
+        }
+    });
+
+    function handleInpatientView(visitId, patientId) {
+        //console.log("View Inpatient record => Visit ID:", visitId, "| Patient ID:", patientId);
+
+        // ✅ Redirect to the InpatientVisitManager view with both IDs
+        const url = `/PatientVisit/InpatientVisitManager?patientId=${patientId}&visitId=${visitId}`;
+        window.open(url, '_blank'); // opens in new tab (as you mentioned earlier)
+    }
+
+
+    function handleOutpatientView(id, patientId) {
+        console.log("View Outpatient record => Visit ID:", id, "| Patient ID:", patientId);
+        // Later: window.open(`/Outpatient/Details/${id}?patientId=${patientId}`, '_blank');
+    }
 
 
 });

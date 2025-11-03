@@ -3,6 +3,7 @@ using HMS.Application.Commands.User;
 using HMS.Application.Features.Appointments.Validators;
 using HMS.Application.Features.Users.Commands.CreateAdmin;
 using HMS.Application.Validators.Appointment;
+using HMS.Application.Validators.Bill;
 using HMS.Application.Validators.Department;
 using HMS.Application.Validators.Doctor;
 using HMS.Application.Validators.DoctorDocument;
@@ -13,6 +14,7 @@ using HMS.Application.Validators.Slot;
 using HMS.Application.Validators.User;
 using HMS.Application.Validators.Ward;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace HMS.Application.Extensions
 {
@@ -39,7 +41,8 @@ namespace HMS.Application.Extensions
             services.AddValidatorsFromAssembly(typeof(CreateFeedbackCommandValidator).Assembly);
             services.AddValidatorsFromAssembly(typeof(VerifyEmailPhoneCommandValidator).Assembly);
             services.AddTransient<IValidator<VerifyOtpCommand>, VerifyOtpCommandValidator>();
-
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             return services;
         }

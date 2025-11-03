@@ -3,16 +3,10 @@ using HMS.Application.Commands.Insurance;
 using HMS.Application.Commands.PatientVisit;
 using HMS.Application.Commands.PatientVisits;
 using HMS.Application.Dto;
-using HMS.Application.DTO;
-using HMS.Application.DTO.Allergy;
-using HMS.Application.DTO.Insurance;
-using HMS.Application.DTO.MedicalHistory;
-using HMS.Application.DTO.Patient;
 using HMS.Application.DTOs.PatientVisitDtos;
 using HMS.Application.Features.PatientVisits.Commands;
 using HMS.Application.Features.PatientVisits.Queries;
-using HMS.Application.Queries;
-using HMS.Application.Queries.Insurance;
+using HMS.Application.Queries.Patient;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +20,7 @@ namespace HMS.Web.Controllers
 
     {
         private readonly IMediator _mediator;
+
         public PatientVisitController(IMediator Mediator)
         {
             _mediator = Mediator;
@@ -140,6 +135,35 @@ namespace HMS.Web.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { Message = "An error occurred while updating the patient visit.", Details = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> InpatientVisitManager(int patientId, int visitId)
+        {
+            try
+            {
+                if (patientId <= 0 || visitId <= 0)
+                {
+                    return BadRequest("Invalid patient or visit ID.");
+                }
+
+                var query = new GetInpatientDetailsQuery(patientId, visitId);
+                var result = await _mediator.Send(query);
+
+                if (result == null)
+                {
+                    return NotFound("No inpatient record found.");
+                }
+
+                // ✅ Return strongly typed view
+                return View("~/Views/Patient/InpatientVisitManager.cshtml", result);
+
+            }
+            catch (Exception ex)
+            {
+                // log ex
+                return StatusCode(500, "An error occurred while retrieving inpatient details.");
             }
         }
 

@@ -5,9 +5,11 @@ using HMS.Application.Dto.Role;
 using HMS.Application.DTO;
 using HMS.Application.DTO.Allergy;
 using HMS.Application.DTO.Appointment;
+using HMS.Application.DTO.Bill;
 using HMS.Application.DTO.Department;
 using HMS.Application.DTO.Doctor;
 using HMS.Application.DTO.DoctorDocument;
+using HMS.Application.DTO.Feedback;
 using HMS.Application.DTO.Insurance;
 using HMS.Application.DTO.MedicalHistory;
 using HMS.Application.DTO.Patient;
@@ -16,7 +18,6 @@ using HMS.Application.DTO.Ward;
 using HMS.Application.DTOs.PatientVisitDtos;
 using HMS.Application.DTOs.Slot;
 using HMS.Application.DTOs.Users;
-using HMS.Application.DTO.Feedback;
 using HMS.Application.ViewModel.Appointment;
 using HMS.Application.ViewModel.DoctorDocument;
 using HMS.Application.ViewModel.User;
@@ -157,6 +158,66 @@ namespace HMS.Application.Mappings
                 .ForMember(dest => dest.SubmittedFromDevice, opt => opt.MapFrom(src => src.SubmittedFromDevice))
                 .ForMember(dest => dest.SubmittedAt, opt => opt.MapFrom(src => src.SubmittedAt))
                 .ForMember(dest => dest.IsVisible, opt => opt.MapFrom(src => src.IsVisible)).ReverseMap();
+
+            CreateMap<PatientVisit, InpatientDetailsDto>()
+                .ForMember(dest => dest.VisitId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.PatientId, opt => opt.MapFrom(src => src.PatientId))
+                .ForMember(dest => dest.VisitType, opt => opt.MapFrom(src => src.VisitType))
+                .ForMember(dest => dest.VisitDate, opt => opt.MapFrom(src => src.VisitDate))
+                .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.DoctorName))
+                .ForMember(dest => dest.AdmissionDate, opt => opt.MapFrom(src => src.AdmissionDate))
+                .ForMember(dest => dest.DischargeDate, opt => opt.MapFrom(src => src.DischargeDate))
+                .ForMember(dest => dest.RoomNumber, opt => opt.MapFrom(src => src.RoomNumber))
+                .ForMember(dest => dest.TreatmentDetails, opt => opt.MapFrom(src => src.TreatmentDetails))
+                .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt))
+                // Nested Patient details
+                .ForMember(dest => dest.PatientCode, opt => opt.MapFrom(src => src.Patient.PatientCode))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Patient.FullName))
+                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Patient.Gender))
+                .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.Patient.DateOfBirth))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Patient.Email))
+                .ForMember(dest => dest.ContactNumber, opt => opt.MapFrom(src => src.Patient.ContactNumber))
+                .ForMember(dest => dest.AlternateContactNumber, opt => opt.MapFrom(src => src.Patient.AlternateContactNumber))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Patient.Address))
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.Patient.City))
+                .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.Patient.State))
+                .ForMember(dest => dest.ZipCode, opt => opt.MapFrom(src => src.Patient.ZipCode))
+                .ForMember(dest => dest.BloodGroup, opt => opt.MapFrom(src => src.Patient.BloodGroup))
+                .ForMember(dest => dest.EmergencyContactName, opt => opt.MapFrom(src => src.Patient.EmergencyContactName))
+                .ForMember(dest => dest.EmergencyContactNumber, opt => opt.MapFrom(src => src.Patient.EmergencyContactNumber))
+                .ForMember(dest => dest.RelationshipWithEmergencyContact, opt => opt.MapFrom(src => src.Patient.RelationshipWithEmergencyContact));
+
+            CreateMap<AddBillDto, Bill>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.IsActive, opt => opt.Ignore());
+
+            CreateMap<Bill, BillListDto>().ReverseMap();
+
+            CreateMap<EditBillDto, Bill>()
+              .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+              .ForMember(dest => dest.PatientId, opt => opt.MapFrom(src => src.PatientId))
+              .ForMember(dest => dest.VisitId, opt => opt.MapFrom(src => src.VisitId))
+              .ForMember(dest => dest.BillDate, opt => opt.MapFrom(src => src.BillDate))
+              .ForMember(dest => dest.PaymentStatus, opt => opt.MapFrom(src => src.PaymentStatus))
+              .ForMember(dest => dest.PaymentMode, opt => opt.MapFrom(src => src.PaymentMode))
+              .ForMember(dest => dest.RoomCharges, opt => opt.MapFrom(src => src.RoomCharges))
+              .ForMember(dest => dest.ProcedureCharges, opt => opt.MapFrom(src => src.ProcedureCharges))
+              .ForMember(dest => dest.MedicationCharges, opt => opt.MapFrom(src => src.MedicationCharges))
+              .ForMember(dest => dest.ConsultationCharges, opt => opt.MapFrom(src => src.ConsultationCharges))
+              .ForMember(dest => dest.OpdConsultationFee, opt => opt.MapFrom(src => src.OpdConsultationFee))
+              .ForMember(dest => dest.DiscountAmount, opt => opt.MapFrom(src => src.DiscountAmount))
+              .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.TotalAmount))
+              .ForMember(dest => dest.NetAmount, opt => opt.MapFrom(src => src.NetAmount))
+              .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
+              .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
+
+            CreateMap<Bill, EditBillDto>(); 
+
 
         }
     }

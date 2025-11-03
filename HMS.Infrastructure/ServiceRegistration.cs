@@ -29,6 +29,7 @@ namespace HMS.Infrastructure
             services.AddScoped<IFeedbackRepository, FeedbackRepository>();
             services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IBillRepository, BillRepository>();
         }
     }
 }

@@ -14,5 +14,7 @@ namespace HMS.Application.Interfaces
         Task<IEnumerable<PatientVisitDto>> GetAllPatientVisitsAsync();
         Task<bool> DeleteAsync(int id);
         Task<int> UpdateAsync(PatientVisitUpdateDto dto);
+
+        Task<object?> GetInpatientDetailsAsync(int patientId, int visitId);
     }
 }

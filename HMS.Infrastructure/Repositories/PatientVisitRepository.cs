@@ -80,5 +80,22 @@ namespace HMS.Infrastructure.Repositories
 
             return rowsAffected;
         }
+
+        public async Task<object?> GetInpatientDetailsAsync(int patientId, int visitId)
+        {
+            using var connection = _context.CreateConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@PatientId", patientId, DbType.Int32);
+            parameters.Add("@VisitId", visitId, DbType.Int32);
+
+            var result = await connection.QueryFirstOrDefaultAsync<object>(
+                "sp_GetInpatientDetails",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return result;
+        }
     }
 }

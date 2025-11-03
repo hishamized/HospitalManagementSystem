@@ -1,8 +1,7 @@
-﻿using HMS.Application.Interfaces;
+﻿using AutoMapper;
+using HMS.Application.Interfaces;
 using HMS.Domain.Interfaces;
 using HMS.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace HMS.Infrastructure.Repositories
 {
@@ -10,37 +9,34 @@ namespace HMS.Infrastructure.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly DapperContext _dapperContext;
+        private readonly IMapper _mapper;
 
-        // Private backing fields for repositories
         private IUserRepository _userRepository;
         private IPatientRepository _patientRepository;
         private IMedicalHistoryRepository _medicalHistoryRepository;
         private IAllergyRepository _allergyRepository;
         private IInsuranceRepository _insuranceRepository;
+        private IBillRepository _billRepository;
 
-
-        public UnitOfWork(ApplicationDbContext context, DapperContext dapperContext)
+        public UnitOfWork(ApplicationDbContext context, DapperContext dapperContext, IMapper mapper)
         {
             _context = context;
             _dapperContext = dapperContext;
+            _mapper = mapper;
         }
 
-        // Expose repositories through interface
         public IUserRepository Users => _userRepository ??= new UserRepository(_dapperContext);
         public IPatientRepository Patients => _patientRepository ??= new PatientRepository(_dapperContext);
 
         public IMedicalHistoryRepository MedicalHistories =>
-     _medicalHistoryRepository ??= new MedicalHistoryRepository(this, _dapperContext);
+            _medicalHistoryRepository ??= new MedicalHistoryRepository(this, _dapperContext);
 
         public IAllergyRepository Allergies => _allergyRepository ??= new AllergyRepository(_dapperContext, this);
 
         public IInsuranceRepository Insurances => _insuranceRepository ??= new InsuranceRepository(this, _dapperContext);
 
+        public IBillRepository Bills => _billRepository ??= new BillRepository(this, _dapperContext, _mapper);
 
-        // Commit method (optional for Dapper, but required if EF changes are tracked)
-        public async Task<int> CommitAsync()
-        {
-            return await _context.SaveChangesAsync();
-        }
+        public async Task<int> CommitAsync() => await _context.SaveChangesAsync();
     }
 }
