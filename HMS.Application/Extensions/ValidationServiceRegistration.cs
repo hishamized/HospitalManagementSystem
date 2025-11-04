@@ -43,6 +43,7 @@ namespace HMS.Application.Extensions
             services.AddTransient<IValidator<VerifyOtpCommand>, VerifyOtpCommandValidator>();
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
             return services;
         }

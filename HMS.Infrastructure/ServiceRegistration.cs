@@ -1,4 +1,7 @@
-﻿using HMS.Application.Interfaces;
+﻿using FluentValidation;
+using HMS.Application.Commands.Bed;
+using HMS.Application.Interfaces;
+using HMS.Application.Validators.Bed;
 using HMS.Domain.Interfaces;
 using HMS.Infrastructure.Data;
 using HMS.Infrastructure.Repositories;
@@ -30,6 +33,9 @@ namespace HMS.Infrastructure
             services.AddScoped<IAnalyticsRepository, AnalyticsRepository>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IBillRepository, BillRepository>();
+            services.AddScoped<IBedRepository, BedRepository>();
+            services.AddTransient<IValidator<EditBedCommand>, EditBedValidator>();
+
         }
     }
 }

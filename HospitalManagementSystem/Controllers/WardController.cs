@@ -1,10 +1,11 @@
-﻿using HMS.Application.Commands.Ward;
+﻿using FluentValidation;
+using HMS.Application.Commands.Bed;
+using HMS.Application.Commands.Ward;
 using HMS.Application.DTO.Ward;
 using HMS.Application.Queries.Ward;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FluentValidation;
 
 namespace HMS.Web.Controllers
 {
@@ -225,6 +226,43 @@ namespace HMS.Web.Controllers
             {
                 // Optional: log error here if you have ILogger injected
                 return StatusCode(500, new { success = false, message = $"An error occurred: {ex.Message}" });
+            }
+        }
+        [HttpDelete]
+        public async Task<IActionResult> DeleteBed(int id)
+        {
+            try
+            {
+                if (id <= 0)
+                    return BadRequest(new { success = false, message = "Invalid bed ID." });
+
+                var result = await _mediator.Send(new DeleteBedCommand(id));
+
+                if (result > 0)
+                {
+                    return Ok(new
+                    {
+                        success = true,
+                        message = $"Bed with ID {id} deleted successfully."
+                    });
+                }
+                else
+                {
+                    return NotFound(new
+                    {
+                        success = false,
+                        message = $"No bed found with ID {id}."
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "An error occurred while deleting the bed.",
+                    error = ex.Message
+                });
             }
         }
 

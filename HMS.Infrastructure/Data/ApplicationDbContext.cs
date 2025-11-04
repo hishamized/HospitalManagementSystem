@@ -30,6 +30,8 @@ namespace HMS.Infrastructure.Data
 
         public DbSet<Bill> Bill { get; set; }
 
+        public DbSet<Bed> Bed { get; set; }
+
 
 
         public DbSet<User> Users { get; set; } = null!;

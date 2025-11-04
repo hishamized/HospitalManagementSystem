@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using HMS.Application.Commands.Bed;
 using HMS.Application.Dto;
 using HMS.Application.Dto.Doctor;
 using HMS.Application.Dto.Role;
 using HMS.Application.DTO;
 using HMS.Application.DTO.Allergy;
 using HMS.Application.DTO.Appointment;
+using HMS.Application.DTO.Bed;
 using HMS.Application.DTO.Bill;
 using HMS.Application.DTO.Department;
 using HMS.Application.DTO.Doctor;
@@ -259,6 +261,35 @@ namespace HMS.Application.Mappings
                 .ForMember(dest => dest.TreatmentDetails, opt => opt.MapFrom(src => src.v.TreatmentDetails))
                 .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.v.Notes))
                 .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.v.IsActive));
+
+            CreateMap<AddBedDto, Bed>().ReverseMap();
+            CreateMap<AddBedCommand, AddBedDto>()
+                .ForMember(dest => dest.BedCode, opt => opt.MapFrom(src => src.Bed.BedCode))
+                .ForMember(dest => dest.BedNumber, opt => opt.MapFrom(src => src.Bed.BedNumber))
+                .ForMember(dest => dest.WardId, opt => opt.MapFrom(src => src.Bed.WardId))
+                .ForMember(dest => dest.BedType, opt => opt.MapFrom(src => src.Bed.BedType))
+                .ForMember(dest => dest.IsOccupied, opt => opt.MapFrom(src => src.Bed.IsOccupied))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Bed.Status))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Bed.Description))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.Bed.IsActive));
+
+            // Existing mapping for adding bed
+            CreateMap<Bed, AddBedDto>().ReverseMap();
+
+            // Mapping for listing beds (pagination)
+            CreateMap<Bed, BedListDto>()
+                .ForMember(dest => dest.WardName, opt => opt.MapFrom(src => src.Ward.WardName))
+                .ForMember(dest => dest.BedCode, opt => opt.MapFrom(src => src.BedCode))
+                .ForMember(dest => dest.BedNumber, opt => opt.MapFrom(src => src.BedNumber))
+                .ForMember(dest => dest.BedType, opt => opt.MapFrom(src => src.BedType))
+                .ForMember(dest => dest.IsOccupied, opt => opt.MapFrom(src => src.IsOccupied))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
+
+            CreateMap<AddBedDto, Bed>().ReverseMap();
+            CreateMap<EditBedDto, Bed>().ReverseMap();  
 
         }
     }
