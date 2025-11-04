@@ -47,8 +47,7 @@ namespace HMS.Web.Controllers
                 return StatusCode(500, new
                 {
                     success = false,
-                    message = "An error occurred while adding the bill.",
-                    details = ex.Message
+                    message = ex.Message
                 });
             }
         }

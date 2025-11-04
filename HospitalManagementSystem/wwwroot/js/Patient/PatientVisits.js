@@ -378,9 +378,10 @@ $("#editVisitType").on("change", function () {
     }
 
 
-    function handleOutpatientView(id, patientId) {
-        console.log("View Outpatient record => Visit ID:", id, "| Patient ID:", patientId);
-        // Later: window.open(`/Outpatient/Details/${id}?patientId=${patientId}`, '_blank');
+    function handleOutpatientView(visitId, patientId) {
+        //console.log("View Outpatient record => Visit ID:", id, "| Patient ID:", patientId);
+        const url = `/PatientVisit/OutpatientVisitManager?patientId=${patientId}&visitId=${visitId}`;
+        window.open(url, '_blank');
     }
 
 

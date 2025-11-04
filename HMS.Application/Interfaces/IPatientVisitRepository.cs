@@ -16,5 +16,6 @@ namespace HMS.Application.Interfaces
         Task<int> UpdateAsync(PatientVisitUpdateDto dto);
 
         Task<object?> GetInpatientDetailsAsync(int patientId, int visitId);
+        Task<OutPatientDetailsDto?> GetOutPatientDetailsAsync(int patientId, int visitId);
     }
 }

@@ -3,6 +3,7 @@ using Dapper;
 using HMS.Application.Dto;
 using HMS.Application.DTO;
 using HMS.Application.DTO.Insurance;
+using HMS.Application.DTO.Patient;
 using HMS.Application.DTOs.PatientVisitDtos;
 using HMS.Application.Interfaces;
 using HMS.Domain.Entities;
@@ -91,6 +92,25 @@ namespace HMS.Infrastructure.Repositories
 
             var result = await connection.QueryFirstOrDefaultAsync<object>(
                 "sp_GetInpatientDetails",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return result;
+        }
+
+        public async Task<OutPatientDetailsDto?> GetOutPatientDetailsAsync(int patientId, int visitId)
+        {
+            using var connection = _context.CreateConnection();
+
+            var parameters = new
+            {
+                PatientId = patientId,
+                VisitId = visitId
+            };
+
+            var result = await connection.QueryFirstOrDefaultAsync<OutPatientDetailsDto>(
+                "sp_GetOutPatientDetails",
                 parameters,
                 commandType: CommandType.StoredProcedure
             );

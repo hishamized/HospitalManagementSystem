@@ -216,8 +216,49 @@ namespace HMS.Application.Mappings
               .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
               .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
 
-            CreateMap<Bill, EditBillDto>(); 
+            CreateMap<Bill, EditBillDto>();
 
+            CreateMap<Patient, OutPatientDetailsDto>()
+                .ForMember(dest => dest.PatientId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.VisitId, opt => opt.Ignore())
+                .ForMember(dest => dest.VisitType, opt => opt.Ignore())
+                .ForMember(dest => dest.VisitDate, opt => opt.Ignore())
+                .ForMember(dest => dest.DoctorId, opt => opt.Ignore())
+                .ForMember(dest => dest.DoctorName, opt => opt.Ignore())
+                .ForMember(dest => dest.TreatmentDetails, opt => opt.Ignore())
+                .ForMember(dest => dest.Notes, opt => opt.Ignore())
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive));
+
+            CreateMap<PatientVisit, OutPatientDetailsDto>()
+                .ForMember(dest => dest.VisitId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.PatientId, opt => opt.MapFrom(src => src.PatientId))
+                .ForMember(dest => dest.VisitDate, opt => opt.MapFrom(src => src.VisitDate))
+                .ForMember(dest => dest.VisitType, opt => opt.MapFrom(src => src.VisitType))
+                .ForMember(dest => dest.DoctorId, opt => opt.MapFrom(src => src.DoctorId))
+                .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.DoctorName))
+                .ForMember(dest => dest.TreatmentDetails, opt => opt.MapFrom(src => src.TreatmentDetails))
+                .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.IsActive));
+
+            CreateMap<(Patient p, PatientVisit v), OutPatientDetailsDto>()
+                .ForMember(dest => dest.PatientId, opt => opt.MapFrom(src => src.p.Id))
+                .ForMember(dest => dest.PatientCode, opt => opt.MapFrom(src => src.p.PatientCode))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.p.FullName))
+                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.p.Gender))
+                .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.p.DateOfBirth))
+                .ForMember(dest => dest.ContactNumber, opt => opt.MapFrom(src => src.p.ContactNumber))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.p.Email))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.p.Address))
+                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.p.City))
+                .ForMember(dest => dest.State, opt => opt.MapFrom(src => src.p.State))
+                .ForMember(dest => dest.VisitId, opt => opt.MapFrom(src => src.v.Id))
+                .ForMember(dest => dest.VisitDate, opt => opt.MapFrom(src => src.v.VisitDate))
+                .ForMember(dest => dest.VisitType, opt => opt.MapFrom(src => src.v.VisitType))
+                .ForMember(dest => dest.DoctorId, opt => opt.MapFrom(src => src.v.DoctorId))
+                .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.v.DoctorName))
+                .ForMember(dest => dest.TreatmentDetails, opt => opt.MapFrom(src => src.v.TreatmentDetails))
+                .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.v.Notes))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => src.v.IsActive));
 
         }
     }

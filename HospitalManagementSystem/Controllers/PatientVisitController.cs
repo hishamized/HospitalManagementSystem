@@ -167,5 +167,34 @@ namespace HMS.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> OutpatientVisitManager(int patientId, int visitId)
+        {
+            try
+            {
+                if (patientId <= 0 || visitId <= 0)
+                {
+                    return BadRequest("Invalid patient or visit ID.");
+                }
+
+                var query = new GetOutPatientDetailsQuery(patientId, visitId);
+                var result = await _mediator.Send(query);
+
+                if (result == null)
+                {
+                    return NotFound("No inpatient record found.");
+                }
+
+                // ✅ Return strongly typed view
+                return View("~/Views/Patient/OutpatientVisitManager.cshtml", result);
+
+            }
+            catch (Exception ex)
+            {
+                // log ex
+                return StatusCode(500, "An error occurred while retrieving inpatient details.");
+            }
+        }
+
     }
 }
