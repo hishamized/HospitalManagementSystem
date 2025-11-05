@@ -1,4 +1,5 @@
 ﻿using HMS.Application.DTO.Bed;
+using HMS.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,9 @@ namespace HMS.Application.Interfaces
         Task<int> UpdateBedAsync(EditBedDto dto);
         Task<int> DeleteBedAsync(int id);
 
+        Task<IEnumerable<BedDropdownDto>> GetBedsByWardIdAsync(int wardId);
+        Task<bool> AllotBedAsync(AllotBedDto entity);
+        Task<CheckBedDto> CheckBedStatusAsync(int patientId);
+        Task<int> RemovePatientFromBedAsync(int patientBedWardId);
     }
 }

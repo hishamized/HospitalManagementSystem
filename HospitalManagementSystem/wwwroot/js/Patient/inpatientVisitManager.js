@@ -307,4 +307,202 @@
         });
     });
 
+    // Show modal
+    $("#btnAllotBed").on("click", function () {
+        $("#allotBedModal").modal("show");
+        loadWards();
+    });
+
+    // Load wards
+    function loadWards() {
+        $.ajax({
+            url: '/Ward/GetAll',
+            type: 'GET',
+            success: function (wards) {
+                var group = wards.data;
+                var wardSelect = $("#wardSelect");
+                wardSelect.empty().append('<option value="">-- Select Ward --</option>');
+
+                $.each(group, function (i, ward) {
+                    wardSelect.append(`<option value="${ward.id}">${ward.wardName} (${ward.wardType})</option>`);
+                });
+            },
+            error: function () {
+                alert("Failed to load wards.");
+            }
+        });
+    }
+
+    // When ward selected
+
+    $("#wardSelect").on("change", function () {
+        var wardId = $(this).val();
+        var bedSelect = $("#bedSelect");
+
+        if (wardId) {
+            bedSelect.prop("disabled", false);
+            bedSelect.empty().append('<option value="">-- Select Bed --</option>');
+
+            // Fetch beds for selected ward
+            $.ajax({
+                url: '/Bed/GetByWardId?wardId=' + wardId,
+                type: 'GET',
+                success: function (data) {
+                    if (data && data.length > 0) {
+                        $.each(data, function (i, bed) {
+                            bedSelect.append(`<option value="${bed.id}">
+                            ${bed.bedNumber} : ${bed.id} (${bed.bedType} - ${bed.status})
+                        </option>`);
+                        });
+                    } else {
+                        bedSelect.append('<option value="">No available beds</option>');
+                    }
+                },
+                error: function (xhr) {
+                    console.error(xhr.responseText);
+                    alert("Failed to load beds for the selected ward.");
+                }
+            });
+        } else {
+            bedSelect.prop("disabled", true);
+            bedSelect.empty().append('<option value="">-- Select Bed --</option>');
+        }
+    });
+    $('#allotBedForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const dto = {
+            patientId: $('#PatientId').val(),
+            wardId: $('#wardSelect').val(),
+            bedId: $('#bedSelect').val(),
+            notes: $('#notes').val(),
+            assignedAt: new Date().toISOString()
+        };
+
+        $.ajax({
+            url: '/Bed/AllotBed',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(dto),
+            success: function (response) {
+                $('#allotBedModal').modal('hide');
+                alert(response);
+                $('#inpatientVisitGrid').agGridGridOptions.api.refreshServerSideStore(); // if using server-side grid
+            },
+            error: function (xhr) {
+                let message = 'An error occurred.';
+                if (xhr.responseText) message = xhr.responseText;
+                else if (xhr.responseJSON) message = xhr.responseJSON;
+                $('#errorMessage').remove();
+                $('#allotBedModal .modal-body').prepend(
+                    `<div id="errorMessage" class="alert alert-danger mb-2">${message}</div>`
+                );
+            }
+        });
+    });
+    $(document).on('click', '.check-bed-btn', function () {
+        const patientId = $(this).data('patient-id');
+
+        $.ajax({
+            url: `/Bed/CheckBed`,
+            type: 'GET',
+            data: { patientId: patientId },
+            beforeSend: function () {
+                // You could show a loader or disable the button temporarily
+            },
+            success: function (response) {
+                if (response.success) {
+                    const bedData = response.data;
+                    console.log(bedData);
+                    if (bedData.bedCode == null || bedData.wardCode == null) {
+                        alert(response.message || 'No bed data available.');
+                        return;
+                    } else {
+                        $('#removeWardBed')
+                            .attr('data-has-bed', 1)
+                            .attr('data-patient-bed-ward-id', bedData.patientBedWardId);
+
+                        checkRemoveButton();
+                    }
+                    // Trigger modal/pop-up logic (will handle separately)
+                    // Example: populate modal and show
+                    showBedPopup(bedData);
+                } else {
+                    alert("There was an error fetching data " + response);
+                }
+            },
+            error: function (xhr) {
+                alert('An unexpected error occurred while checking bed status.');
+                console.error(xhr.responseText);
+            }
+        });
+    });
+    function showBedPopup(bedData) {
+        $('#wardName').text(bedData.wardName || 'N/A');
+        $('#wardCapacity').text(bedData.wardCapacity || 0);
+        $('#wardOccupied').text(bedData.occupiedBeds || 0);
+
+        const totalBeds = bedData.wardCapacity || 0;
+        const occupiedBeds = bedData.occupiedBeds || 0;
+        const patientBedCode = bedData.bedCode;
+        const bedContainer = $('#bedGridContainer');
+        bedContainer.empty();
+
+        for (let i = 1; i <= totalBeds; i++) {
+            let bedStatusClass = 'bg-available';
+            let bedLabel = `Bed ${i}`;
+
+            if (bedData.hasBedAllotted && i === bedData.bedPosition) {
+                bedStatusClass = 'bg-patient';
+                bedLabel = `${bedData.bedCode || 'Bed'} (${bedData.bedNumber || i})`;
+            } else if (i <= occupiedBeds) {
+                bedStatusClass = 'bg-occupied';
+            }
+
+            const bedDiv = $(`<div class="bed-box ${bedStatusClass}">${bedLabel}</div>`);
+            bedContainer.append(bedDiv);
+        }
+
+        const modal = new bootstrap.Modal(document.getElementById('checkBedModal'));
+        modal.show();
+    }
+    $('#removeWardBed').on('click', function () {
+        const patientBedWardId = $(this).attr('data-patient-bed-ward-id');
+
+        if (!patientBedWardId) {
+            alert('No bed record found for this patient.');
+            return;
+        }
+
+        $.ajax({
+            url: '/Bed/RemovePatientFromBed',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ patientBedWardId }),
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message);
+                    $('#removeWardBed').data('hasBed', 0).hide();
+                } else {
+                    alert(response.message || 'Failed to remove bed assignment.');
+                }
+            },
+            error: function (xhr) {
+                alert('An error occurred while removing bed: ' + xhr.responseText);
+            }
+        });
+    });
+
+    function checkRemoveButton() {
+        const btn = $('#removeWardBed');
+        const hasBed = btn.attr('data-has-bed');
+
+        if (hasBed == 0 || hasBed === false) {
+            btn.hide();
+        } else {
+            btn.show();
+        }
+    }
+    checkRemoveButton();
+    
 });

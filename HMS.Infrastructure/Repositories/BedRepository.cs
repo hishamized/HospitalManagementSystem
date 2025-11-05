@@ -2,6 +2,7 @@
 using Dapper;
 using HMS.Application.DTO.Bed;
 using HMS.Application.Interfaces;
+using HMS.Domain.Entities;
 using HMS.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -94,6 +95,65 @@ namespace HMS.Infrastructure.Repositories
 
             return result;
         }
+        public async Task<IEnumerable<BedDropdownDto>> GetBedsByWardIdAsync(int wardId)
+        {
+            using var connection = _context.CreateConnection();
 
+            var parameters = new DynamicParameters();
+            parameters.Add("@WardId", wardId, DbType.Int32);
+
+            var beds = await connection.QueryAsync<BedDropdownDto>(
+                "sp_GetBedsByWardId",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return beds;
+        }
+        public async Task<bool> AllotBedAsync(AllotBedDto entity)
+        {
+            using var connection = _context.CreateConnection();
+
+            var parameters = new DynamicParameters(entity);
+
+            var result = await connection.ExecuteScalarAsync<int>(
+                "sp_AllotBedToPatient",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return result > 0;
+        }
+        public async Task<CheckBedDto> CheckBedStatusAsync(int patientId)
+        {
+            using var connection = _context.CreateConnection();
+            var parameters = new DynamicParameters();
+            parameters.Add("PatientId", patientId);
+
+            var result = await connection.QueryFirstOrDefaultAsync<CheckBedDto>(
+                "sp_CheckPatientBedStatus",
+                parameters,
+                commandType: System.Data.CommandType.StoredProcedure
+            );
+
+            return result ?? new CheckBedDto
+            {
+                PatientId = patientId,
+                HasBedAllotted = false
+            };
+        }
+        public async Task<int> RemovePatientFromBedAsync(int patientBedWardId)
+        {
+            using var connection = _context.CreateConnection();
+            var parameters = new DynamicParameters(new { PatientBedWardId = patientBedWardId });
+
+            var result = await connection.ExecuteScalarAsync<int>(
+                "sp_RemovePatientFromBed",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return result;
+        }
     }
 }

@@ -154,7 +154,87 @@ namespace HMS.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetByWardId(int wardId)
+        {
+            try
+            {
+                if (wardId <= 0)
+                    return BadRequest("Invalid Ward Id.");
 
+                var result = await _mediator.Send(new GetBedsByWardIdCommand(wardId));
 
+                if (result == null)
+                    return NotFound("No beds found for the selected ward.");
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // Log exception here if you use a logging framework
+                return StatusCode(500, $"An error occurred while fetching beds: {ex.Message}");
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> AllotBed([FromBody] AllotBedDto dto)
+        {
+            try
+            {
+                if (dto == null)
+                    return BadRequest("Invalid request data.");
+
+                if (dto.PatientId <= 0 || dto.WardId <= 0 || dto.BedId <= 0)
+                    return BadRequest("Patient, Ward, and Bed are required fields.");
+
+                var result = await _mediator.Send(new AllotBedCommand(dto));
+
+                if (!result)
+                    return StatusCode(500, "Failed to allot bed. Please try again.");
+
+                return Ok("Bed successfully allotted to patient.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while allotting bed: {ex.Message}");
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> CheckBed(int patientId)
+        {
+            try
+            {
+                var command = new CheckBedCommand(patientId);
+                var result = await _mediator.Send(command);
+
+                if (result == null)
+                    return Json(new { success = false, message = "No data found." });
+
+                return Json(new { success = true, data = result });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> RemovePatientFromBed([FromBody] RemovePatientFromBedCommand command)
+        {
+            try
+            {
+                if (command == null || command.PatientBedWardId <= 0)
+                    return BadRequest(new { success = false, message = "Invalid request." });
+
+                var result = await _mediator.Send(command);
+
+                if (result)
+                    return Ok(new { success = true, message = "Patient successfully removed from bed." });
+                else
+                    return BadRequest(new { success = false, message = "Failed to remove patient from bed." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
     }
 }

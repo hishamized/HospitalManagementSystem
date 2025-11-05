@@ -5,6 +5,45 @@
     Layout = "_Layout";
 }
 
+<style>
+    #bedGridContainer {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+    }
+
+    .bed-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        padding: 15px 10px;
+        font-weight: 600;
+        color: #fff;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .bed-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+    .bg-available {
+        background-color: #28a745;
+    }
+
+    .bg-occupied {
+        background-color: #dc3545;
+    }
+
+    .bg-patient {
+        background-color: #6f42c1;
+    }
+
+    .bg-purple {
+        background-color: #6f42c1 !important;
+    }
+</style>
 
 <div class="card shadow-sm mt-4">
     <div class="card-body">
@@ -13,6 +52,24 @@
             <button id="btnReloadBills" class="btn btn-outline-primary btn-sm">
                 <i class="bi bi-arrow-clockwise me-1"></i> Refresh
             </button>
+            <button id="btnAllotBed" class="btn btn-primary">
+                <i class="uil-bed-double"></i> Allot Bed
+            </button>
+            <button id="btnAddBill" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i> Add Bill
+            </button>
+            <button class="btn btn-info btn-sm check-bed-btn"
+                    data-patient-id="@Model.PatientId">
+                Check Bed
+            </button>
+            <button style="display: none;"
+                    class="btn btn-danger"
+                    id="removeWardBed"
+                    data-has-bed="0"
+                    data-patient-bed-ward-id="">
+                Remove Ward / Bed
+            </button>
+
         </div>
 
         <!-- AG Grid container -->
@@ -23,9 +80,7 @@
 
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <button id="btnAddBill" class="btn btn-primary">
-            <i class="bi bi-plus-lg me-1"></i> Add Bill
-        </button>
+    
         <h4 class="fw-bold">Inpatient Visit Manager</h4>
         <button class="btn btn-secondary" onclick="window.history.back();">← Back</button>
     </div>
@@ -265,6 +320,80 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" id="btnUpdateBill" class="btn btn-warning">Update Bill</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Allot Bed Modal -->
+<div class="modal fade" id="allotBedModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Allot Bed to Patient</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="allotBedForm">
+                    <div class="mb-3">
+                        <label for="wardSelect" class="form-label fw-semibold">Select Ward</label>
+                        <select id="wardSelect" class="form-select" required>
+                            <option value="">-- Select Ward --</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="bedSelect" class="form-label fw-semibold">Select Bed</label>
+                        <select id="bedSelect" class="form-select" disabled required>
+                            <option value="">-- Select Bed --</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="notes" class="form-label fw-semibold">Notes</label>
+                        <textarea id="notes" class="form-control" rows="2" placeholder="Enter any notes (optional)"></textarea>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="allotBedForm" class="btn btn-primary">Assign</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="checkBedModal" tabindex="-1" aria-labelledby="checkBedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-3">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="checkBedModalLabel">Patient Bed Status</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="ward-info mb-3">
+                    <h6 class="fw-bold">Ward Information</h6>
+                    <div class="row">
+                        <div class="col-md-4"><span class="fw-semibold">Ward:</span> <span id="wardName"></span></div>
+                        <div class="col-md-4"><span class="fw-semibold">Capacity:</span> <span id="wardCapacity"></span></div>
+                        <div class="col-md-4"><span class="fw-semibold">Occupied:</span> <span id="wardOccupied"></span></div>
+                    </div>
+                </div>
+
+                <div id="bedGridContainer" class="d-flex flex-wrap gap-2 justify-content-start"></div>
+
+                <div class="legend mt-4">
+                    <span class="badge bg-success">Available</span>
+                    <span class="badge bg-danger">Occupied</span>
+                    <span class="badge bg-purple">Patient’s Bed</span>
+                </div>
+
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

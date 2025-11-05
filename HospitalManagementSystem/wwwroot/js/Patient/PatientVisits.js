@@ -15,7 +15,7 @@
         {
             headerName: "Actions",
             field: "id",
-            width: 150,
+            width: 300,
             cellRenderer: function (params) {
                 return `
                 <button class="btn btn-sm btn-info view-btn" data-id="${params.value}" data-patientid="${params.data.patientId}" data-visittype="${params.data.visitType}">

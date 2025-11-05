@@ -32,6 +32,8 @@ namespace HMS.Infrastructure.Data
 
         public DbSet<Bed> Bed { get; set; }
 
+        public DbSet<PatientBedWard> PatientBedWards { get; set; }
+
 
 
         public DbSet<User> Users { get; set; } = null!;
@@ -168,6 +170,45 @@ namespace HMS.Infrastructure.Data
                 entity.Property(w => w.CreatedAt)
                       .HasDefaultValueSql("GETUTCDATE()");
             });
+
+            modelBuilder.Entity<PatientBedWard>(entity =>
+            {
+                entity.ToTable("PatientBedWards");
+
+                entity.HasKey(e => e.Id);
+
+                entity.HasOne(e => e.Patient)
+                    .WithMany() // or .WithMany(p => p.PatientBedWards) if you add a navigation in Patient
+                    .HasForeignKey(e => e.PatientId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Ward)
+                    .WithMany() // you can add .WithMany(w => w.PatientBedWards) later if needed
+                    .HasForeignKey(e => e.WardId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Bed)
+                    .WithMany() // or .WithMany(b => b.PatientBedWards)
+                    .HasForeignKey(e => e.BedId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.AssignedAt)
+                    .IsRequired();
+
+                entity.Property(e => e.IsActive)
+                    .HasDefaultValue(true);
+
+                // To ensure a bed can’t be assigned to more than one active patient at a time
+                entity.HasIndex(e => new { e.BedId, e.IsActive })
+                    .IsUnique()
+                    .HasFilter("[IsActive] = 1");
+
+                // Optional: enforce uniqueness so one patient can’t have two active assignments
+                entity.HasIndex(e => new { e.PatientId, e.IsActive })
+                    .IsUnique()
+                    .HasFilter("[IsActive] = 1");
+            });
+
 
 
         }

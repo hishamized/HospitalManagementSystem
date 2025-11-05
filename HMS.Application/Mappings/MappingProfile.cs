@@ -289,7 +289,27 @@ namespace HMS.Application.Mappings
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt));
 
             CreateMap<AddBedDto, Bed>().ReverseMap();
-            CreateMap<EditBedDto, Bed>().ReverseMap();  
+            CreateMap<EditBedDto, Bed>().ReverseMap();
+
+            CreateMap<Bed, BedDropdownDto>()
+               .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+               .ForMember(dest => dest.BedCode, opt => opt.MapFrom(src => src.BedCode))
+               .ForMember(dest => dest.BedNumber, opt => opt.MapFrom(src => src.BedNumber))
+               .ForMember(dest => dest.BedType, opt => opt.MapFrom(src => src.BedType))
+               .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+
+            // Map between AllotBedDto and PatientBedWard
+            CreateMap<AllotBedDto, PatientBedWard>()
+                .ForMember(dest => dest.PatientId, opt => opt.MapFrom(src => src.PatientId))
+                .ForMember(dest => dest.WardId, opt => opt.MapFrom(src => src.WardId))
+                .ForMember(dest => dest.BedId, opt => opt.MapFrom(src => src.BedId))
+                .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
+                .ForMember(dest => dest.AssignedAt, opt => opt.MapFrom(src => src.AssignedAt))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
+
+            CreateMap<CheckBedDto, CheckBedDto>();
+
+
 
         }
     }
