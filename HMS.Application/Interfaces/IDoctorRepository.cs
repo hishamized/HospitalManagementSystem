@@ -11,5 +11,11 @@ namespace HMS.Application.Interfaces
         Task<IEnumerable<GetDoctorsDto>> GetAllDoctorsAsync();
         Task<bool> UpdateDoctorAsync(EditDoctorDto dto);
         Task<bool> DeleteDoctorAsync(int doctorId);
+        Task<IEnumerable<DoctorSelectDto>> GetDoctorsByPatientWardAsync(int patientId);
+        Task<int> AddDoctorRoundAsync(AddDoctorRoundDto dto);
+        Task<IEnumerable<DoctorRoundHistoryDto>> GetRoundsByPatientAsync(int patientId);
+
+        Task<UpdateDoctorRoundDto?> UpdateDoctorRoundAsync(UpdateDoctorRoundDto doctorRound);
+        Task<bool> DeleteDoctorRoundAsync(int id);
     }
 }

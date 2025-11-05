@@ -1,7 +1,9 @@
 ﻿using FluentValidation;
 using HMS.Application.Commands.Bed;
+using HMS.Application.Commands.Doctor;
 using HMS.Application.Interfaces;
 using HMS.Application.Validators.Bed;
+using HMS.Application.Validators.Doctor;
 using HMS.Domain.Interfaces;
 using HMS.Infrastructure.Data;
 using HMS.Infrastructure.Repositories;
@@ -35,6 +37,8 @@ namespace HMS.Infrastructure
             services.AddScoped<IBillRepository, BillRepository>();
             services.AddScoped<IBedRepository, BedRepository>();
             services.AddTransient<IValidator<EditBedCommand>, EditBedValidator>();
+            services.AddTransient<IValidator<AddDoctorRoundCommand>, AddDoctorRoundCommandValidator>();
+            services.AddTransient<IValidator<EditDoctorRoundCommand>, EditDoctorRoundCommandValidator>();
 
         }
     }

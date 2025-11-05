@@ -39,6 +39,9 @@ namespace HMS.Infrastructure.Data
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Role> Roles { get; set; } = null!;
         public DbSet<UserRole> UserRoles { get; set; } = null!;
+
+        public DbSet<DoctorRound> DoctorRounds { get; set; }
+
         //public DbSet<Doctor> Doctors { get; set; }
         //public DbSet<Appointment> Appointments { get; set; }
 
@@ -210,6 +213,34 @@ namespace HMS.Infrastructure.Data
             });
 
 
+            modelBuilder.Entity<DoctorRound>(entity =>
+            {
+                entity.ToTable("DoctorRounds");
+
+                entity.HasKey(dr => dr.Id);
+
+                entity.Property(dr => dr.Observations).HasMaxLength(1000);
+                entity.Property(dr => dr.Diagnosis).HasMaxLength(500);
+                entity.Property(dr => dr.Prescriptions).HasMaxLength(1000);
+                entity.Property(dr => dr.TreatmentPlan).HasMaxLength(1000);
+                entity.Property(dr => dr.TestsRecommended).HasMaxLength(1000);
+                entity.Property(dr => dr.FollowUpInstructions).HasMaxLength(1000);
+
+                entity.HasOne(dr => dr.Doctor)
+                      .WithMany()
+                      .HasForeignKey(dr => dr.DoctorId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(dr => dr.Patient)
+                      .WithMany()
+                      .HasForeignKey(dr => dr.PatientId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(dr => dr.Ward)
+                      .WithMany()
+                      .HasForeignKey(dr => dr.WardId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
 
         }
     }

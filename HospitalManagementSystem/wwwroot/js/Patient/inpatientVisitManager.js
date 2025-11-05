@@ -504,5 +504,290 @@
         }
     }
     checkRemoveButton();
-    
+    // Show modal on button click
+
+    // Show modal and populate doctors
+    $('#btnAddDoctorRound').on('click', function () {
+        const patientId = $('#PatientId').val(); // get hidden patientId
+
+        if (!patientId) {
+            alert('Patient ID not found!');
+            return;
+        }
+        // Fetch doctors via AJAX
+        $.ajax({
+            url: `/Doctor/GetDoctorsByPatient`,
+            type: 'GET',
+            data: { patientId: patientId },
+            success: function (data) {
+                console.log(data)
+                const $doctorSelect = $('#DoctorId');
+                $doctorSelect.empty();
+                $doctorSelect.append('<option value="">Select Doctor</option>');
+
+                $.each(data, function (i, doctor) {
+                    $doctorSelect.append(`<option value="${doctor.id}">${doctor.fullName} (${doctor.specialization})</option>`);
+                });
+
+                // Show modal after dropdown is populated
+                $('#doctorRoundModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+                alert('Failed to fetch doctors. Please try again.');
+            }
+        });
+    });
+
+    // Close modal
+    $('#btnCloseDoctorRound').on('click', function () {
+        $('#doctorRoundModal').modal('hide');
+    });
+
+    // Optional: clear form on close
+    $('#doctorRoundModal').on('hidden.bs.modal', function () {
+        $('#doctorRoundForm')[0].reset();
+        $('#DoctorId').empty().append('<option value="">Select Doctor</option>');
+    });
+    // Close modal on close button click
+    $('#btnCloseDoctorRound').on('click', function () {
+        $('#doctorRoundModal').modal('hide');
+    });
+
+    // Optional: Clear form when modal is closed
+    $('#doctorRoundModal').on('hidden.bs.modal', function () {
+        $('#doctorRoundForm')[0].reset();
+    });
+
+    // Form submission
+    $('#doctorRoundForm').submit(function (e) {
+        e.preventDefault();
+
+        // Remove previous errors
+        $('#doctorRoundForm .is-invalid').removeClass('is-invalid');
+        $('#doctorRoundForm .invalid-feedback').remove();
+
+        var form = $(this);
+        var token = $('input[name="__RequestVerificationToken"]', form).val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/Doctor/AddDoctorRound',
+            data: form.serialize(),
+            headers: {
+                'RequestVerificationToken': token
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message); // replace with toast or nicer UI if you like
+                    $('#doctorRoundModal').modal('hide');
+                    $('#doctorRoundForm')[0].reset();
+                    // Optionally refresh doctor rounds table here
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function (xhr) {
+                if (xhr.status === 400) {
+                    // Display model state errors
+                    var errors = xhr.responseJSON;
+                    $.each(errors, function (key, value) {
+                        var input = $('[name="' + key + '"]');
+                        input.addClass('is-invalid');
+                        input.after('<div class="invalid-feedback">' + value[0] + '</div>');
+                    });
+                } else {
+                    alert('An unexpected error occurred.');
+                }
+            }
+        });
+    });
+    // Column definitions for Doctor Rounds
+    var roundColumnDefs = [
+        { headerName: "Doctor", field: "doctorName", sortable: true, filter: true },
+        { headerName: "Ward", field: "wardName", sortable: true, filter: true },
+        { headerName: "Round Date", field: "roundDate", sortable: true, filter: true },
+        { headerName: "Observations", field: "observations" },
+        { headerName: "Diagnosis", field: "diagnosis" },
+        { headerName: "Prescriptions", field: "prescriptions" },
+        { headerName: "Tests Recommended", field: "testsRecommended" },
+        { headerName: "Treatment Plan", field: "treatmentPlan" },
+        { headerName: "Follow-up Instructions", field: "followUpInstructions" },
+        { headerName: "Critical", field: "isCritical", cellRenderer: params => params.value ? "Yes" : "No" },
+        {
+            headerName: "Actions",
+            cellRenderer: function (params) {
+                const id = params.data?.id ?? 0; // safe fallback
+                return `
+            <button class="btn btn-sm btn-primary me-1 btn-edit-round" 
+                data-id="${id}" data-row-index="${params.rowIndex}">Edit</button>
+            <button class="btn btn-sm btn-danger btn-delete-round" data-id="${id}">Delete</button>
+        `;
+            }
+        }
+
+
+
+
+    ];
+
+
+    var roundGridOptions = {
+        columnDefs: roundColumnDefs,
+        defaultColDef: { resizable: true },
+        rowData: [],
+        animateRows: true,
+        pagination: true,
+        paginationPageSize: 10
+    };
+
+    // Initialize AG Grid
+    var eRoundGridDiv = document.querySelector('#doctorRoundHistoryGrid');
+    new agGrid.Grid(eRoundGridDiv, roundGridOptions);
+
+    // Fetch and display rounds when button clicked
+    $('#btnViewRoundHistory').click(function () {
+        var patientId = $('#PatientId').val();
+        if (!patientId) {
+            alert("Patient ID not found.");
+            return;
+        }
+
+        $.ajax({
+            url: '/Doctor/GetDoctorRoundsByPatient',
+            type: 'GET',
+            data: { patientId: patientId },
+            success: function (response) {
+                console.log(response)
+                if (response.success) {
+                    roundGridOptions.api.setRowData(response.data);
+                    $('#doctorRoundHistoryModal').modal('show');
+                } else {
+                    alert(response.message || "Failed to fetch round history.");
+                }
+            },
+            error: function (xhr) {
+                var errMsg = xhr.responseJSON?.message || "An error occurred while fetching round history.";
+                alert(errMsg);
+            }
+        });
+    });
+
+    // Clear grid data when modal closes
+    $('#doctorRoundHistoryModal').on('hidden.bs.modal', function () {
+        roundGridOptions.api.setRowData([]);
+    });
+
+
+    // Open Edit Round Modal on button click
+    $(document).on('click', '.btn-edit-round', function () {
+        const rowIndex = $(this).data('row-index');
+        const rowNode = roundGridOptions.api.getDisplayedRowAtIndex(rowIndex);
+
+        if (!rowNode || !rowNode.data) {
+            alert("Row data not found!");
+            return;
+        }
+
+        const rowData = rowNode.data;
+
+        // Prefill form
+        $('#EditRoundId').val(rowData.id);
+        $('#EditDoctorName').val(rowData.doctorName);
+        $('#EditWardName').val(rowData.wardName);
+        $('#EditRoundDate').val(rowData.roundDate ? new Date(rowData.roundDate).toISOString().slice(0, 16) : '');
+        $('#EditObservations').val(rowData.observations);
+        $('#EditDiagnosis').val(rowData.diagnosis);
+        $('#EditPrescriptions').val(rowData.prescriptions);
+        $('#EditTestsRecommended').val(rowData.testsRecommended);
+        $('#EditTreatmentPlan').val(rowData.treatmentPlan);
+        $('#EditFollowUpInstructions').val(rowData.followUpInstructions);
+        $('#EditIsCritical').val(rowData.isCritical ? "true" : "false");
+
+        // Close previous modal and open edit modal
+        $('#doctorRoundHistoryModal').modal('hide');
+        $('#editDoctorRoundModal').modal('show');
+    });
+
+
+    // Close Edit Modal
+    $('#btnCloseEditDoctorRound').on('click', function () {
+        $('#editDoctorRoundModal').modal('hide');
+    });
+
+    // Submit Edit Doctor Round Form
+    $('#editDoctorRoundForm').submit(function (e) {
+        e.preventDefault();
+
+        var form = $(this);
+        var token = $('input[name="__RequestVerificationToken"]', form).val();
+
+        $.ajax({
+            url: '/Doctor/UpdateDoctorRound', // your backend endpoint
+            type: 'POST',
+            data: form.serialize(),
+            headers: { 'RequestVerificationToken': token },
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message);
+                    $('#editDoctorRoundModal').modal('hide');
+
+                    // Update row in AG Grid without another server call
+                    let rowNode = gridOptions.api.getRowNode(response.data.id);
+                    if (rowNode) {
+                        rowNode.setData(response.data);
+                    }
+                } else {
+                    alert(response.message || "Failed to update round.");
+                }
+            },
+            error: function (xhr) {
+                alert(xhr.responseJSON?.message || "Server error occurred.");
+            }
+        });
+    });
+
+    // Handle delete button click
+    $(document).on('click', '.btn-delete-round', function () {
+        const id = $(this).data('id');
+
+        if (!id) {
+            alert("Invalid record selected for deletion.");
+            return;
+        }
+
+        if (!confirm("Are you sure you want to delete this entry?")) {
+            return;
+        }
+
+        $.ajax({
+            url: `/Doctor/DeleteDoctorRound/${id}`, // Controller + Action
+            type: 'DELETE',
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message || "Entry deleted successfully!");
+
+                    // Refresh AG Grid without reloading the whole page
+                    if (typeof roundGridOptions !== 'undefined' && roundGridOptions.api) {
+                        roundGridOptions.api.applyTransaction({ remove: [roundGridOptions.api.getRowNode(id).data] });
+                    }
+                } else {
+                    alert(response.message || "Failed to delete entry.");
+                }
+            },
+            error: function (xhr) {
+                let errorMsg = "An unexpected error occurred.";
+                if (xhr.responseJSON?.message) {
+                    errorMsg = xhr.responseJSON.message;
+                } else if (xhr.responseText) {
+                    errorMsg = xhr.responseText;
+                }
+                alert(errorMsg);
+            }
+        });
+    });
+
 });

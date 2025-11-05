@@ -69,6 +69,13 @@
                     data-patient-bed-ward-id="">
                 Remove Ward / Bed
             </button>
+            <button id="btnAddDoctorRound" class="btn btn-primary mt-3">
+                <i class="bi bi-plus-circle"></i> Add Doctor Round
+            </button>
+            <button id="btnViewRoundHistory" class="btn btn-info mt-3">
+                <i class="bi bi-clock-history"></i> View Round History
+            </button>
+
 
         </div>
 
@@ -395,6 +402,186 @@
             <div class="modal-footer border-0">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Doctor Round Modal -->
+<div class="modal fade" id="doctorRoundModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-3 shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Add Doctor Round</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="doctorRoundForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="PatientId" name="PatientId" value="@Model.PatientId" />
+
+                <div class="modal-body">
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label">Doctor</label>
+                            <select id="DoctorId" name="DoctorId" class="form-select" required>
+                                <option value="">Select Doctor</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Round Date</label>
+                            <input type="datetime-local" id="RoundDate" name="RoundDate" class="form-control" required />
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Observations</label>
+                            <textarea id="Observations" name="Observations" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Diagnosis</label>
+                            <textarea id="Diagnosis" name="Diagnosis" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Prescriptions</label>
+                            <textarea id="Prescriptions" name="Prescriptions" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Tests Recommended</label>
+                            <textarea id="TestsRecommended" name="TestsRecommended" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Treatment Plan</label>
+                            <textarea id="TreatmentPlan" name="TreatmentPlan" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Follow-up Instructions</label>
+                            <textarea id="FollowUpInstructions" name="FollowUpInstructions" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Is Critical</label>
+                            <select id="IsCritical" name="IsCritical" class="form-select" required>
+                                <option value="">Select</option>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btnCloseDoctorRound">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Round</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Doctor Round History Modal -->
+<div class="modal fade" id="doctorRoundHistoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content rounded-3 shadow-lg">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">Doctor Round History</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div id="doctorRoundHistoryGrid" class="ag-theme-alpine" style="width:100%; height:400px;"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Doctor Round Modal -->
+<div class="modal fade" id="editDoctorRoundModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-3 shadow-lg">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title">Edit Doctor Round</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="editDoctorRoundForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="EditRoundId" name="Id" />
+
+                <div class="modal-body">
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label">Doctor</label>
+                            <input type="text" id="EditDoctorName" class="form-control" disabled />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Ward</label>
+                            <input type="text" id="EditWardName" class="form-control" disabled />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Round Date</label>
+                            <input type="datetime-local" id="EditRoundDate" name="RoundDate" class="form-control" required />
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Observations</label>
+                            <textarea id="EditObservations" name="Observations" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Diagnosis</label>
+                            <textarea id="EditDiagnosis" name="Diagnosis" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Prescriptions</label>
+                            <textarea id="EditPrescriptions" name="Prescriptions" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Tests Recommended</label>
+                            <textarea id="EditTestsRecommended" name="TestsRecommended" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Treatment Plan</label>
+                            <textarea id="EditTreatmentPlan" name="TreatmentPlan" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label">Follow-up Instructions</label>
+                            <textarea id="EditFollowUpInstructions" name="FollowUpInstructions" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Critical</label>
+                            <select id="EditIsCritical" name="IsCritical" class="form-select">
+                                <option value="false">No</option>
+                                <option value="true">Yes</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btnCloseEditDoctorRound">Close</button>
+                    <button type="submit" class="btn btn-warning">Update Round</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -310,6 +310,17 @@ namespace HMS.Application.Mappings
             CreateMap<CheckBedDto, CheckBedDto>();
 
 
+            // Map AddDoctorRoundDto to DoctorRound entity
+            CreateMap<AddDoctorRoundDto, DoctorRound>()
+                .ForMember(dest => dest.WardId, opt => opt.Ignore()) // handled in SP
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.IsActive, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
+            // Map DoctorRound entity to DoctorRoundHistoryDto if needed
+            CreateMap<DoctorRound, DoctorRoundHistoryDto>()
+                .ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.Doctor.FullName))
+                .ForMember(dest => dest.WardName, opt => opt.MapFrom(src => src.Ward.WardName));
 
         }
     }
