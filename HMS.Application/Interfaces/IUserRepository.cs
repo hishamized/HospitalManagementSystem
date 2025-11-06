@@ -1,4 +1,5 @@
-﻿using HMS.Application.DTO.User;
+﻿using HMS.Application.DTO.Chat;
+using HMS.Application.DTO.User;
 using HMS.Application.DTOs;
 using HMS.Application.DTOs.Users;
 using HMS.Application.ViewModel.User;
@@ -15,6 +16,10 @@ namespace HMS.Application.Interfaces
 
         Task<UserOtpResultDto?> VerifyOtpAsync(string otpCode);
         Task<string?> ResetPasswordAfterOtpAsync(int userId);
+
+        Task<List<UserListDto>> SearchActiveUsersAsync(string query);
+        Task<int?> ResolveUserIdByIdentifier(string identifier);
+        Task<DateTime?> GetLastSeenForUserAsync(int userId);
 
     }
 }

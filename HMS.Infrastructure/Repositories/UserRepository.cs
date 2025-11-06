@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using HMS.Application.DTO.Chat;
 using HMS.Application.DTO.User;
 using HMS.Application.DTOs;
 using HMS.Application.DTOs.Users;
@@ -173,4 +174,35 @@ public class UserRepository : IUserRepository
             .Select(s => s[random.Next(s.Length)]).ToArray());
     }
 
+    public async Task<List<UserListDto>> SearchActiveUsersAsync(string query)
+    {
+        using var conn = _context.CreateConnection();
+        var q = @"SELECT Id, FullName, Email, Username FROM Users
+            WHERE IsActive = 1 AND
+            (FullName LIKE @term OR Email = @termExact OR Username = @termExact OR Username LIKE @term)";
+        var p = new { term = $"%{query}%", termExact = query };
+        return (await conn.QueryAsync<UserListDto>(q, p)).ToList();
+    }
+
+    public async Task<int?> ResolveUserIdByIdentifier(string identifier)
+    {
+        using var conn = _context.CreateConnection();
+        var q = "SELECT Id FROM Users WHERE Email = @id OR Username = @id";
+        return await conn.QueryFirstOrDefaultAsync<int?>(q, new { id = identifier });
+    }
+    public async Task<DateTime?> GetLastSeenForUserAsync(int userId)
+    {
+        using var conn = _context.CreateConnection();
+        var parameters = new DynamicParameters();
+        parameters.Add("@UserId", userId, DbType.Int32);
+
+        // Execute the stored procedure and get the result
+        var lastSeen = await conn.QuerySingleOrDefaultAsync<DateTime?>(
+            "sp_GetLastSeenForUser",
+            parameters,
+            commandType: CommandType.StoredProcedure
+        );
+
+        return lastSeen;
+    }
 }

@@ -1,14 +1,17 @@
 using AutoMapper;
 using FluentValidation;
 using HMS.Application.Behaviors;
+using HMS.Application.Extensions;
 using HMS.Application.Handlers;
+using HMS.Application.Interfaces;
 using HMS.Application.Mappings;
 using HMS.Infrastructure;
 using HMS.Infrastructure.Data;
+using HMS.Web.Hubs;
+using HMS.Web.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using HMS.Application.Extensions;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,8 +60,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 builder.Services.AddAuthorization();
 
+builder.Services.AddSignalR();
+builder.Services.AddScoped<IChatHubService, ChatHubService>();
+
+
 // Build app
 var app = builder.Build();
+app.MapHub<ChatHub>("/chathub");
 
 // Seed initial data
 using (var scope = app.Services.CreateScope())

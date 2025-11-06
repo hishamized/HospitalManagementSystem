@@ -40,6 +40,13 @@ namespace HMS.Infrastructure
             services.AddTransient<IValidator<AddDoctorRoundCommand>, AddDoctorRoundCommandValidator>();
             services.AddTransient<IValidator<EditDoctorRoundCommand>, EditDoctorRoundCommandValidator>();
 
+            services.AddScoped<IChatRepository, ChatRepository>();
+            services.AddScoped<IPresenceTracker, PresenceTracker>();
+
+            services.AddScoped<IUserContext, HttpUserContext>();
+         
+
+            services.AddHttpContextAccessor();
         }
     }
 }

@@ -45,6 +45,11 @@ namespace HMS.Infrastructure.Data
         //public DbSet<Doctor> Doctors { get; set; }
         //public DbSet<Appointment> Appointments { get; set; }
 
+        public DbSet<ChatRoom> ChatRooms { get; set; }
+        public DbSet<ChatRoomUser> ChatRoomUsers { get; set; }
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<MessageStatus> MessageStatuses { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -241,6 +246,49 @@ namespace HMS.Infrastructure.Data
                       .HasForeignKey(dr => dr.WardId)
                       .OnDelete(DeleteBehavior.Restrict);
             });
+
+            // Apply configurations
+            modelBuilder.Entity<ChatRoomUser>()
+                .HasKey(cru => new { cru.ChatRoomId, cru.UserId });
+
+            modelBuilder.Entity<MessageStatus>()
+                .HasKey(ms => new { ms.MessageId, ms.UserId });
+
+            modelBuilder.Entity<ChatRoomUser>()
+                .HasOne(cru => cru.ChatRoom)
+                .WithMany(cr => cr.ChatRoomUsers)
+                .HasForeignKey(cru => cru.ChatRoomId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ChatRoomUser>()
+                .HasOne(cru => cru.User)
+                .WithMany()
+                .HasForeignKey(cru => cru.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.ChatRoom)
+                .WithMany(c => c.Messages)
+                .HasForeignKey(m => m.ChatRoomId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Sender)
+                .WithMany()
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<MessageStatus>()
+                .HasOne(ms => ms.Message)
+                .WithMany(m => m.MessageStatuses)
+                .HasForeignKey(ms => ms.MessageId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<MessageStatus>()
+                .HasOne(ms => ms.User)
+                .WithMany()
+                .HasForeignKey(ms => ms.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
         }
     }

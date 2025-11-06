@@ -4,6 +4,7 @@ using HMS.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HMS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251106040758_AddChatEntities")]
+    partial class AddChatEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,14 +258,9 @@ namespace HMS.Infrastructure.Migrations
                     b.Property<DateTime>("LastSeenAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("int");
-
                     b.HasKey("ChatRoomId", "UserId");
 
                     b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("ChatRoomUsers");
                 });
@@ -684,16 +682,11 @@ namespace HMS.Infrastructure.Migrations
                     b.Property<DateTime>("SentAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ChatRoomId");
 
                     b.HasIndex("SenderId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Messages");
                 });
@@ -1158,10 +1151,6 @@ namespace HMS.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HMS.Domain.Entities.User", null)
-                        .WithMany("ChatRooms")
-                        .HasForeignKey("UserId1");
-
                     b.Navigation("ChatRoom");
 
                     b.Navigation("User");
@@ -1287,10 +1276,6 @@ namespace HMS.Infrastructure.Migrations
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("HMS.Domain.Entities.User", null)
-                        .WithMany("SentMessages")
-                        .HasForeignKey("UserId");
 
                     b.Navigation("ChatRoom");
 
@@ -1429,10 +1414,6 @@ namespace HMS.Infrastructure.Migrations
 
             modelBuilder.Entity("HMS.Domain.Entities.User", b =>
                 {
-                    b.Navigation("ChatRooms");
-
-                    b.Navigation("SentMessages");
-
                     b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618

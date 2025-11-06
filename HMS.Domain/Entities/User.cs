@@ -23,5 +23,8 @@ namespace HMS.Domain.Entities
 
         // Navigation property for many-to-many with roles
         public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+        public ICollection<Message> SentMessages { get; set; } = new List<Message>();
+        public ICollection<ChatRoomUser> ChatRooms { get; set; } = new List<ChatRoomUser>();
+
     }
 }

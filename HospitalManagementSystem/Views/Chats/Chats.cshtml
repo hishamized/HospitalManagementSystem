@@ -1,0 +1,100 @@
+﻿@inject Microsoft.AspNetCore.SignalR.IHubContext<HMS.Web.Hubs.ChatHub> HubContext
+@{
+    ViewData["Title"] = "Chats";
+}
+<style>
+    #messages {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .message {
+        display: flex;
+        flex-direction: column;
+        max-width: 70%;
+        padding: 8px 12px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+        word-wrap: break-word;
+    }
+
+    .message-right {
+        align-self: flex-end;
+        background-color: #ffffff;
+        color: #000;
+        border-top-right-radius: 0;
+    }
+
+    .message-left {
+        align-self: flex-start;
+        background-color: #dcf8c6; /* WhatsApp greenish */
+        color: #000;
+        border-top-left-radius: 0;
+    }
+    .message-meta {
+        font-size: 0.7rem;
+        color: #555;
+        margin-bottom: 2px;
+    }
+
+    .typing-indicator {
+        font-size: 0.7rem;
+        color: #888;
+        margin-top: 2px;
+    }
+
+    .status-indicator {
+        margin-top: 2px;
+    }
+
+    .online-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background-color: #28a745; /* Bootstrap green */
+        border-radius: 50%;
+        margin-right: 5px;
+        vertical-align: middle;
+    }
+
+    .online-text {
+        color: #28a745;
+        font-size: 0.75rem;
+        vertical-align: middle;
+    }
+
+
+</style>
+
+<input type="hidden" id="current-user-id" value="@Context.Session.GetString("UserId")" />
+
+<div class="container-fluid vh-100">
+
+    <div class="row h-100">
+        <div class="col-3 border-end d-flex flex-column p-2" id="users-pane">
+            <div class="mb-2">
+                <input id="user-search" class="form-control" placeholder="Search by name, email, username" />
+            </div>
+            <div id="users-list" class="flex-grow-1 overflow-auto"></div>
+        </div>
+
+        <div class="col-6 d-flex flex-column p-2" id="chat-pane">
+            <div id="chat-header" class="border-bottom py-2">Select a user to start chat</div>
+            <div id="messages" class="flex-grow-1 overflow-auto p-2"></div>
+            <div class="pt-2">
+                <div class="input-group">
+                    <input id="message-input" class="form-control" disabled />
+                    <button id="send-btn" class="btn btn-primary" disabled>Send</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-3 border-start d-flex flex-column p-2" id="sidebar-pane">
+            <h6>Recent Chats</h6>
+            <div id="recent-chats" class="flex-grow-1 overflow-auto"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+<script src="~/js/Chats/chats.js"></script>
