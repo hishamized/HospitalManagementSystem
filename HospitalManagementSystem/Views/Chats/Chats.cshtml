@@ -62,7 +62,10 @@
         font-size: 0.75rem;
         vertical-align: middle;
     }
-
+    .message-seen{
+        color: cyan;
+        font-weight: bolder;
+    }
 
 </style>
 
@@ -78,7 +81,7 @@
             <div id="users-list" class="flex-grow-1 overflow-auto"></div>
         </div>
 
-        <div class="col-6 d-flex flex-column p-2" id="chat-pane">
+        <div class="col-6 d-flex flex-column p-2 h-100" id="chat-pane">
             <div id="chat-header" class="border-bottom py-2">Select a user to start chat</div>
             <div id="messages" class="flex-grow-1 overflow-auto p-2"></div>
             <div class="pt-2">
@@ -88,6 +91,7 @@
                 </div>
             </div>
         </div>
+
 
         <div class="col-3 border-start d-flex flex-column p-2" id="sidebar-pane">
             <h6>Recent Chats</h6>

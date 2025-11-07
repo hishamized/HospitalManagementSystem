@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HMS.Application.Queries.Chat
 {
-    public record GetMessagesQuery : IRequest<List<MessageDto>>
+    public record GetMessagesQuery : IRequest<List<MessageDtoDetailed>>
     {
         public int ChatRoomId { get; init; }
         public int Page { get; init; } = 1;

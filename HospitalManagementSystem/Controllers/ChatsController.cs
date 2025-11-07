@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 namespace HMS.Web.Controllers
 {
@@ -13,7 +14,7 @@ namespace HMS.Web.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IHubContext<ChatHub> _hubContext;
-        public ChatsController(IMediator mediator, IHubContext<ChatHub> hubContext) { 
+        public ChatsController(IMediator mediator, IHubContext<ChatHub> hubContext) {
             _mediator = mediator;
             _hubContext = hubContext;
         }
@@ -74,21 +75,79 @@ namespace HMS.Web.Controllers
             return Ok(msgs);
         }
 
+        /*
         [HttpPost]
         public async Task<IActionResult> SendMessage([FromForm] SendMessageCommand cmd)
         {
-            // 1. Send through CQRS pipeline (Mediate command to handler)
             var sentMessage = await _mediator.Send(cmd);
 
-            // 2. Broadcast via SignalR to all participants in the chat room
-            // Inject IHubContext<ChatHub> into your controller via constructor
             await _hubContext.Clients.Group($"chat-{cmd.ChatRoomId}")
                                      .SendAsync("ReceiveMessage", sentMessage);
-
-            // 3. Return the persisted message to the sender
             return Ok(sentMessage);
         }
+        */
+        [HttpGet]
+        public async Task<IActionResult> GetUnseenMessages(int chatRoomId)
+        {
+            var userId = GetCurrentUserId();
+            var messages = await _mediator.Send(new GetUnseenMessagesQuery
+            {
+                ChatRoomId = chatRoomId,
+                UserId = userId
+            });
+            return Ok(messages);
+        }
 
+        private int GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+            {
+                throw new UnauthorizedAccessException("User ID not found in claims.");
+            }
+
+            return userId;
+        }
+
+    [HttpPost]
+        public async Task<IActionResult> MarkMessagesDelivered()
+        {
+            var userId = GetCurrentUserId();
+
+            var count = await _mediator.Send(new MarkMessagesDeliveredCommand
+            {
+                UserId = userId
+            });
+
+            return Ok(new { count });
+        }
+        [HttpPost]
+        public async Task<IActionResult> DeleteMessage(int messageId)
+        {
+            var userId = GetCurrentUserId();
+
+            await _mediator.Send(new DeleteMessageCommand
+            {
+                MessageId = messageId,
+                UserId = userId
+            });
+
+            return Ok(new { success = true, message = "Message deleted successfully" });
+        }
+        [HttpPost]
+        public async Task<IActionResult> EditMessage(int messageId, string newContent)
+        {
+            var userId = GetCurrentUserId();
+
+            await _mediator.Send(new EditMessageCommand
+            {
+                MessageId = messageId,
+                NewContent = newContent,
+                UserId = userId
+            });
+
+            return Ok(new { success = true, message = "Message edited successfully" });
+        }
     }
-
 }

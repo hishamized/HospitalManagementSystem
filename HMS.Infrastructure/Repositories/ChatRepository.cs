@@ -71,7 +71,72 @@ namespace HMS.Infrastructure.Repositories
             }
         }
 
+        public async Task UpdateMessageStatusAsync(int messageId, int userId, bool isDelivered, bool isSeen)
+        {
+            using var connection = _context.CreateConnection();
 
+            var parameters = new DynamicParameters();
+            parameters.Add("@MessageId", messageId, DbType.Int32);
+            parameters.Add("@UserId", userId, DbType.Int32);
+            parameters.Add("@IsDelivered", isDelivered, DbType.Boolean);
+            parameters.Add("@IsSeen", isSeen, DbType.Boolean);
+
+            await connection.ExecuteAsync(
+                "sp_UpdateMessageStatus",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+        }
+
+        public async Task<int> MarkMessagesSeenAsync(int userId, List<int> messageIds)
+        {
+            using var connection = _context.CreateConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@UserId", userId);
+            parameters.Add("@MessageIds", string.Join(",", messageIds));
+
+            var result = await connection.ExecuteScalarAsync<int>(
+                "sp_MarkMessagesSeen",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return result;
+        }
+
+        public async Task<IEnumerable<MessageDto>> GetUnseenMessagesAsync(int chatRoomId, int userId, CancellationToken cancellationToken = default)
+        {
+            using var conn = _context.CreateConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@ChatRoomId", chatRoomId, DbType.Int32);
+            parameters.Add("@UserId", userId, DbType.Int32);
+
+            var messages = await conn.QueryAsync<MessageDto>(
+                "sp_GetUnseenMessages",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return messages;
+        }
+
+        public async Task EditMessageAsync(int messageId, string newContent, int userId, CancellationToken cancellationToken = default)
+        {
+            using var conn = _context.CreateConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@MessageId", messageId, DbType.Int32);
+            parameters.Add("@NewContent", newContent, DbType.String);
+            parameters.Add("@UserId", userId, DbType.Int32);
+
+            await conn.ExecuteAsync(
+                "sp_EditMessage",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+        }
 
         public async Task<RecentChatDto> GetRecentChatDtoAsync(int chatRoomId, int currentUserId)
         {
@@ -152,25 +217,17 @@ ORDER BY ISNULL(latest.SentAt, cr.CreatedAt) DESC;
             return list;
         }
 
-        public async Task<List<MessageDto>> GetMessagesAsync(int chatRoomId, int page, int pageSize)
+        public async Task<List<MessageDtoDetailed>> GetMessagesAsync(int chatRoomId, int page, int pageSize)
         {
             using var conn = _context.CreateConnection();
-
-            if (page < 1) page = 1;
-            if (pageSize <= 0) pageSize = 50;
-            var offset = (page - 1) * pageSize;
-
-            var sql = @"
-SELECT m.Id, m.ChatRoomId, m.SenderId, u.Username AS SenderUsername, m.Content, m.SentAt, m.IsEdited, m.IsDeletedForEveryone
-FROM Messages m
-JOIN Users u ON u.Id = m.SenderId
-WHERE m.ChatRoomId = @ChatRoomId
-ORDER BY m.SentAt ASC, m.Id ASC
-OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
-";
-            var messages = (await conn.QueryAsync<MessageDto>(sql, new { ChatRoomId = chatRoomId, Offset = offset, PageSize = pageSize })).ToList();
-            return messages;
+            var parameters = new DynamicParameters();
+            parameters.Add("@ChatRoomId", chatRoomId);
+            parameters.Add("@Page", page);
+            parameters.Add("@PageSize", pageSize);
+            var result = await conn.QueryAsync<MessageDtoDetailed>("sp_GetMessages", parameters, commandType: CommandType.StoredProcedure);
+            return result.ToList();
         }
+
         public async Task<int> ResolveUserIdByIdentifier(string? identifier)
         {
             if (string.IsNullOrWhiteSpace(identifier))
@@ -186,6 +243,36 @@ OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
                 return userId.Value;
 
             throw new InvalidOperationException($"User not found for identifier '{identifier}'.");
+        }
+
+        public async Task<int> MarkMessagesAsDeliveredAsync(int chatRoomId, int userId, CancellationToken cancellationToken = default)
+        {
+            using var conn = _context.CreateConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@UserId", userId, DbType.Int32);
+
+            var count = await conn.QuerySingleAsync(
+                "sp_MarkMessagesAsDelivered",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return count;
+        }
+        public async Task DeleteMessageAsync(int messageId, int userId, CancellationToken cancellationToken = default)
+        {
+            using var conn = _context.CreateConnection();
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@MessageId", messageId, DbType.Int32);
+            parameters.Add("@UserId", userId, DbType.Int32);
+
+            await conn.ExecuteAsync(
+                "sp_DeleteMessage",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
         }
     }
 }

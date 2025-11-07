@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace HMS.Application.Handlers.Chat
 {
-    public class GetMessagesHandler : IRequestHandler<GetMessagesQuery, List<MessageDto>>
+    public class GetMessagesHandler : IRequestHandler<GetMessagesQuery, List<MessageDtoDetailed>>
     {
         private readonly IChatRepository _repo;
         public GetMessagesHandler(IChatRepository repo) { _repo = repo; }
-        public Task<List<MessageDto>> Handle(GetMessagesQuery req, CancellationToken ct) => _repo.GetMessagesAsync(req.ChatRoomId, req.Page, req.PageSize);
+        public Task<List<MessageDtoDetailed>> Handle(GetMessagesQuery req, CancellationToken ct) => _repo.GetMessagesAsync(req.ChatRoomId, req.Page, req.PageSize);
     }
 
 }
