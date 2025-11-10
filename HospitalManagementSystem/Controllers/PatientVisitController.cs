@@ -1,5 +1,7 @@
 ﻿using HMS.Application.Commands;
+using HMS.Application.Commands.Bill;
 using HMS.Application.Commands.Insurance;
+using HMS.Application.Commands.Patient;
 using HMS.Application.Commands.PatientVisit;
 using HMS.Application.Commands.PatientVisits;
 using HMS.Application.Dto;
@@ -72,7 +74,7 @@ namespace HMS.Web.Controllers
                 return StatusCode(500, new
                 {
                     success = false,
-                    message = "An unexpected error occurred while adding the patient visit.",
+                    message = "An unexpected error occurred while adding the patient visit." + ex.Message,
                     error = ex.Message
                 });
             }
@@ -195,6 +197,27 @@ namespace HMS.Web.Controllers
                 return StatusCode(500, "An error occurred while retrieving inpatient details.");
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> DischargePatient(int visitId)
+        {
+            try
+            {
+                if (visitId == null || visitId < 1) {
+                    return StatusCode(500,"Invalid Patient Visit Record");
+                }
+                var command = new DischargePatientCommand()
+                {
+                    VisitId = visitId 
+                };
+              
+                var result = _mediator.Send(command);
+                return Ok(new {Success = true, Message = "Patient has been discharged successfully!"  });
+            }
+            catch (Exception ex) {
+                return StatusCode(500, ex.Message); 
+            }
+        }
 
+        
     }
 }

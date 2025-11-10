@@ -17,5 +17,7 @@ namespace HMS.Application.Interfaces
 
         Task<object?> GetInpatientDetailsAsync(int patientId, int visitId);
         Task<OutPatientDetailsDto?> GetOutPatientDetailsAsync(int patientId, int visitId);
+
+        Task<bool> DischargePatientAsync(int VisitId);
     }
 }

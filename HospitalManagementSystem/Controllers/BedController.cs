@@ -188,7 +188,7 @@ namespace HMS.Web.Controllers
 
                 var result = await _mediator.Send(new AllotBedCommand(dto));
 
-                if (!result)
+                if (result != 1)
                     return StatusCode(500, "Failed to allot bed. Please try again.");
 
                 return Ok("Bed successfully allotted to patient.");

@@ -790,4 +790,124 @@
         });
     });
 
+    $('#dischargePatientBtn').on('click', function () {
+        const VisitId = $(this).data('visitid');
+        $.ajax({
+            url: '/PatientVisit/DischargePatient',
+            method: 'GET',
+            data: { VisitId: VisitId },
+            success: function (response) {
+                if (response.Success == true) {
+                    alert(response.Message); 
+                    $('#dischargePatientBtn').hide();
+                }
+            },
+            error: function (xhr) {
+                let errorMessage = xhr.response;
+                console.log(errorMessage);
+            }
+        });
+    });
+
+    $('#GenerateFinalBillBtn').on('click', function () {
+        const VisitId = $(this).data('visitid');
+        const PatientId = $(this).data('patientid');
+
+        $.ajax({
+            url: '/Bill/GetFinalBill',
+            method: 'GET',
+            data: {
+                patientId: PatientId,
+                visitId: VisitId
+            },
+            beforeSend: function () {
+                $('#GenerateFinalBillBtn').prop('disabled', true).html('<i class="bi bi-hourglass-split"></i> Loading...');
+            },
+            success: function (response) {
+                if (response.success && response.data) {
+                    console.log(response.data);
+                    populateFinalBillModal(response.data);
+                    $('#finalBillModal').modal('show');
+                } else {
+                    alert(response.message || "Failed to generate bill.");
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', xhr.responseJSON);
+                alert("Server Error: " + (xhr.responseJSON?.message || error));
+            },
+            complete: function () {
+                $('#GenerateFinalBillBtn').prop('disabled', false).html('<i class="bi bi-receipt"></i> Generate Final Bill');
+            }
+        });
+    });
+
+    function populateFinalBillModal(data) {
+        // Charges
+        $('#billRoomCharges').text((data.roomChargesFinal || 0).toFixed(2));
+        $('#billConsultationCharges').text((data.consultationChargesFinal || 0).toFixed(2));
+        $('#billProcedureCharges').text((data.procedureChargesFinal || 0).toFixed(2));
+        $('#billMedicationCharges').text((data.medicationChargesFinal || 0).toFixed(2));
+        $('#billOpdConsultationFee').text((data.opdConsultationFeeFinal || 0).toFixed(2));
+
+        const subtotal = (data.roomCharges || 0) + (data.consultationChargesFinal || 0) +
+            (data.procedureChargesFinal || 0) + (data.medicationChargesFinal || 0) +
+            (data.opdConsultationFeeFinal || 0);
+        $('#billSubtotal').text(subtotal.toFixed(2));
+        $('#billDiscountAmount').text((data.discountAmountFinal || 0).toFixed(2));
+        $('#billNetAmount').text((data.netAmountFinal || 0).toFixed(2));
+
+        // Payment Info
+        const paymentStatusBadge = $('#billPaymentStatus');
+        paymentStatusBadge.text(data.paymentStatus || '-');
+
+        // Color code payment status
+        paymentStatusBadge.removeClass('bg-success bg-warning bg-danger');
+        if (data.paymentStatus === 'Paid') {
+            paymentStatusBadge.addClass('bg-success');
+        } else if (data.paymentStatus === 'Pending') {
+            paymentStatusBadge.addClass('bg-warning');
+        } else {
+            paymentStatusBadge.addClass('bg-danger');
+        }
+
+        $('#billPaymentMode').text(data.paymentMode || '-');
+
+        // Notes
+        if (data.notes && data.notes.trim() !== '') {
+            $('#billNotes').text(data.notes);
+            $('#billNotesSection').show();
+        } else {
+            $('#billNotesSection').hide();
+        }
+
+        // Generated Date
+        $('#billGeneratedDate').text(new Date().toLocaleString());
+
+        // Store data for PDF generation
+        $('#finalBillModal').data('billData', data);
+    }
+
+    // Download PDF Button
+    $('#btnDownloadBill').on('click', function () {
+        const billData = $('#finalBillModal').data('billData');
+
+        if (!billData) {
+            alert('Bill data not available. Please regenerate the bill.');
+            return;
+        }
+
+        // Using html2pdf library (you'll need to include this in your layout)
+        const element = document.getElementById('billContent');
+        const opt = {
+            margin: 10,
+            filename: `Bill_${billData.patientName}_${billData.visitId}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save();
+    });
 });
+

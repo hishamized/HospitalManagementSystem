@@ -154,5 +154,35 @@ namespace HMS.Web.Controllers
                 });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetFinalBill(int patientId, int visitId)
+        {
+            try
+            {
+                if (patientId == 0 || visitId == 0)
+                {
+                    return BadRequest(new { success = false, message = "Invalid patient or visit ID." });
+                }
+
+                var result = await _mediator.Send(new GetFinalBillCommand(patientId, visitId));
+
+                if (result == null)
+                {
+                    return NotFound(new { success = false, message = "No bill record found for the specified patient visit." });
+                }
+
+                return Ok(new { success = true, data = result });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "An error occurred while fetching the bill.",
+                    details = ex.Message
+                });
+            }
+        }
     }
 }

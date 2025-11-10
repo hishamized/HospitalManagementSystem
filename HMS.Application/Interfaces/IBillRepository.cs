@@ -13,5 +13,7 @@ namespace HMS.Application.Interfaces
         Task<IEnumerable<BillListDto>> GetBillsByPatientIdAsync(int patientId);
         Task<int> UpdateBillAsync(EditBillDto dto);
         Task<int> DeleteBillAsync(int id);
+
+        Task<GetFinalBillDto> GetFinalBillAsync(int PatientId, int Visitid);
     }
 }

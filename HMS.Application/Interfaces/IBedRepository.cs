@@ -18,7 +18,7 @@ namespace HMS.Application.Interfaces
         Task<int> DeleteBedAsync(int id);
 
         Task<IEnumerable<BedDropdownDto>> GetBedsByWardIdAsync(int wardId);
-        Task<bool> AllotBedAsync(AllotBedDto entity);
+        Task<int> AllotBedAsync(AllotBedDto entity);
         Task<CheckBedDto> CheckBedStatusAsync(int patientId);
         Task<int> RemovePatientFromBedAsync(int patientBedWardId);
     }

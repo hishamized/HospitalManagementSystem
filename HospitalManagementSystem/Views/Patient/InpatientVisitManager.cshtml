@@ -43,12 +43,42 @@
     .bg-purple {
         background-color: #6f42c1 !important;
     }
+
+    #finalBillModal .table td,
+    #finalBillModal .table th {
+        padding: 0.5rem;
+    }
+
+    #finalBillModal .table-bordered {
+        border: 1px solid #dee2e6;
+    }
+
+    #finalBillModal .modal-body {
+        font-size: 0.95rem;
+    }
+
+    @@media print {
+        .modal-footer
+
+    {
+        display: none !important;
+    }
+
+    }
 </style>
 
 <div class="card shadow-sm mt-4">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="card-title mb-0">Patient Bills</h5>
+            @if (@Model.IsActive == true)
+            {
+                <button id="dischargePatientBtn" class="btn btn-danger" data-visitid="@Model.VisitId">Discharge Patient</button>
+            }
+            
+            <button class="btn btn-danger" id="GenerateFinalBillBtn" data-visitid="@Model.VisitId" data-patientid="@Model.PatientId">
+                Final Bill
+            </button>
             <button id="btnReloadBills" class="btn btn-outline-primary btn-sm">
                 <i class="bi bi-arrow-clockwise me-1"></i> Refresh
             </button>
@@ -586,7 +616,143 @@
     </div>
 </div>
 
+<!-- Final Bill Modal -->
+<div class="modal fade" id="finalBillModal" tabindex="-1" aria-labelledby="finalBillModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="finalBillModalLabel">
+                    <i class="bi bi-file-earmark-text"></i> Final Bill Summary
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="billContent">
+                <!-- Hospital Header -->
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold">Hospital Management System</h3>
+                    <p class="text-muted mb-0">Final Discharge Bill</p>
+                </div>
 
+                <hr />
+
+                <!-- Patient Information -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold text-primary">Patient Information</h6>
+                        <table class="table table-sm table-borderless">
+                            <tr>
+                                <td class="fw-semibold">Patient Name:</td>
+                                <td id="billPatientName">@Model.FullName</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Patient Code:</td>
+                                <td id="billPatientId">@Model.PatientCode</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Gender:</td>
+                                <td id="billAgeGender">@Model.Gender</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Contact:</td>
+                                <td id="billContactNumber">@Model.ContactNumber</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold text-primary">Visit Information</h6>
+                        <table class="table table-sm table-borderless">
+                            <tr>
+                                <td class="fw-semibold">Visit ID:</td>
+                                <td id="billVisitId">@Model.VisitId</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Admission Date:</td>
+                                <td id="billAdmissionDate">@Model.AdmissionDate</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-semibold">Discharge Date:</td>
+                                <td id="billDischargeDate">@Model.DischargeDate</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+
+                <hr />
+
+                <!-- Charges Breakdown -->
+                <div class="mb-3">
+                    <h6 class="fw-bold text-primary">Charges Breakdown</h6>
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Description</th>
+                                <th class="text-end">Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Room Charges</td>
+                                <td class="text-end" id="billRoomCharges">0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Consultation Charges</td>
+                                <td class="text-end" id="billConsultationCharges">0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Procedure Charges</td>
+                                <td class="text-end" id="billProcedureCharges">0.00</td>
+                            </tr>
+                            <tr>
+                                <td>Medication Charges</td>
+                                <td class="text-end" id="billMedicationCharges">0.00</td>
+                            </tr>
+                            <tr>
+                                <td>OPD Consultation Fee</td>
+                                <td class="text-end" id="billOpdConsultationFee">0.00</td>
+                            </tr>
+                            <tr class="table-light">
+                                <td class="fw-bold">Subtotal</td>
+                                <td class="text-end fw-bold" id="billSubtotal">0.00</td>
+                            </tr>
+                            <tr class="table-warning">
+                                <td class="fw-semibold">Discount</td>
+                                <td class="text-end fw-semibold" id="billDiscountAmount">0.00</td>
+                            </tr>
+                            <tr class="table-success">
+                                <td class="fw-bold fs-5">Net Amount Payable</td>
+                                <td class="text-end fw-bold fs-5" id="billNetAmount">0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Notes -->
+                <div class="mb-3" id="billNotesSection" style="display: none;">
+                    <h6 class="fw-bold text-primary">Additional Notes</h6>
+                    <p class="text-muted" id="billNotes"></p>
+                </div>
+
+                <hr />
+
+                <!-- Footer -->
+                <div class="text-center text-muted small">
+                    <p class="mb-1">Thank you for choosing our services!</p>
+                    <p class="mb-0">Generated on: <span id="billGeneratedDate"></span></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> Close
+                </button>
+                <button type="button" class="btn btn-success" id="btnDownloadBill">
+                    <i class="bi bi-download"></i> Download PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 @section Scripts {
     <script src="/js/Patient/inpatientVisitManager.js"></script>
+    <!-- Include html2pdf library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 }

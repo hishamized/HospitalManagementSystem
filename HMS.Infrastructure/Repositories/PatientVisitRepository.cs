@@ -117,5 +117,20 @@ namespace HMS.Infrastructure.Repositories
 
             return result;
         }
+
+        public async Task<bool> DischargePatientAsync(int visitId)
+        {
+            using var connection = _context.CreateConnection();
+
+            var parameters = new { patientvisitid = visitId };
+
+            var result = await connection.ExecuteScalarAsync<int>(
+                "sp_DischargePatient",
+                parameters,
+                commandType: CommandType.StoredProcedure    
+            );
+
+            return result > 0;
+        }
     }
 }

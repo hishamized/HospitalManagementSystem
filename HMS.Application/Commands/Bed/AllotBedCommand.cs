@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HMS.Application.Commands.Bed
 {
-    public class AllotBedCommand : IRequest<bool>
+    public class AllotBedCommand : IRequest<int>
     {
         public AllotBedDto Dto { get; }
 

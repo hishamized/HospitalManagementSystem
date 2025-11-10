@@ -104,5 +104,20 @@ namespace HMS.Infrastructure.Repositories
                 throw new Exception($"Database delete failed: {ex.Message}", ex);
             }
         }
+
+        public async Task<GetFinalBillDto> GetFinalBillAsync(int PatientId, int VisitId) {
+            using var connection = _context.CreateConnection();
+            var parameters = new DynamicParameters();
+            parameters.Add("@PatientId", PatientId, DbType.Int32);
+            parameters.Add("@VisitId", VisitId, DbType.Int32);
+
+            var result = await connection.QuerySingleOrDefaultAsync<GetFinalBillDto>(
+                    "sp_FinalBill",
+                    parameters,
+                    commandType: CommandType.StoredProcedure
+                );
+
+            return result;
+        }
     }
 }

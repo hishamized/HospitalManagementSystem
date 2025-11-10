@@ -110,20 +110,22 @@ namespace HMS.Infrastructure.Repositories
 
             return beds;
         }
-        public async Task<bool> AllotBedAsync(AllotBedDto entity)
+        public async Task<int> AllotBedAsync(AllotBedDto entity)
         {
             using var connection = _context.CreateConnection();
 
             var parameters = new DynamicParameters(entity);
 
-            var result = await connection.ExecuteScalarAsync<int>(
+            // Execute stored procedure and get new BedId
+            var newBedId = await connection.ExecuteScalarAsync<int>(
                 "sp_AllotBedToPatient",
                 parameters,
                 commandType: CommandType.StoredProcedure
             );
 
-            return result > 0;
+            return newBedId; // Returns 0 if failed, or new BedId if successful
         }
+
         public async Task<CheckBedDto> CheckBedStatusAsync(int patientId)
         {
             using var connection = _context.CreateConnection();
