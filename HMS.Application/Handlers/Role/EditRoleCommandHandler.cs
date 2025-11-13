@@ -18,7 +18,7 @@ namespace HMS.Application.Handlers.Role
         public async Task<int> Handle(EditRoleCommand request, CancellationToken cancellationToken)
         {
             // Pass the DTO directly to repository
-            return await _roleRepository.EditRoleAsync(request.Role);
+            return await _roleRepository.EditRoleAsync(cancellationToken, request.Role);
         }
     }
 }

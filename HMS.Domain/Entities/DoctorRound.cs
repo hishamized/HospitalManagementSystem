@@ -15,6 +15,9 @@ namespace HMS.Domain.Entities
         public int PatientId { get; set; }
         public int WardId { get; set; }
 
+        //Not a foreign key but important
+        public int VisitId { get; set; }
+
         // Core Round Details
         public DateTime RoundDate { get; set; } = DateTime.UtcNow;   // Date and time of the round
         public string? Observations { get; set; }                     // Doctor’s notes or observations

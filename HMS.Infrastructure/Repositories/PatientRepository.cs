@@ -2,12 +2,8 @@
 using HMS.Application.DTO.Patient;
 using HMS.Domain.Entities;
 using HMS.Domain.Interfaces;
-using HMS.Infrastructure.Data;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
 using System.Data;
-using System.Threading.Tasks;
+
 
 namespace HMS.Infrastructure.Repositories
 {
@@ -69,7 +65,27 @@ namespace HMS.Infrastructure.Repositories
             using var conn = _context.CreateConnection();
             return await conn.QueryFirstAsync<string>("sp_GeneratePatientCode", commandType: System.Data.CommandType.StoredProcedure);
         }
-   
 
+        public async Task<DischargeSummaryDto?> GetDischargeSummaryAsync(int visitId)
+        {
+            const string procedureName = "usp_GetDischargeSummary";
+            using var conn = _context.CreateConnection();
+            using (var multi = await conn.QueryMultipleAsync(
+                procedureName,
+                new { VisitId = visitId },
+                commandType: CommandType.StoredProcedure))
+            {
+                // 1️⃣ First result: Discharge Summary
+                var summary = await multi.ReadFirstOrDefaultAsync<DischargeSummaryDto>();
+
+                // 2️⃣ Second result: Doctor Rounds
+                var rounds = (await multi.ReadAsync<DoctorRoundDto>()).ToList();
+
+                if (summary != null)
+                    summary.DoctorRounds = rounds;
+
+                return summary;
+            }
+        }
     }
 }

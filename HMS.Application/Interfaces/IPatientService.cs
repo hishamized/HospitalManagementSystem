@@ -14,5 +14,7 @@ namespace HMS.Domain.Interfaces
         Task<int> DeleteAsync(int id);
         Task<string> GeneratePatientCodeAsync();
 
+        Task<DischargeSummaryDto?> GetDischargeSummaryAsync(int visitId);
+
     }
 }

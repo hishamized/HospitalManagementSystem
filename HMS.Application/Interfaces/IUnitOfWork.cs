@@ -12,6 +12,10 @@ namespace HMS.Domain.Interfaces
         IInsuranceRepository Insurances { get; }
         IBillRepository Bills { get; }
 
+        IRoleRepository RoleRepository { get; }
+
+        IPatientPortalRepository PatientPortalRepository { get; }
+
         Task<int> CommitAsync();
     }
 

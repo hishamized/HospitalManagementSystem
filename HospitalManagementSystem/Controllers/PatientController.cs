@@ -1,9 +1,11 @@
 ﻿using HMS.Application.Commands;
 using HMS.Application.DTO.Patient;
 using HMS.Application.Queries;
+using HMS.Application.Queries.Patient;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 
 namespace HMS.Web.Controllers
 {
@@ -69,5 +71,36 @@ namespace HMS.Web.Controllers
 
             return View("ViewPatient", patient);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GenerateDischargeSummary(int visitId)
+        {
+            try
+            {
+                var summary = await _mediator.Send(new GetDischargeSummaryQuery(visitId));
+                if (summary == null)
+                    return NotFound(new
+                    {
+                        status = 404,
+                        success = false,
+                        message = $"No discharge summary found for VisitId {visitId}"
+                    });
+
+                return Ok(new
+                {
+                    status = 200,
+                    success = true,
+                    data = summary
+                });
+            }
+            catch (Exception ex) {
+                return StatusCode(500, new
+                 {
+                    success = false,
+                    message = $"Server error: {ex.Message}"
+                });
+            }
+        }
+
     }
 }

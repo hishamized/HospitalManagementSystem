@@ -18,7 +18,7 @@ namespace HMS.Application.Handlers.Role
         public async Task<(bool Success, string Message, int RowsAffected)> Handle(TheDeleteRoleCommand request, CancellationToken cancellationToken)
         {
             // Access request.RoleId here safely
-            var result = await _roleRepository.DeleteAsync(request.RoleId);
+            var result = await _roleRepository.DeleteAsync(cancellationToken, request.RoleId);
             return result;
         }
     }

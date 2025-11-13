@@ -5,6 +5,7 @@ using HMS.Application.Interfaces;
 using HMS.Application.Validators.Bed;
 using HMS.Application.Validators.Doctor;
 using HMS.Domain.Interfaces;
+using HMS.Domain.Repositories;
 using HMS.Infrastructure.Data;
 using HMS.Infrastructure.Repositories;
 using HMS.Infrastructure.Services;
@@ -17,6 +18,7 @@ namespace HMS.Infrastructure
         public static void AddInfrastructure(this IServiceCollection services)
         {
             services.AddSingleton<DapperContext>();
+            services.AddTransient<IRepository, Repository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IPatientRepository, PatientRepository>();

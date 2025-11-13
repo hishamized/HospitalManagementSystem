@@ -509,7 +509,6 @@
     // Show modal and populate doctors
     $('#btnAddDoctorRound').on('click', function () {
         const patientId = $('#PatientId').val(); // get hidden patientId
-
         if (!patientId) {
             alert('Patient ID not found!');
             return;
@@ -562,6 +561,7 @@
     // Form submission
     $('#doctorRoundForm').submit(function (e) {
         e.preventDefault();
+        $('#doctorRoundForm').prop('disabled', true);
 
         // Remove previous errors
         $('#doctorRoundForm .is-invalid').removeClass('is-invalid');
@@ -579,6 +579,7 @@
             },
             success: function (response) {
                 if (response.success) {
+                    $('#doctorRoundForm').prop('disabled', false);
                     alert(response.message); // replace with toast or nicer UI if you like
                     $('#doctorRoundModal').modal('hide');
                     $('#doctorRoundForm')[0].reset();
@@ -588,6 +589,7 @@
                 }
             },
             error: function (xhr) {
+                $('#doctorRoundForm').prop('disabled', false);
                 if (xhr.status === 400) {
                     // Display model state errors
                     var errors = xhr.responseJSON;
@@ -907,6 +909,100 @@
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
+        html2pdf().set(opt).from(element).save();
+    });
+
+    $('#dischargeSummaryBtn').on('click', function () {
+        const visitId = $(this).data('visitid');
+        $.ajax({
+            url: '/Patient/GenerateDischargeSummary',
+            method: 'GET',
+            data: { VisitId: visitId },
+            success: function (response) {
+                if (response.success) {
+                    const data = response.data;
+                    populateDischargeModal(data);
+                    const modal = new bootstrap.Modal(document.getElementById('dischargeSummaryModal'));
+                    modal.show();
+                } else {
+                    alert("No discharge summary found.");
+                }
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                alert("Error loading discharge summary.");
+            }
+        });
+    });
+
+    function populateDischargeModal(data) {
+        let roundsHtml = '';
+        if (data.doctorRounds && data.doctorRounds.length > 0) {
+            roundsHtml = data.doctorRounds.map(r => `
+                <tr>
+                    <td>${r.roundDate ? new Date(r.roundDate).toLocaleString() : ''}</td>
+                    <td>${r.doctorName || ''}</td>
+                    <td>${r.diagnosis || ''}</td>
+                    <td>${r.prescriptions || ''}</td>
+                    <td>${r.treatmentPlan || ''}</td>
+                    <td>${r.isCritical ? 'Yes' : 'No'}</td>
+                </tr>
+            `).join('');
+        } else {
+            roundsHtml = `<tr><td colspan="6" class="text-center text-muted">No doctor rounds recorded.</td></tr>`;
+        }
+
+        const html = `
+            <div id="summaryToPrint">
+                <h4 class="mb-3">${data.fullName} (${data.patientCode})</h4>
+                <p><strong>Gender:</strong> ${data.gender} | <strong>DOB:</strong> ${new Date(data.dateOfBirth).toLocaleDateString()}</p>
+                <p><strong>Contact:</strong> ${data.contactNumber} | <strong>Address:</strong> ${data.address || '-'}</p>
+
+                <hr/>
+                <h5>Visit Details</h5>
+                <p><strong>Visit ID:</strong> ${data.visitId} | <strong>Visit Type:</strong> ${data.visitType}</p>
+                <p><strong>Admission:</strong> ${data.admissionDate ? new Date(data.admissionDate).toLocaleDateString() : '-'} |
+                   <strong>Discharge:</strong> ${data.dischargeDate ? new Date(data.dischargeDate).toLocaleDateString() : '-'}</p>
+                <p><strong>Room:</strong> ${data.roomNumber || '-'} | <strong>Ward:</strong> ${data.wardName || '-'} | <strong>Bed:</strong> ${data.bedNumber || '-'}</p>
+
+                <hr/>
+                <h5>Doctor Details</h5>
+                <p><strong>Doctor:</strong> ${data.doctorName || '-'} (ID: ${data.doctorId || '-'})</p>
+                <p><strong>Treatment Summary:</strong> ${data.treatmentDetails || '-'}</p>
+                <p><strong>Notes:</strong> ${data.notes || '-'}</p>
+
+                <hr/>
+                <h5>Doctor Rounds</h5>
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Date</th>
+                            <th>Doctor</th>
+                            <th>Diagnosis</th>
+                            <th>Prescriptions</th>
+                            <th>Treatment Plan</th>
+                            <th>Critical</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${roundsHtml}
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        $('#dischargeSummaryContent').html(html);
+    }
+
+    $('#downloadPdfBtn').on('click', function () {
+        const element = document.getElementById('summaryToPrint');
+        const opt = {
+            margin: 0.5,
+            filename: 'DischargeSummary.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
         html2pdf().set(opt).from(element).save();
     });
 });

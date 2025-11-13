@@ -62,6 +62,7 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IChatHubService, ChatHubService>();
+builder.Services.AddScoped<DbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
 
 // Build app

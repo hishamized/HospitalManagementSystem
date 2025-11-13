@@ -23,7 +23,7 @@ namespace HMS.Application.Handlers.Role
         public async Task<IEnumerable<GetRoleDto>> Handle(GetRolesQuery request, CancellationToken cancellationToken)
         {
             // Get all roles from the repository
-            var roles = await _roleRepository.GetAllAsync();
+            var roles = await _roleRepository.GetAllAsync(cancellationToken);
 
             // Map entities to DTOs
             var roleDtos = _mapper.Map<IEnumerable<GetRoleDto>>(roles);

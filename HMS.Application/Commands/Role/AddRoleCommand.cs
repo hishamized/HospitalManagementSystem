@@ -3,7 +3,7 @@ using MediatR;
 
 namespace HMS.Application.Commands.Role
 {
-    public class AddRoleCommand : IRequest<int>
+    public class AddRoleCommand : IRequest<long>
     {
         public AddRoleDto Role { get; set; }
 

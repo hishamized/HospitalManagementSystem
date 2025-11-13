@@ -69,46 +69,71 @@
 
 <div class="card shadow-sm mt-4">
     <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center mb-3">
             <h5 class="card-title mb-0">Patient Bills</h5>
-            @if (@Model.IsActive == true)
-            {
-                <button id="dischargePatientBtn" class="btn btn-danger" data-visitid="@Model.VisitId">Discharge Patient</button>
-            }
-            
-            <button class="btn btn-danger" id="GenerateFinalBillBtn" data-visitid="@Model.VisitId" data-patientid="@Model.PatientId">
-                Final Bill
-            </button>
-            <button id="btnReloadBills" class="btn btn-outline-primary btn-sm">
-                <i class="bi bi-arrow-clockwise me-1"></i> Refresh
-            </button>
-            <button id="btnAllotBed" class="btn btn-primary">
-                <i class="uil-bed-double"></i> Allot Bed
-            </button>
-            <button id="btnAddBill" class="btn btn-primary">
-                <i class="bi bi-plus-lg me-1"></i> Add Bill
-            </button>
-            <button class="btn btn-info btn-sm check-bed-btn"
-                    data-patient-id="@Model.PatientId">
-                Check Bed
-            </button>
-            <button style="display: none;"
-                    class="btn btn-danger"
-                    id="removeWardBed"
-                    data-has-bed="0"
-                    data-patient-bed-ward-id="">
-                Remove Ward / Bed
-            </button>
-            <button id="btnAddDoctorRound" class="btn btn-primary mt-3">
-                <i class="bi bi-plus-circle"></i> Add Doctor Round
-            </button>
-            <button id="btnViewRoundHistory" class="btn btn-info mt-3">
-                <i class="bi bi-clock-history"></i> View Round History
-            </button>
+            <div class="d-flex flex-wrap gap-2">
 
+                @if (@Model.IsActive == true)
+                {
+                    <button id="dischargeSummaryBtn"
+                            class="btn btn-danger btn-sm"
+                            data-visitid="@Model.VisitId">
+                        <i class="bi bi-box-arrow-right me-1"></i> Discharge Summary
+                    </button>
+                }
 
+                <button id="dischargePatientBtn"
+                        class="btn btn-danger btn-sm"
+                        data-visitid="@Model.VisitId">
+                    <i class="bi bi-box-arrow-right me-1"></i> Discharge
+                </button>
+
+                <button id="GenerateFinalBillBtn"
+                        class="btn btn-danger btn-sm"
+                        data-visitid="@Model.VisitId"
+                        data-patientid="@Model.PatientId">
+                    <i class="bi bi-receipt-cutoff me-1"></i> Final Bill
+                </button>
+
+                <button id="btnReloadBills"
+                        class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                </button>
+
+                <button id="btnAddBill"
+                        class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-lg me-1"></i> Add Bill
+                </button>
+
+                <button id="btnAllotBed"
+                        class="btn btn-primary btn-sm">
+                    <i class="bi bi-hospital me-1"></i> Allot Bed
+                </button>
+
+                <button class="btn btn-info btn-sm check-bed-btn"
+                        data-patient-id="@Model.PatientId">
+                    <i class="bi bi-search me-1"></i> Check Bed
+                </button>
+
+                <button id="removeWardBed"
+                        class="btn btn-danger btn-sm d-none"
+                        data-has-bed="0"
+                        data-patient-bed-ward-id="">
+                    <i class="bi bi-x-circle me-1"></i> Remove Ward/Bed
+                </button>
+
+                <button id="btnAddDoctorRound"
+                        class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-circle me-1"></i> Add Doctor Round
+                </button>
+
+                <button id="btnViewRoundHistory"
+                        class="btn btn-info btn-sm">
+                    <i class="bi bi-clock-history me-1"></i> Round History
+                </button>
+
+            </div>
         </div>
-
         <!-- AG Grid container -->
         <div id="billsGrid" class="ag-theme-quartz" style="height: 400px; width: 100%;"></div>
     </div>
@@ -448,6 +473,7 @@
             <form id="doctorRoundForm">
                 @Html.AntiForgeryToken()
                 <input type="hidden" id="PatientId" name="PatientId" value="@Model.PatientId" />
+                <input type="hidden" id="VisitId" name="VisitId" value="@Model.VisitId" />
 
                 <div class="modal-body">
                     <div class="row g-3">
@@ -751,6 +777,31 @@
         </div>
     </div>
 </div>
+
+<!-- Discharge Summary Modal -->
+<div class="modal fade" id="dischargeSummaryModal" tabindex="-1" aria-labelledby="dischargeSummaryLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="dischargeSummaryLabel">Discharge Summary</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body" id="dischargeSummaryContent">
+                <!-- Dynamic summary content will be injected here -->
+                <div class="text-center text-muted">Loading summary...</div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="downloadPdfBtn" class="btn btn-success">
+                    <i class="bi bi-file-earmark-pdf"></i> Download as PDF
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="/js/Patient/inpatientVisitManager.js"></script>
     <!-- Include html2pdf library for PDF generation -->
