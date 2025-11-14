@@ -277,10 +277,48 @@
                                     Patients
                                 </a>
                             </li>
+                            @if(Context.Session.GetString("PatientId") == null ){
+                            <li>
+                                <a class="nav-link" asp-controller="PatientPortal" asp-action="LoginPage">
+                                    Patient Login
+                                </a>
+                            </li>
+                            }
                         </ul>
                     </div>
                 </li>
+                @if(Context.Session.GetString("PatientId") != null)
+                {
+                    <li>
+                        <a href="#PatientsPortalOptions" data-bs-toggle="collapse">
+                            <i data-feather="airplay"></i>
 
+                            <span class="badge bg-success rounded-pill float-end">2</span>
+                            <span> Patient Menu </span>
+                        </a>
+                        <div class="collapse" id="PatientsPortalOptions">
+                            <ul class="nav-second-level">
+                                <li>
+                                    <form asp-controller="PatientPortal" asp-action="Logout" method="post" class="d-inline">
+                                        <button type="submit" class="nav-link" style="border: none; background: transparent;">
+                                            Logout( @(Context.Session.GetString("FullName")) )
+                                        </button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="PatientPortal" asp-action="ViewManageVisits">
+                                        Manage Visits
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="" asp-action="">
+                                        Patient Portal Option 2
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                }
                 <li class="menu-title mt-2 d-none">Apps</li>
 
                 <li class="d-none">

@@ -11,5 +11,6 @@ namespace HMS.Application.Interfaces
     public interface IPatientPortalRepository 
     {
         Task<GetPatientByIdentifierDto> GetPatientByIdentifierAsync(CancellationToken token, string identifier);
+        Task<PatientLoginResultDto> LoginAsync(CancellationToken token, string identifier);
     }
 }

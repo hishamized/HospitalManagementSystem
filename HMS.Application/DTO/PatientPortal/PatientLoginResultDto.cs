@@ -6,16 +6,15 @@ using System.Threading.Tasks;
 
 namespace HMS.Application.DTO.PatientPortal
 {
-    public class GetPatientByIdentifierDto
+    public class PatientLoginResultDto
     {
-        public int Id { get; set; }
-        public string FullName { get; set; }
+        public int PatientId { get; set; }
         public string PatientCode { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public string FullName { get; set; }
         public string Email { get; set; }
         public string ContactNumber { get; set; }
-        public string Gender { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public int RoleId { get; set; }
+
+        public string PasswordHash { get; set; } = string.Empty;
     }
 }
-

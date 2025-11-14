@@ -65,7 +65,8 @@ function addPatient() {
         BloodGroup: $('#bloodGroup').val(),
         EmergencyContactName: $('#emergencyContactName').val(),
         EmergencyContactNumber: $('#emergencyContactNumber').val(),
-        RelationshipWithEmergencyContact: $('#relationshipWithEmergencyContact').val()
+        RelationshipWithEmergencyContact: $('#relationshipWithEmergencyContact').val(),
+        Password: $('#password').val()
     };
 
     $.ajax({

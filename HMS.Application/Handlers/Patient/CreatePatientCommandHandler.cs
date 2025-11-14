@@ -23,10 +23,13 @@ namespace HMS.Application.Handlers
 
         public async Task<int> Handle(CreatePatientCommand request, CancellationToken cancellationToken)
         {
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Patient.Password);
             // Map DTO → Entity
             var patient = _mapper.Map<CreatePatientDto>(request.Patient);
 
+
             // Assign system-generated fields
+            patient.Password = passwordHash;
             patient.PatientCode = $"PT{DateTime.UtcNow:yyyyMMddHHmmss}{new Random().Next(100, 999)}";
             patient.CreatedAt = DateTime.UtcNow;
             patient.IsActive = true;

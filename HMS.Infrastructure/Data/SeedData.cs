@@ -18,7 +18,8 @@ namespace HMS.Infrastructure.Data
                 "Doctor",
                 "Nurse",
                 "Receptionist",
-                "Pharmacist"
+                "Pharmacist",
+                "Patient",
                 // Add more roles here if needed
             };
 

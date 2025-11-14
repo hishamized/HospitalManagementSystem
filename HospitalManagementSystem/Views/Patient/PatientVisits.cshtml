@@ -52,10 +52,13 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="doctorName" class="form-label fw-semibold">Doctor Name</label>
-                            <select id="doctorName" name="DoctorName" class="form-select" required>
+                            <input type="hidden" id="DoctorId" name="DoctorId" />
+                            <input type="hidden" id="DoctorName" name="DoctorName" />
+
+                            <select id="doctorNameSelect" class="form-select" required>
                                 <option value="">Select Doctor</option>
                             </select>
+
                         </div>
 
                         <div class="col-md-6 inpatient-field">
@@ -132,10 +135,13 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="editDoctorName" class="form-label fw-semibold">Doctor Name</label>
-                            <select type="text" id="editDoctorName" name="DoctorName" class="form-select" required />
-                                    <option value="">Select Doctor</option>
+                            <input type="hidden" id="editDoctorId" name="DoctorId" />
+                            <input type="hidden" id="editDoctorName" name="DoctorName" />
+
+                            <select id="editDoctorSelect" class="form-select" required>
+                                <option value="">Select Doctor</option>
                             </select>
+
                         </div>
 
                         <div class="col-md-6 inpatient-field">

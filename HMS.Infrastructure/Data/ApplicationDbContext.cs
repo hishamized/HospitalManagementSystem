@@ -79,6 +79,34 @@ namespace HMS.Infrastructure.Data
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
                 .IsUnique();
+            modelBuilder.Entity<Patient>(entity =>
+            {
+                entity.HasKey(p => p.Id);
+
+                entity.Property(p => p.PatientCode)
+                      .IsRequired()
+                      .HasMaxLength(50);
+
+                entity.Property(p => p.FullName)
+                      .IsRequired()
+                      .HasMaxLength(200);
+
+                entity.Property(p => p.Email)
+                      .HasMaxLength(150);
+
+                entity.Property(p => p.ContactNumber)
+                      .HasMaxLength(20);
+
+                // ✅ Unique Constraints
+                entity.HasIndex(p => p.Email)
+                      .IsUnique();
+
+                entity.HasIndex(p => p.PatientCode)
+                      .IsUnique();
+
+                entity.HasIndex(p => p.ContactNumber)
+                      .IsUnique();
+            });
 
             modelBuilder.Entity<MedicalHistory>()
             .HasOne(m => m.Patient)

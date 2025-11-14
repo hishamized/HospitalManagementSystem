@@ -4,6 +4,7 @@ using HMS.Domain.Entities;
 using HMS.Domain.Exceptions;
 using HMS.Domain.Interfaces;
 using HMS.Domain.Logger.Services;
+using HMS.Domain.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -66,5 +67,22 @@ namespace HMS.Infrastructure.Repositories
             }
         }
 
+        public async Task<PatientLoginResultDto> LoginAsync(CancellationToken cancellationToken, string identifier)
+        {
+            var parameters = new List<ParametersCollection>
+    {
+        new() { ParameterName = "@Identifier", ParameterValue = identifier, ParameterType = DbType.String, ParameterDirection = ParameterDirection.Input }
+    };
+
+            var result = await _dbRepository.ExecuteSpSingleAsync<PatientLoginResultDto>(
+                cancellationToken,
+                "sp_PatientLogin",
+                parameters
+            );
+
+            return result;
+        }
+
     }
 }
+

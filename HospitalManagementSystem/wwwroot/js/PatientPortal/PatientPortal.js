@@ -21,11 +21,11 @@
 
                 modalBody.html(`
                     <div class="mb-3">
-                        <strong>Full Name:</strong> ${p.fullName}<br/>
                         <strong>Patient Code:</strong> ${p.patientCode}<br/>
                         <strong>Date of Birth:</strong> ${new Date(p.dateOfBirth).toLocaleDateString()}<br/>
                         <strong>Email:</strong> ${p.email}<br/>
                         <strong>Contact:</strong> ${p.contactNumber}<br/>
+                        <strong>Gender:</strong> ${p.gender}<br/>
                         <strong>Created At:</strong> ${new Date(p.createdAt).toLocaleString()}
                     </div>
                 `);

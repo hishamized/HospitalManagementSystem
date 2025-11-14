@@ -35,11 +35,17 @@ namespace HMS.Domain.Entities
         public string? EmergencyContactNumber { get; set; }
         public string? RelationshipWithEmergencyContact { get; set; }
 
+        // Authentication
+        public string PasswordHash { get; set; } = string.Empty;
+
+        public int RoleId { get; set; }
+
         // System details
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public bool IsActive { get; set; } = true;
 
+ 
         public ICollection<MedicalHistory>? MedicalHistories { get; set; }
         public ICollection<Allergy> Allergies { get; set; } = new List<Allergy>();
         public virtual ICollection<Insurance> Insurances { get; set; } = new List<Insurance>();

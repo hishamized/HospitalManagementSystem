@@ -80,8 +80,7 @@
     });
 
 
-    function getDoctorList(selectId, selectedValue) {
-        console.log(selectedValue);
+    function getDoctorList(selectId, selectedDoctorId) {
         $.ajax({
             url: '/Doctor/GetAllDoctors',
             type: 'GET',
@@ -92,25 +91,37 @@
                     select.empty().append('<option value="">Select Doctor</option>');
 
                     $.each(data, function (i, doctor) {
-                        if (selectedValue == doctor.fullName) {
-                            select.append('<option selected value="' + doctor.fullName + '">' + doctor.fullName + '</option>');
-                        } else {
-                            select.append('<option value="' + doctor.fullName + '">' + doctor.fullName + '</option>');
-                        }
-                            
+                        select.append(
+                            `<option value="${doctor.id}" ${doctor.id == selectedDoctorId ? 'selected' : ''}>
+                            ${doctor.fullName}
+                         </option>`
+                        );
                     });
                 }
-            },
-            error: function (xhr, status, error) {
-                console.error('Error loading doctor list:', status, error);
             }
         });
     }
 
+
+    $('#doctorNameSelect').on('change', function () {
+        $('#DoctorId').val($(this).val());
+        $('#DoctorName').val($(this).find("option:selected").text().trim());
+    });
+
+
+    $('#editDoctorSelect').on('change', function () {
+        $('#editDoctorId').val($(this).val());
+        $('#editDoctorName').val($(this).find("option:selected").text().trim());
+    });
+
+
+
+
     // 1️⃣ Show modal on button click
     $("#btnAddVisit").on("click", function () {
 
-        getDoctorList('#doctorName', '');
+        getDoctorList('#doctorNameSelect', '');
+
 
         $("#visitModalLabel").text("Add Patient Visit");
         $("#visitForm")[0].reset();
@@ -163,6 +174,14 @@ $("#editVisitType").on("change", function () {
     $('#saveVisitBtn').on('click', function () {
         var form = $('#visitForm')[0];
         var formData = new FormData(form);
+
+        // OVERRIDE FORM DATA HERE
+        var selectedDoctorId = $('#doctorNameSelect').val();
+        var selectedDoctorName = $('#doctorNameSelect option:selected').text().trim();
+
+
+        formData.set("DoctorId", selectedDoctorId);
+        formData.set("DoctorName", selectedDoctorName);
 
         $.ajax({
             url: '/PatientVisit/Add',
@@ -248,7 +267,8 @@ $("#editVisitType").on("change", function () {
         // Populate modal fields
         $('#editVisitId').val(visitData.id);
 
-        getDoctorList('#editDoctorName', visitData.doctorName);
+        getDoctorList('#editDoctorSelect', visitData.doctorId);
+
 
         // Fix Patient select
         const patientSelect = $('#editPatientId');
@@ -281,8 +301,8 @@ $("#editVisitType").on("change", function () {
             PatientId: $('#editPatientId').val(),
             VisitType: $('#editVisitType').val(),
             VisitDate: $('#editVisitDate').val(),
-            DoctorId: $('#editDoctorId').val() || null,
-            DoctorName: $('#editDoctorName').val() || null,
+            DoctorId: $('#editDoctorId').val(),
+            DoctorName: $('#editDoctorName').val().trim(),
             AdmissionDate: $('#editAdmissionDate').val() || null,
             DischargeDate: $('#editDischargeDate').val() || null,
             RoomNumber: $('#editRoomNumber').val() || null,

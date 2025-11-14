@@ -1,0 +1,90 @@
+﻿@model HMS.Application.DTO.PatientPortal.PatientLoginDto
+
+@{
+    ViewData["Title"] = "Patient Login";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4>Patient Login</h4>
+                </div>
+                <div class="card-body">
+                    @* AJAX form *@
+                    <form id="patientLoginForm" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label asp-for="Identifier" class="form-label">Email, Patient Code or Contact Number</label>
+                            <input asp-for="Identifier" class="form-control" placeholder="Enter your Email / Patient Code / Contact Number" />
+                            <span asp-validation-for="Identifier" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label">Password</label>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input asp-for="RememberMe" class="form-check-input" type="checkbox" />
+                            <label asp-for="RememberMe" class="form-check-label">Remember Me</label>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-block">Login</button>
+                        </div>
+
+                        <div id="loginMessage" class="mt-3"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#patientLoginForm").submit(function (e) {
+                e.preventDefault();
+
+                var form = $(this);
+                var token = $('input[name="__RequestVerificationToken"]', form).val();
+
+                var formData = {
+                    Identifier: $("#Identifier").val(),
+                    Password: $("#Password").val(),
+                    RememberMe: $("#RememberMe").is(":checked")
+                };
+
+                $.ajax({
+                    url: '@Url.Action("Login", "PatientPortal")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    headers: {
+                        'RequestVerificationToken': token
+                    },
+                    success: function (response) {
+                         console.log(response);
+                        if (response.success) {      
+                            // Redirect on successful login
+                            window.location.href = response.redirectUrl;
+                        } else {
+                            $("#loginMessage").html('<div class="alert alert-danger">' + response.details + '<br>' + response.details + '</div>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                         console.log(xhr.responseJSON);
+                        var msg = xhr.responseJSON?.message ?? "An error occurred. Please try again.";
+                        var details = xhr.responseJSON.details ?? " ";
+                        $("#loginMessage").html('<div class="alert alert-danger">' + msg + '<br>' + details + '</div>');
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -34,8 +34,7 @@ namespace HMS.Application.DTO.Patient
         public string? EmergencyContactName { get; set; }
         public string? EmergencyContactNumber { get; set; }
         public string? RelationshipWithEmergencyContact { get; set; }
-
-
+        public string? Password { get; set; } = string.Empty;
 
         // System details
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
