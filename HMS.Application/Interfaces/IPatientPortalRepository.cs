@@ -12,5 +12,8 @@ namespace HMS.Application.Interfaces
     {
         Task<GetPatientByIdentifierDto> GetPatientByIdentifierAsync(CancellationToken token, string identifier);
         Task<PatientLoginResultDto> LoginAsync(CancellationToken token, string identifier);
+        Task<IEnumerable< GetPatientVisitsResponseDto>> GetPatientVisitsByIdAsync(CancellationToken token, long PatientId);
+        Task<IEnumerable<GetPatientBillsDto>> GetPatientBillsAsync(long PatientId, long VisitId, CancellationToken cancellationToken);
+
     }
 }

@@ -16,6 +16,8 @@ namespace HMS.Domain.Interfaces
 
         IPatientPortalRepository PatientPortalRepository { get; }
 
+        IPaymentRepository PaymentRepository { get; }
+
         Task<int> CommitAsync();
     }
 

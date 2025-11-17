@@ -1,7 +1,199 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "ViewManageVisits";
 }
 
-<h1>ViewManageVisits Page Has Been Loaded</h1>
+<div style="margin-top:20px;">
+    <h4>Patient Visits</h4>
+    <div id="patientVisitsGrid" class="ag-theme-alpine" style="height: 400px; width: 100%;"></div>
+</div>
 
+<p id="noRecordsMessage" style="display:none; color:red; font-weight:bold;">
+    No visit records found.
+</p>
+
+<!-- Bills Popup Modal -->
+<div id="billsModal" class="modal" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%;
+     background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+
+    <div style="background:white; width:80%; padding:20px; border-radius:8px; position:relative;">
+
+        <h3>Patient Bills</h3>
+        <button class="btn btn-danger" id="closeBillsModal" style="position:absolute; right:15px; top:10px;">X</button>
+
+        <!-- AG Grid bills table -->
+        <div id="patientBillsGrid" style="height:400px; width:100%;" class="ag-theme-alpine"></div>
+
+    </div>
+</div>
+
+<!-- Payment Gateway Modal -->
+<div id="paymentModal" class="modal" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%;
+     background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1001;">
+
+    <div style="background:white; width:500px; padding:30px; border-radius:12px; position:relative; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+
+        <!-- Header -->
+        <div style="border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; margin-bottom: 20px;">
+            <h3 style="margin:0; color:#2d3748;">Complete Your Payment</h3>
+            <button class="btn btn-danger btn-sm" id="closePaymentModal" style="position:absolute; right:20px; top:20px;">✕</button>
+        </div>
+
+        <!-- Bill Summary -->
+        <div style="background:#f7fafc; padding:15px; border-radius:8px; margin-bottom:20px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <span style="color:#718096;">Bill ID:</span>
+                <strong id="paymentBillId">-</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <span style="color:#718096;">Visit ID:</span>
+                <strong id="paymentVisitId">-</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:18px;">
+                <span style="color:#2d3748; font-weight:600;">Amount to Pay:</span>
+                <strong style="color:#38a169;" id="paymentAmount">₹0.00</strong>
+            </div>
+        </div>
+
+        <!-- Payment Form -->
+        <form id="paymentForm">
+            @Html.AntiForgeryToken();
+            <input type="hidden" id="PaymentFormVisitId" name="VisitId" value="" />
+        
+
+            <!-- Payment Method -->
+            <div class="form-group" style="margin-bottom:20px;">
+                <label style="font-weight:500; margin-bottom:10px; display:block;">Select Payment Method *</label>
+
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <label class="payment-method-option" style="flex:1; min-width:120px; cursor:pointer;">
+                        <input type="radio" name="paymentMethod" value="credit_card" style="margin-right:8px;" required>
+                        <span>💳 Credit Card</span>
+                    </label>
+                    <label class="payment-method-option" style="flex:1; min-width:120px; cursor:pointer;">
+                        <input type="radio" name="paymentMethod" value="debit_card" style="margin-right:8px;">
+                        <span>💳 Debit Card</span>
+                    </label>
+                    <label class="payment-method-option" style="flex:1; min-width:120px; cursor:pointer;">
+                        <input type="radio" name="paymentMethod" value="upi" style="margin-right:8px;">
+                        <span>📱 UPI</span>
+                    </label>
+                    <label class="payment-method-option" style="flex:1; min-width:120px; cursor:pointer;">
+                        <input type="radio" name="paymentMethod" value="net_banking" style="margin-right:8px;">
+                        <span>🏦 Net Banking</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Card Details (shown when card is selected) -->
+            <div id="cardDetailsSection" style="display:none; border:1px solid #e2e8f0; padding:15px; border-radius:8px; margin-bottom:15px;">
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label for="cardNumber" style="font-weight:500; margin-bottom:5px; display:block;">Card Number *</label>
+                    <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19"
+                           style="padding:10px; border:1px solid #cbd5e0; border-radius:6px; width:100%;">
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <div class="form-group" style="flex:1;">
+                        <label for="cardExpiry" style="font-weight:500; margin-bottom:5px; display:block;">Expiry (MM/YY) *</label>
+                        <input type="text" class="form-control" id="cardExpiry" placeholder="MM/YY" maxlength="5"
+                               style="padding:10px; border:1px solid #cbd5e0; border-radius:6px; width:100%;">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label for="cardCvv" style="font-weight:500; margin-bottom:5px; display:block;">CVV *</label>
+                        <input type="text" class="form-control" id="cardCvv" placeholder="123" maxlength="4"
+                               style="padding:10px; border:1px solid #cbd5e0; border-radius:6px; width:100%;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- UPI Details (shown when UPI is selected) -->
+            <div id="upiDetailsSection" style="display:none; border:1px solid #e2e8f0; padding:15px; border-radius:8px; margin-bottom:15px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="upiId" style="font-weight:500; margin-bottom:5px; display:block;">UPI ID *</label>
+                    <input type="text" class="form-control" id="upiId" placeholder="yourname@upi"
+                           style="padding:10px; border:1px solid #cbd5e0; border-radius:6px; width:100%;">
+                </div>
+            </div>
+
+            <!-- Net Banking Details (shown when Net Banking is selected) -->
+            <div id="netBankingDetailsSection" style="display:none; border:1px solid #e2e8f0; padding:15px; border-radius:8px; margin-bottom:15px;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="bankName" style="font-weight:500; margin-bottom:5px; display:block;">Select Bank *</label>
+                    <select class="form-control" id="bankName" style="padding:10px; border:1px solid #cbd5e0; border-radius:6px; width:100%;">
+                        <option value="">-- Select Bank --</option>
+                        <option value="sbi">State Bank of India</option>
+                        <option value="hdfc">HDFC Bank</option>
+                        <option value="icici">ICICI Bank</option>
+                        <option value="axis">Axis Bank</option>
+                        <option value="kotak">Kotak Mahindra Bank</option>
+                        <option value="pnb">Punjab National Bank</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-success btn-lg" id="submitPayment"
+                    style="width:100%; padding:12px; font-weight:600; border-radius:8px; margin-top:10px;">
+                Pay Now
+            </button>
+        </form>
+
+        <!-- Security Note -->
+        <div style="text-align:center; margin-top:15px; color:#718096; font-size:12px;">
+            🔒 Your payment information is secure and encrypted
+        </div>
+
+    </div>
+</div>
+
+<!-- Payment Successful Modal -->
+<div class="modal fade" id="paymentSuccessModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Payment Successful</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body text-center">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                <p class="mt-3 mb-0 fs-5">The payment has been processed successfully.</p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="dischargeSummaryModal" tabindex="-1" aria-labelledby="dischargeSummaryLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="dischargeSummaryLabel">Discharge Summary</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body" id="dischargeSummaryContent">
+                <!-- Dynamic summary content will be injected here -->
+                <div class="text-center text-muted">Loading summary...</div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="downloadPdfBtn" class="btn btn-success">
+                    <i class="bi bi-file-earmark-pdf"></i> Download as PDF
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/PatientPortal/ViewManageVisits.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+}

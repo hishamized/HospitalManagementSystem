@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Dapper;
 using HMS.Application.DTO.Bill;
+using HMS.Application.DTO.PatientPortal;
 using HMS.Application.Interfaces;
+using HMS.Domain.Entities;
 using HMS.Domain.Interfaces;
 using System.Data;
 

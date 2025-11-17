@@ -16,6 +16,7 @@ using HMS.Application.DTO.Insurance;
 using HMS.Application.DTO.MedicalHistory;
 using HMS.Application.DTO.Patient;
 using HMS.Application.DTO.PatientPortal;
+using HMS.Application.DTO.Payment;
 using HMS.Application.DTO.Slot;
 using HMS.Application.DTO.Ward;
 using HMS.Application.DTOs.PatientVisitDtos;
@@ -327,6 +328,7 @@ namespace HMS.Application.Mappings
             CreateMap<DoctorRound, DoctorRoundDto>().ReverseMap();
 
             CreateMap<Patient, GetPatientByIdentifierDto>().ReverseMap();
+            CreateMap<AddPaymentDto, Payment>().ReverseMap();
 
         }
     }

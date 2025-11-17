@@ -1,4 +1,4 @@
-﻿$('#patientSearchForm').on('submit', function (e) {
+﻿    $('#patientSearchForm').on('submit', function (e) {
     e.preventDefault();
 
     const form = $(this);

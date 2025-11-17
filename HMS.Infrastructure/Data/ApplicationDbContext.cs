@@ -50,6 +50,8 @@ namespace HMS.Infrastructure.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageStatus> MessageStatuses { get; set; }
 
+        public DbSet<Payment> Payments { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -317,6 +319,44 @@ namespace HMS.Infrastructure.Data
                 .WithMany()
                 .HasForeignKey(ms => ms.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.ToTable("Payments");
+
+                entity.HasKey(p => p.Id);
+
+                // Payment → Bill relationship (required foreign key)
+                entity.HasOne(p => p.Bill)
+                      .WithMany() // or .WithMany(b => b.Payments) if you add ICollection<Payment> to Bill
+                      .HasForeignKey(p => p.BillId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                // Property configurations
+                entity.Property(p => p.Amount)
+                      .HasPrecision(18, 2); // decimal precision for currency
+
+                entity.Property(p => p.PaymentStatus)
+                      .IsRequired()
+                      .HasMaxLength(50)
+                      .HasDefaultValue("Unpaid");
+
+                entity.Property(p => p.PaymentMode)
+                      .HasMaxLength(50);
+
+                entity.Property(p => p.PaymentDate)
+                      .IsRequired()
+                      .HasDefaultValueSql("GETUTCDATE()");
+
+                entity.Property(p => p.CreatedAt)
+                      .IsRequired()
+                      .HasDefaultValueSql("GETUTCDATE()");
+
+                // Optional: Add index on BillId for better query performance
+                entity.HasIndex(p => p.BillId);
+
+                // Optional: Add index on PaymentStatus for filtering queries
+                entity.HasIndex(p => p.PaymentStatus);
+            });
 
         }
     }

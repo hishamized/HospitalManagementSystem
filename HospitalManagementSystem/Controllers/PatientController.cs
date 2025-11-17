@@ -9,7 +9,7 @@ using Microsoft.VisualBasic;
 
 namespace HMS.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin,Doctor")]
     public class PatientController : Controller
     {
         private readonly IMediator _mediator;
@@ -73,6 +73,7 @@ namespace HMS.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Doctor,Patient")]
         public async Task<IActionResult> GenerateDischargeSummary(int visitId)
         {
             try

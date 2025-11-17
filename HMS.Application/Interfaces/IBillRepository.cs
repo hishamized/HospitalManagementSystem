@@ -1,4 +1,5 @@
 ﻿using HMS.Application.DTO.Bill;
+using HMS.Application.DTO.PatientPortal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,5 +16,7 @@ namespace HMS.Application.Interfaces
         Task<int> DeleteBillAsync(int id);
 
         Task<GetFinalBillDto> GetFinalBillAsync(int PatientId, int Visitid);
+
+       
     }
 }

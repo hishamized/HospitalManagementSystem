@@ -29,6 +29,7 @@ namespace HMS.Infrastructure.Repositories
         private IBillRepository _billRepository;
         private IRoleRepository _roleRepository;
         private IPatientPortalRepository _patientPortalRepository;
+        private IPaymentRepository _paymentRepository;
 
     
 
@@ -49,6 +50,15 @@ namespace HMS.Infrastructure.Repositories
         public IPatientPortalRepository PatientPortalRepository { get { _patientPortalRepository = (_patientPortalRepository == null) ? new PatientPortalRepository(_dbRepository) : _patientPortalRepository;
                 return _patientPortalRepository;
             } }
+
+        public IPaymentRepository PaymentRepository
+        {
+            get {
+            _paymentRepository = (_paymentRepository == null) 
+                ? new PaymentRepository(_dbRepository) 
+                : _paymentRepository;
+                return _paymentRepository;
+          } }
 
         public async Task<int> CommitAsync() => await _context.SaveChangesAsync();
     }

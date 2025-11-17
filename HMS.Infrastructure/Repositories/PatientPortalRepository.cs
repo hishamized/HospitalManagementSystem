@@ -19,7 +19,8 @@ namespace HMS.Infrastructure.Repositories
         private readonly IRepository _dbRepository;
         private readonly LogService _logger;
 
-        public PatientPortalRepository(IRepository dbRepository) {
+        public PatientPortalRepository(IRepository dbRepository)
+        {
             _dbRepository = dbRepository;
             _logger = new LogService();
         }
@@ -82,7 +83,37 @@ namespace HMS.Infrastructure.Repositories
 
             return result;
         }
+        public async Task<IEnumerable<GetPatientVisitsResponseDto>> GetPatientVisitsByIdAsync(CancellationToken token, long PatientId)
+        {
+            var parameters = new List<ParametersCollection> {
+                new(){ ParameterName = "@PatientId", ParameterValue = PatientId, ParameterType = DbType.Int64, ParameterDirection = ParameterDirection.Input }
+            };
+
+            var result = await _dbRepository.ExecuteSpListAsync<GetPatientVisitsResponseDto>(
+                        token,
+                        "sp_PortalGetPatientVisits",
+                        parameters
+                );
+
+            return result;
+        }
+
+
+        public async Task<IEnumerable<GetPatientBillsDto>> GetPatientBillsAsync(long PatientId, long VisitId, CancellationToken cancellationToken)
+        {
+            var parameters = new List<ParametersCollection> {
+                new() { ParameterName = "@PatientId", ParameterValue = PatientId, ParameterType = DbType.Int64 , ParameterDirection = ParameterDirection.Input},
+                new() { ParameterName = "@VisitId", ParameterValue = VisitId, ParameterType = DbType.Int64 , ParameterDirection = ParameterDirection.Input}
+            };
+
+            var result = await _dbRepository.ExecuteSpListAsync<GetPatientBillsDto>(
+                    cancellationToken,
+                    "sp_PortalGetPatientBills",
+                    parameters
+                );
+
+            return result;
+        }
 
     }
 }
-
