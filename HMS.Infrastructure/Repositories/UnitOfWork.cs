@@ -30,6 +30,7 @@ namespace HMS.Infrastructure.Repositories
         private IRoleRepository _roleRepository;
         private IPatientPortalRepository _patientPortalRepository;
         private IPaymentRepository _paymentRepository;
+        private ILabRepository _labRepository;
 
     
 
@@ -59,6 +60,15 @@ namespace HMS.Infrastructure.Repositories
                 : _paymentRepository;
                 return _paymentRepository;
           } }
+        public ILabRepository LabRepository
+        {
+            get {
+                _labRepository = (_labRepository == null)
+                    ? new LabRepository(_dbRepository)
+                    : _labRepository;
+                return _labRepository;
+            }
+        }
 
         public async Task<int> CommitAsync() => await _context.SaveChangesAsync();
     }

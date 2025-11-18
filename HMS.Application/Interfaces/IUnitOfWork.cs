@@ -18,6 +18,8 @@ namespace HMS.Domain.Interfaces
 
         IPaymentRepository PaymentRepository { get; }
 
+        ILabRepository LabRepository { get; }
+
         Task<int> CommitAsync();
     }
 

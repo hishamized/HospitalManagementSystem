@@ -1,0 +1,117 @@
+﻿@{
+    ViewData["Title"] = "ManageTestsCore";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box d-flex justify-content-between align-items-center">
+                <h4 class="page-title">Manage Lab Tests</h4>
+                <button type="button" class="btn btn-primary" id="addTestBtn">
+                    <i class="mdi mdi-plus-circle"></i> Add Test
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AG Grid Container -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div id="labTestsGrid" class="ag-theme-alpine" style="height: 600px; width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Lab Test Modal -->
+<div class="modal fade" id="addLabTestModal" tabindex="-1" aria-labelledby="addLabTestModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addLabTestModalLabel">
+                    <i class="mdi mdi-test-tube"></i> Add New Lab Test
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addLabTestForm">
+                    @Html.AntiForgeryToken()
+
+                    <div class="row">
+                        <!-- Test Name -->
+                        <div class="col-md-6 mb-3">
+                            <label for="testName" class="form-label">Test Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="testName" name="TestName" required placeholder="e.g., Complete Blood Count">
+                            <div class="invalid-feedback">Please provide a test name.</div>
+                        </div>
+
+                        <!-- Sample Type -->
+                        <div class="col-md-6 mb-3">
+                            <label for="sampleType" class="form-label">Sample Type</label>
+                            <select class="form-select" id="sampleType" name="SampleType">
+                                <option value="">Select Sample Type</option>
+                                <option value="Blood">Blood</option>
+                                <option value="Urine">Urine</option>
+                                <option value="Saliva">Saliva</option>
+                                <option value="Stool">Stool</option>
+                                <option value="Tissue">Tissue</option>
+                                <option value="Swab">Swab</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Normal Range -->
+                        <div class="col-md-6 mb-3">
+                            <label for="normalRange" class="form-label">Normal Range <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="normalRange" name="NormalRange" required placeholder="e.g., 4.5-11.0 x10^9/L">
+                            <div class="invalid-feedback">Please provide the normal range.</div>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="col-md-6 mb-3">
+                            <label for="price" class="form-label">Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="price" name="Price" step="0.01" min="0" placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="Description" rows="3" placeholder="Enter test description, purpose, and any special instructions..."></textarea>
+                    </div>
+
+                    <!-- Is Active -->
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="isActive" name="IsActive" checked>
+                        <label class="form-check-label" for="isActive">
+                            Active Test
+                        </label>
+                    </div>
+
+                    <!-- Hidden fields for timestamps -->
+                    <input type="hidden" id="createdAt" name="CreatedAt">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="mdi mdi-close"></i> Cancel
+                </button>
+                <button type="submit" form="addLabTestForm" class="btn btn-primary" id="submitBtn">
+                    <i class="mdi mdi-content-save"></i> Save Lab Test
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/Lab/ManageTestsCore.js"></script>
+}

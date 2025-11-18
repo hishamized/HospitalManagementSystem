@@ -51,6 +51,11 @@ namespace HMS.Infrastructure.Data
         public DbSet<MessageStatus> MessageStatuses { get; set; }
 
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<LabTest> LabTests { get; set; }
+        public DbSet<LabRequest> LabRequests { get; set; }
+        public DbSet<LabRequestItem> LabRequestItems { get; set; }
+        public DbSet<Sample> Samples { get; set; }
+        public DbSet<LabResult> LabResults { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -358,6 +363,60 @@ namespace HMS.Infrastructure.Data
                 entity.HasIndex(p => p.PaymentStatus);
             });
 
+            modelBuilder.Entity<LabRequest>(entity => {
+                entity.ToTable("LabRequests");
+                entity.HasKey(lr => lr.Id);
+                entity.HasOne(lr => lr.Patient)
+                .WithMany()
+                .HasForeignKey(lr => lr.PatientId)
+                .OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(lr => lr.Doctor)
+                .WithMany()
+                .HasForeignKey(lr => lr.DoctorId)
+                .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<LabRequestItem>(entity => {
+                entity.ToTable("LabRequestItems");
+                entity.HasKey(lr => lr.Id);
+                entity.HasOne(lri => lri.LabTest)
+                .WithMany()
+                .HasForeignKey(lri => lri.LabTestId)
+                .OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(lri => lri.LabRequest)
+                .WithMany()
+                .HasForeignKey(lri => lri.LabRequestId)
+                .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<Sample>(entity => {
+                entity.ToTable("Samples");
+                entity.HasKey(s => s.Id);
+                entity.HasOne(s => s.LabRequestItem)
+                .WithOne(lri => lri.Sample)
+                .HasForeignKey<Sample>(s => s.LabRequestItemId)
+                .OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(s => s.User)
+                .WithMany()
+                .HasForeignKey(s => s.CollectedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<LabResult>(entity =>
+            {
+                entity.ToTable("LabResults");
+                entity.HasKey(lr => lr.Id);
+                entity.HasOne(lr => lr.Doctor)
+                .WithMany()
+                .HasForeignKey(lr => lr.DoctorId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+                entity.HasOne(lr => lr.LabRequestItem)
+                .WithOne(lri => lri.LabResult)
+                .HasForeignKey<LabResult>(lr => lr.LabRquestItemId)
+                .OnDelete(DeleteBehavior.SetNull);
+            });
         }
     }
 }
+    
