@@ -43,5 +43,32 @@ namespace HMS.Infrastructure.Repositories
             IEnumerable<FetchLabTestsDto> result = await _dbRepository.ExecuteSpListAsync<FetchLabTestsDto>(cancellationToken, procedure);
             return result;
         }
+
+        public async Task<bool> DeleteLabTestAsync(DeleteLabTestQuery request, CancellationToken cancellationToken) {
+            string procedure = "sp_DeleteLabTest";
+            var parameters = new List<ParametersCollection> {
+                new() { ParameterName = "@TestId", ParameterValue = request.TestId, ParameterType = DbType.Int64, ParameterDirection = ParameterDirection.Input }
+            };
+            var DbResult = await _dbRepository.ExecuteSpReturnValueAsync(cancellationToken, procedure, parameters);
+            return (DbResult == 1) ? true : false;
+        }
+        public async Task<bool> EditLabTestAsync(EditLabTestCommand request, CancellationToken cancellationToken) {
+            string storedProcedure = "sp_EditLabTest";
+            var parameters = new List<ParametersCollection>
+            {
+                new() {ParameterName = "@TestId", ParameterValue = request.Dto.TestId, ParameterType = DbType.String, ParameterDirection = ParameterDirection.Input },
+                new() {ParameterName = "@TestName", ParameterValue = request.Dto.TestName, ParameterType = DbType.String, ParameterDirection = ParameterDirection.Input },
+                new() {ParameterName = "@Description", ParameterValue = request.Dto.Description, ParameterType = DbType.String, ParameterDirection = ParameterDirection.Input },
+                new() {ParameterName = "@SampleType", ParameterValue = request.Dto.SampleType, ParameterType = DbType.String, ParameterDirection = ParameterDirection.Input },
+                new() {ParameterName = "@NormalRange", ParameterValue = request.Dto.NormalRange, ParameterType = DbType.String, ParameterDirection = ParameterDirection.Input },
+                new() {ParameterName = "@Price", ParameterValue = request.Dto.Price, ParameterType = DbType.Decimal, ParameterDirection = ParameterDirection.Input },
+                new() {ParameterName = "@UpdatedAt", ParameterValue = request.Dto.UpdatedAt, ParameterType = DbType.DateTime, ParameterDirection = ParameterDirection.Input },
+                new() {ParameterName = "@IsActive", ParameterValue = request.Dto.IsActive, ParameterType = DbType.Boolean, ParameterDirection = ParameterDirection.Input },
+            };
+
+            long result = await _dbRepository.ExecuteSpReturnValueAsync(cancellationToken, storedProcedure, parameters);
+            return (result == 1) ? true : false;
+        }
     }
 }
+

@@ -32,7 +32,7 @@ namespace HMS.Infrastructure.Repositories
         private IPaymentRepository _paymentRepository;
         private ILabRepository _labRepository;
 
-    
+
 
         public IUserRepository Users => _userRepository ??= new UserRepository(_dapperContext);
         public IPatientRepository Patients => _patientRepository ??= new PatientRepository(_dapperContext);
@@ -48,21 +48,29 @@ namespace HMS.Infrastructure.Repositories
 
         public IRoleRepository RoleRepository { get { _roleRepository = (_roleRepository == null) ? new RoleRepository(_dbRepository, _mapper) : _roleRepository; return _roleRepository; } }
 
-        public IPatientPortalRepository PatientPortalRepository { get { _patientPortalRepository = (_patientPortalRepository == null) ? new PatientPortalRepository(_dbRepository) : _patientPortalRepository;
+        public IPatientPortalRepository PatientPortalRepository
+        {
+            get
+            {
+                _patientPortalRepository = (_patientPortalRepository == null) ? new PatientPortalRepository(_dbRepository) : _patientPortalRepository;
                 return _patientPortalRepository;
-            } }
+            }
+        }
 
         public IPaymentRepository PaymentRepository
         {
-            get {
-            _paymentRepository = (_paymentRepository == null) 
-                ? new PaymentRepository(_dbRepository) 
-                : _paymentRepository;
+            get
+            {
+                _paymentRepository = (_paymentRepository == null)
+                    ? new PaymentRepository(_dbRepository)
+                    : _paymentRepository;
                 return _paymentRepository;
-          } }
+            }
+        }
         public ILabRepository LabRepository
         {
-            get {
+            get
+            {
                 _labRepository = (_labRepository == null)
                     ? new LabRepository(_dbRepository)
                     : _labRepository;

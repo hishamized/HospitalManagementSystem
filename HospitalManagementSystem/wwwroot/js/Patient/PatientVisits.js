@@ -74,7 +74,7 @@
     // 6️⃣ Delete Button Click
     $('#patientVisitGrid').on('click', '.delete-btn', function () {
         var visitId = $(this).data('id');
-        console.log('Delete visit:', visitId);
+        //console.log('Delete visit:', visitId);
         // Open delete confirmation modal
         $('#deleteVisitModal').modal('show');
     });
@@ -191,7 +191,7 @@ $("#editVisitType").on("change", function () {
             contentType: false,
             success: function (res) {
                 if (res.success) {
-                    console.log('Patient visit added successfully:', res.visitId);
+                    //console.log('Patient visit added successfully:', res.visitId);
                     $('#visitModal').modal('hide');
                     loadPatientVisits();
                     // TODO: Refresh AG Grid here
@@ -235,7 +235,7 @@ $("#editVisitType").on("change", function () {
             data: { id: selectedVisitId },
             success: function (res) {
                 if (res.success) {
-                    console.log('Patient visit deleted successfully:', selectedVisitId);
+                    //console.log('Patient visit deleted successfully:', selectedVisitId);
                     // Remove from AG Grid
                     var rowNode = gridOptions.api.getRowNode(selectedVisitId.toString());
                     if (rowNode) gridOptions.api.applyTransaction({ remove: [rowNode.data] });
@@ -258,12 +258,12 @@ $("#editVisitType").on("change", function () {
 
         // Find the row data
         let visitData;
-        console.log(visitData);
         gridOptions.api.forEachNode(node => {
             if (node.data.id == visitId) visitData = node.data;
         });
         if (!visitData) return;
 
+        //console.log(visitData);
         // Populate modal fields
         $('#editVisitId').val(visitData.id);
 
@@ -273,13 +273,14 @@ $("#editVisitType").on("change", function () {
         // Fix Patient select
         const patientSelect = $('#editPatientId');
         patientSelect.empty(); // remove previous options
-        patientSelect.append(`<option value="${visitData.patientId}" selected>${visitData.fullName}</option>`);
+        patientSelect.append(`<option value="${visitData.patientId}" selected>${visitData.patientName}</option>`);
         patientSelect.prop('disabled', true); // prevent changing
 
         // Other fields
         $('#editVisitType').val(visitData.visitType);
         $('#editVisitDate').val(visitData.visitDate.split('T')[0]);
         $('#editDoctorName').val(visitData.doctorName ?? '');
+        $('#editDoctorId').val(visitData.doctorId ?? '');
         $('#editAdmissionDate').val(visitData.admissionDate ? visitData.admissionDate.split('T')[0] : '');
         $('#editDischargeDate').val(visitData.dischargeDate ? visitData.dischargeDate.split('T')[0] : '');
         $('#editRoomNumber').val(visitData.roomNumber ?? '');
@@ -307,7 +308,8 @@ $("#editVisitType").on("change", function () {
             DischargeDate: $('#editDischargeDate').val() || null,
             RoomNumber: $('#editRoomNumber').val() || null,
             TreatmentDetails: $('#editTreatmentDetails').val() || null,
-            Notes: $('#editNotes').val() || null
+            Notes: $('#editNotes').val() || null,
+            UpdatedAt: new Date().toISOString()
         };
 
         $('#editVisitError').text('');

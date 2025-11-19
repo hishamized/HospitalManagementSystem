@@ -82,7 +82,7 @@
             sortable: true,
             filter: true,
             resizable: true,
-            width: 120,
+            width: 40,
             cellRenderer: function (params) {
                 if (params.value) {
                     return '<span class="badge bg-success">Active</span>';
@@ -90,6 +90,25 @@
                     return '<span class="badge bg-secondary">Inactive</span>';
                 }
             }
+        },
+        {
+            headerName: "Actions",
+            field: "id",
+            cellRenderer: function (params) {
+                return `
+                    <button class="btn btn-sm btn-warning me-1 edit-btn" data-id="${params.value}" data-testname="${params.data.testName}">
+                        <i class="mdi mdi-pencil"></i> Edit
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-btn" data-id="${params.value}" data-testname="${params.data.testName}">
+                        <i class="mdi mdi-delete"></i> Delete
+                    </button>
+                `;
+            },
+            sortable: false,
+            filter: false,
+            resizable: true,
+            width: 200,
+            suppressMenu: true
         },
         {
             headerName: "Created At",
@@ -120,25 +139,6 @@
                 }
                 return '<span class="text-muted">N/A</span>';
             }
-        },
-        {
-            headerName: "Actions",
-            field: "id",
-            cellRenderer: function (params) {
-                return `
-                    <button class="btn btn-sm btn-warning me-1 edit-btn" data-id="${params.value}" data-testname="${params.data.testName}">
-                        <i class="mdi mdi-pencil"></i> Edit
-                    </button>
-                    <button class="btn btn-sm btn-danger delete-btn" data-id="${params.value}" data-testname="${params.data.testName}">
-                        <i class="mdi mdi-delete"></i> Delete
-                    </button>
-                `;
-            },
-            sortable: false,
-            filter: false,
-            resizable: false,
-            width: 200,
-            suppressMenu: true
         }
     ];
 
@@ -226,15 +226,45 @@
     // ========================================
     // EDIT HANDLER (PLACEHOLDER)
     // ========================================
+    // ========================================
+    // EDIT HANDLER
+    // ========================================
     function handleEdit(id, testName) {
-        Swal.fire({
-            icon: 'info',
-            title: 'Edit Lab Test',
-            html: `You clicked Edit for:<br><strong>ID: ${id}</strong><br><strong>Test: ${testName}</strong>`,
-            confirmButtonText: 'OK'
+        // Find the row data from AG Grid
+        let rowData = null;
+        gridOptions.api.forEachNode(node => {
+            if (node.data.id === id) {
+                rowData = node.data;
+            }
         });
-        console.log('Edit clicked for ID:', id, 'Test:', testName);
-        // TODO: Implement edit functionality later
+
+        if (!rowData) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Could not find test data'
+            });
+            return;
+        }
+
+        // Populate form fields with row data
+        $('#editTestId').val(rowData.id);
+        $('#editTestName').val(rowData.testName || '');
+        $('#editSampleType').val(rowData.sampleType || '');
+        $('#editNormalRange').val(rowData.normalRange || '');
+        $('#editPrice').val(rowData.price || '');
+        $('#editDescription').val(rowData.description || '');
+        $('#editIsActive').prop('checked', rowData.isActive);
+        $('#editCreatedAt').val(rowData.createdAt || '');
+        $('#editUpdatedAt').val(new Date().toISOString());
+
+        // Clear validation states
+        $('#editLabTestForm').removeClass('was-validated');
+        $('#editLabTestForm').find('.is-invalid').removeClass('is-invalid');
+        $('#editLabTestForm').find('.is-valid').removeClass('is-valid');
+
+        // Show the modal
+        $('#editLabTestModal').modal('show');
     }
 
     // ========================================
@@ -253,14 +283,41 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 console.log('Delete confirmed for ID:', id);
-                // TODO: Implement delete functionality later
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Delete Action',
-                    text: 'Delete functionality will be implemented later',
-                    timer: 2000,
-                    showConfirmButton: false
+                jQuery.ajax({
+                    url: '/Lab/DeleteLabTest',
+                    method: 'POST',
+                    data: { TestId: id },
+                    success: function (response) {
+                        if (response.success == true) {
+                            loadLabTests();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Delete Action',
+                                text: 'The test entry has been successfully deleted',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Delete Action',
+                                text: 'There was an error due to which test entry could not be deleted',
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        }
+                    },
+                    error: function (response) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Delete Action',
+                            text: response.error,
+                            timer: 2000,
+                            showConfirmButton: false
+                        }); 
+                    }
                 });
+              
             }
         });
     }
@@ -463,6 +520,122 @@
         $('#submitBtn').prop('disabled', false).html('<i class="mdi mdi-content-save"></i> Save Lab Test');
     });
 
+    // ========================================
+    // HANDLE EDIT FORM SUBMISSION
+    // ========================================
+    $('#editLabTestForm').on('submit', function (e) {
+        e.preventDefault();
+
+        // Remove previous validation states
+        $(this).find('.is-invalid').removeClass('is-invalid');
+        $(this).find('.is-valid').removeClass('is-valid');
+
+        // Get the form
+        const form = this;
+
+        // Check HTML5 validation
+        if (!form.checkValidity()) {
+            e.stopPropagation();
+            $(form).addClass('was-validated');
+            return;
+        }
+
+        // Get the anti-forgery token
+        const token = $('input[name="__RequestVerificationToken"]').val();
+
+        // Prepare form data
+        const formData = {
+            TestId: parseInt($('#editTestId').val()),
+            TestName: $('#editTestName').val().trim(),
+            Description: $('#editDescription').val().trim() || null,
+            SampleType: $('#editSampleType').val() || null,
+            NormalRange: $('#editNormalRange').val().trim(),
+            Price: $('#editPrice').val() ? parseFloat($('#editPrice').val()) : null,
+            CreatedAt: $('#editCreatedAt').val(),
+            UpdatedAt: $('#editUpdatedAt').val(),
+            IsActive: $('#editIsActive').is(':checked')
+        };
+
+        // Disable submit button and show loading state
+        const $updateBtn = $('#updateBtn');
+        const originalBtnText = $updateBtn.html();
+        $updateBtn.prop('disabled', true).html('<i class="mdi mdi-loading mdi-spin"></i> Updating...');
+
+        // Send AJAX request
+        $.ajax({
+            url: '/Lab/EditLabTest', // Update this to your actual controller endpoint
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            headers: {
+                'RequestVerificationToken': token
+            },
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('RequestVerificationToken', token);
+            },
+            success: function (response) {
+                // Re-enable button
+                $updateBtn.prop('disabled', false).html(originalBtnText);
+
+                if (response.success) {
+                    // Hide the modal
+                    $('#editLabTestModal').modal('hide');
+
+                    // Show success message
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Lab test updated successfully.',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+
+                    // Refresh AG Grid
+                    loadLabTests();
+                } else {
+                    // Show error message from server
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed',
+                        text: response.message || 'Failed to update lab test. Please try again.'
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                // Re-enable button
+                $updateBtn.prop('disabled', false).html(originalBtnText);
+
+                // Parse error response
+                let errorMessage = 'An error occurred while updating the lab test.';
+
+                if (xhr.responseJSON) {
+                    if (xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
+                    } else if (xhr.responseJSON.errors) {
+                        const errors = xhr.responseJSON.errors;
+                        errorMessage = Object.values(errors).flat().join('<br>');
+                    }
+                } else if (xhr.responseText) {
+                    errorMessage = xhr.responseText;
+                }
+
+                // Show error message
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    html: errorMessage,
+                    confirmButtonText: 'OK'
+                });
+
+                console.error('Error updating lab test:', {
+                    status: xhr.status,
+                    statusText: xhr.statusText,
+                    response: xhr.responseJSON || xhr.responseText,
+                    error: error
+                });
+            }
+        });
+    });
     // ========================================
     // EXPOSE REFRESH FUNCTION GLOBALLY
     // ========================================

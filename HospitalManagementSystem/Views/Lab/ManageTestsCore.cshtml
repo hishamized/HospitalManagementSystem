@@ -112,6 +112,95 @@
     </div>
 </div>
 
+<!-- Edit Lab Test Modal -->
+<div class="modal fade" id="editLabTestModal" tabindex="-1" aria-labelledby="editLabTestModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editLabTestModalLabel">
+                    <i class="mdi mdi-pencil"></i> Edit Lab Test
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editLabTestForm">
+                    @Html.AntiForgeryToken()
+
+                    <!-- Hidden ID field -->
+                    <input type="hidden" id="editTestId" name="Id">
+
+                    <div class="row">
+                        <!-- Test Name -->
+                        <div class="col-md-6 mb-3">
+                            <label for="editTestName" class="form-label">Test Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editTestName" name="TestName" required placeholder="e.g., Complete Blood Count">
+                            <div class="invalid-feedback">Please provide a test name.</div>
+                        </div>
+
+                        <!-- Sample Type -->
+                        <div class="col-md-6 mb-3">
+                            <label for="editSampleType" class="form-label">Sample Type</label>
+                            <select class="form-select" id="editSampleType" name="SampleType">
+                                <option value="">Select Sample Type</option>
+                                <option value="Blood">Blood</option>
+                                <option value="Urine">Urine</option>
+                                <option value="Saliva">Saliva</option>
+                                <option value="Stool">Stool</option>
+                                <option value="Tissue">Tissue</option>
+                                <option value="Swab">Swab</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Normal Range -->
+                        <div class="col-md-6 mb-3">
+                            <label for="editNormalRange" class="form-label">Normal Range <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editNormalRange" name="NormalRange" required placeholder="e.g., 4.5-11.0 x10^9/L">
+                            <div class="invalid-feedback">Please provide the normal range.</div>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="col-md-6 mb-3">
+                            <label for="editPrice" class="form-label">Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="editPrice" name="Price" step="0.01" min="0" placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-3">
+                        <label for="editDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editDescription" name="Description" rows="3" placeholder="Enter test description, purpose, and any special instructions..."></textarea>
+                    </div>
+
+                    <!-- Is Active -->
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="editIsActive" name="IsActive">
+                        <label class="form-check-label" for="editIsActive">
+                            Active Test
+                        </label>
+                    </div>
+
+                    <!-- Hidden fields for timestamps -->
+                    <input type="hidden" id="editCreatedAt" name="CreatedAt">
+                    <input type="hidden" id="editUpdatedAt" name="UpdatedAt">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="mdi mdi-close"></i> Cancel
+                </button>
+                <button type="submit" form="editLabTestForm" class="btn btn-warning" id="updateBtn">
+                    <i class="mdi mdi-content-save"></i> Update Lab Test
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 @section Scripts {
     <script src="~/js/Lab/ManageTestsCore.js"></script>
 }

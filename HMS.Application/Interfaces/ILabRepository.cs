@@ -13,5 +13,7 @@ namespace HMS.Application.Interfaces
     {
         Task<long> AddLabTestAsync(AddLabTestDto request, CancellationToken cancellationtoken);
         Task<IEnumerable<FetchLabTestsDto>> FetchLabTestsAsync(FetchLabTestsQuery request, CancellationToken cancellationToken);
+        Task<bool> DeleteLabTestAsync(DeleteLabTestQuery request, CancellationToken cancellationToken);
+        Task<bool> EditLabTestAsync(EditLabTestCommand request, CancellationToken cancellationToken);
     }
 }
