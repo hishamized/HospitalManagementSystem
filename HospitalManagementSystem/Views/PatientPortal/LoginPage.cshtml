@@ -2,89 +2,245 @@
 
 @{
     ViewData["Title"] = "Patient Login";
+    Layout = null;
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white text-center">
-                    <h4>Patient Login</h4>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .bg-pink-gradient {
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+        }
+
+        .text-pink {
+            color: #ec4899;
+        }
+
+        .btn-pink {
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+            color: white;
+            border: none;
+        }
+
+            .btn-pink:hover {
+                background: linear-gradient(135deg, #be185d 0%, #9f1239 100%);
+                color: white;
+            }
+
+        .btn-outline-pink {
+            color: #ec4899;
+            border-color: #ec4899;
+        }
+
+            .btn-outline-pink:hover {
+                background-color: #ec4899;
+                color: white;
+            }
+    </style>
+</head>
+
+<body class="bg-pink-gradient min-vh-100 d-flex align-items-center">
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-11 col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+
+                <!-- Card -->
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+
+                    <!-- Header -->
+                    <div class="card-header bg-white text-center pt-5 pb-4 border-0">
+                        <div class="bg-pink-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width:90px;height:90px;">
+                            <i class="fas fa-heartbeat text-white" style="font-size:45px;"></i>
+                        </div>
+                        <h3 class="fw-bold text-pink m-0">Patient Portal</h3>
+                        <p class="text-muted small m-0">Sign in to access your records</p>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="card-body px-4 px-sm-5 py-4">
+
+                        <!-- Alert Box -->
+                        <div id="loginMessage"></div>
+
+                        <form id="patientLoginForm" method="post">
+                            @Html.AntiForgeryToken()
+
+                            <!-- Identifier -->
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold small text-dark mb-2">
+                                    <i class="fas fa-user text-pink me-2"></i>Email / Code / Contact
+                                </label>
+
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text bg-light border-end-0 rounded-start-3">
+                                        <i class="fas fa-id-card-alt text-muted"></i>
+                                    </span>
+
+                                    <input asp-for="Identifier"
+                                           id="Identifier"
+                                           class="form-control bg-light border-start-0 rounded-end-3 ps-0"
+                                           placeholder="Enter your identifier" />
+                                </div>
+
+                                <span asp-validation-for="Identifier" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold small text-dark mb-2">
+                                    <i class="fas fa-lock text-pink me-2"></i>Password
+                                </label>
+
+                                <div class="input-group input-group-lg position-relative">
+                                    <span class="input-group-text bg-light border-end-0 rounded-start-3">
+                                        <i class="fas fa-key text-muted"></i>
+                                    </span>
+
+                                    <input asp-for="Password"
+                                           type="password"
+                                           id="Password"
+                                           class="form-control bg-light border-start-0 rounded-end-3 ps-0 pe-5"
+                                           placeholder="Enter your password" />
+
+                                    <button class="btn position-absolute end-0 top-50 translate-middle-y bg-transparent border-0 pe-3"
+                                            type="button" id="togglePassword">
+                                        <i class="fas fa-eye text-muted" id="eyeIcon"></i>
+                                    </button>
+                                </div>
+
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Remember me -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input asp-for="RememberMe"
+                                           id="RememberMe"
+                                           class="form-check-input"
+                                           type="checkbox" />
+
+                                    <label class="form-check-label small text-muted" for="RememberMe">Remember Me</label>
+                                </div>
+
+                                <a href="#" class="text-pink small fw-semibold">Forgot Password?</a>
+                            </div>
+
+                            <!-- Login Button -->
+                            <button type="submit"
+                                    id="loginBtn"
+                                    class="btn btn-pink w-100 btn-lg fw-semibold py-3 shadow-sm">
+                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    <div class="card-footer bg-light text-center small py-3">
+                        <i class="fas fa-shield-alt text-success me-1"></i>Secure Login • Your data is protected
+                    </div>
                 </div>
-                <div class="card-body">
-                    @* AJAX form *@
-                    <form id="patientLoginForm" method="post">
-                        @Html.AntiForgeryToken()
 
-                        <div class="mb-3">
-                            <label asp-for="Identifier" class="form-label">Email, Patient Code or Contact Number</label>
-                            <input asp-for="Identifier" class="form-control" placeholder="Enter your Email / Patient Code / Contact Number" />
-                            <span asp-validation-for="Identifier" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Password" class="form-label">Password</label>
-                            <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" />
-                            <span asp-validation-for="Password" class="text-danger"></span>
-                        </div>
-
-                        <div class="mb-3 form-check">
-                            <input asp-for="RememberMe" class="form-check-input" type="checkbox" />
-                            <label asp-for="RememberMe" class="form-check-label">Remember Me</label>
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-block">Login</button>
-                        </div>
-
-                        <div id="loginMessage" class="mt-3"></div>
-                    </form>
-                </div>
             </div>
         </div>
     </div>
-</div>
 
-@section Scripts {
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
-        $(document).ready(function () {
+        $(function () {
+
+            // Toggle password visibility
+            $("#togglePassword").click(function () {
+                const pass = $("#Password");
+                const icon = $("#eyeIcon");
+
+                if (pass.attr("type") === "password") {
+                    pass.attr("type", "text");
+                    icon.removeClass("fa-eye").addClass("fa-eye-slash");
+                } else {
+                    pass.attr("type", "password");
+                    icon.removeClass("fa-eye-slash").addClass("fa-eye");
+                }
+            });
+
+            // Submit form
             $("#patientLoginForm").submit(function (e) {
                 e.preventDefault();
 
-                var form = $(this);
-                var token = $('input[name="__RequestVerificationToken"]', form).val();
+                const btn = $("#loginBtn");
+                const oldText = btn.html();
 
-                var formData = {
+                btn.prop("disabled", true).html(
+                    `<span class="spinner-border spinner-border-sm me-2"></span>Signing in...`
+                );
+
+                const data = {
                     Identifier: $("#Identifier").val(),
                     Password: $("#Password").val(),
                     RememberMe: $("#RememberMe").is(":checked")
                 };
 
+                const token = $('input[name="__RequestVerificationToken"]').val();
+
                 $.ajax({
                     url: '@Url.Action("Login", "PatientPortal")',
                     type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify(formData),
-                    headers: {
-                        'RequestVerificationToken': token
-                    },
-                    success: function (response) {
-                         console.log(response);
-                        if (response.success) {      
-                            // Redirect on successful login
-                            window.location.href = response.redirectUrl;
+                    data: JSON.stringify(data),
+                    headers: { 'RequestVerificationToken': token },
+
+                    success: function (res) {
+                        if (res.success) {
+                            $("#loginMessage").html(`
+                                <div class="alert alert-success rounded-3 shadow-sm">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    Login successful! Redirecting...
+                                </div>
+                            `);
+
+                            setTimeout(() => window.location.href = res.redirectUrl, 1200);
                         } else {
-                            $("#loginMessage").html('<div class="alert alert-danger">' + response.details + '<br>' + response.details + '</div>');
+                            btn.prop("disabled", false).html(oldText);
+
+                            $("#loginMessage").html(`
+                                <div class="alert alert-danger rounded-3 shadow-sm">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>${res.details}
+                                </div>
+                            `);
                         }
                     },
-                    error: function (xhr, status, error) {
-                         console.log(xhr.responseJSON);
-                        var msg = xhr.responseJSON?.message ?? "An error occurred. Please try again.";
-                        var details = xhr.responseJSON.details ?? " ";
-                        $("#loginMessage").html('<div class="alert alert-danger">' + msg + '<br>' + details + '</div>');
+
+                    error: function (xhr) {
+                        btn.prop("disabled", false).html(oldText);
+
+                        $("#loginMessage").html(`
+                            <div class="alert alert-danger rounded-3 shadow-sm">
+                                <i class="fas fa-times-circle me-2"></i>
+                                ${xhr.responseJSON?.message ?? "Something went wrong."}
+                            </div>
+                        `);
                     }
                 });
             });
+
         });
     </script>
-}
+
+</body>
+</html>

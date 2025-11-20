@@ -132,37 +132,37 @@
                         <div class="collapse" id="doctors">
                             <ul class="nav-second-level">
                           
-                                    <li>
-                                        <a class="nav-link" asp-controller="Doctor" asp-action="Doctor">
-                                            Doctors
-                                        </a>
-                                    </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="Doctor" asp-action="Doctor">
+                                        Doctors
+                                    </a>
+                                </li>
                                 <li>
                                     <a class="nav-link" asp-controller="Doctor" asp-action="Availability">
                                         Check Doctor Availability
                                     </a>
                                 </li>
                               
-                                    <li>
-                                        <a class="nav-link" asp-controller="Department" asp-action="Department">
-                                            Departments
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="nav-link" asp-controller="Slot" asp-action="Slot">
-                                            Slots
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="nav-link" asp-controller="DoctorDocument" asp-action="Document">
-                                            Doctor Documents
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="nav-link" asp-controller="DoctorDocument" asp-action="ViewDocument">
-                                            View Doctor Documents
-                                        </a>
-                                    </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="Department" asp-action="Department">
+                                        Departments
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="Slot" asp-action="Slot">
+                                        Slots
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="DoctorDocument" asp-action="Document">
+                                        Doctor Documents
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="nav-link" asp-controller="DoctorDocument" asp-action="ViewDocument">
+                                        View Doctor Documents
+                                    </a>
+                                </li>
                                 
 
                             </ul>
@@ -262,6 +262,44 @@
                     </li>
                 }
                 <li>
+                    <a href="#DoctorPortal" data-bs-toggle="collapse">
+                        <i data-feather="airplay"></i>
+                        <span class="badge bg-success rounded-pill float-end">2</span>
+                        <span> Doctor Portal </span>
+                    </a>
+                    <div class="collapse" id="DoctorPortal">
+                        <ul class="nav-second-level">
+                   
+                           
+                            @if (Context.Session.GetString("DoctorId") != null)
+                            {
+                                <li>
+                                    <a class="nav-link" asp-controller="DoctorPortal" asp-action="PatientManager">
+                                        Patient Manager
+                                    </a>
+                                </li>
+                                <li>
+                                    <form asp-controller="DoctorPortal" asp-action="Logout" method="post" class="d-inline">
+                                        <button type="submit" class="nav-link" style="border: none; background: transparent;">
+                                            Logout( @(Context.Session.GetString("FirstName")) )
+                                        </button>
+                                    </form>
+                                </li>
+                            } else
+                            {
+                                <li>
+                                    <a class="nav-link" asp-controller="DoctorPortal" asp-action="LoginPage">
+                                        Login (Doctor)
+                                    </a>
+                                </li>
+
+                            }
+
+                        </ul>
+                    </div>
+
+                </li>
+                <li>
                     <a href="#analytics" data-bs-toggle="collapse">
                         <i data-feather="airplay"></i>
 
@@ -284,7 +322,7 @@
                         <i data-feather="airplay"></i>
 
                         <span class="badge bg-success rounded-pill float-end">2</span>
-                        <span> Patients </span>
+                        <span> Patients Portal</span>
                     </a>
                     <div class="collapse" id="PatientsPortal">
                         <ul class="nav-second-level">

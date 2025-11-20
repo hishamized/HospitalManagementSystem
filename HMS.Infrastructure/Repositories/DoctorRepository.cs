@@ -26,6 +26,10 @@ namespace HMS.Infrastructure.Repositories
 
         public async Task<int> AddDoctorAsync(AddDoctorDto doctor)
         {
+            // Generate unique doctor code
+            string doctorCode = $"DOC{DateTime.UtcNow:yyyyMMddHHmmss}{Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper()}";
+            doctor.DoctorCode = doctorCode;
+
             var parameters = new DynamicParameters(doctor);
 
             using var conn = _context.CreateConnection();

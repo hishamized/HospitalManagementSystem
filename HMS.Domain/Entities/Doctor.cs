@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HMS.Domain.Entities;
 
 namespace HMS.Domain.Entities
 {
@@ -34,8 +35,11 @@ namespace HMS.Domain.Entities
         // 🧭 Navigation Properties
         public Slot? Slot { get; set; }
         public Department? Department { get; set; }
-        public ICollection<DoctorDocument> Documents { get; set; } = new List<DoctorDocument>();
 
+        public string PasswordHash { get; set; } // New Field
+        public int? RoleId { get; set; }
+        public Role? Role { get; set; }
+        public ICollection<DoctorDocument> Documents { get; set; } = new List<DoctorDocument>();  
 
     }
 

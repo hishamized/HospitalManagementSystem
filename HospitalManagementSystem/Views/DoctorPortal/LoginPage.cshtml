@@ -1,0 +1,251 @@
+﻿@model HMS.Application.DTO.DoctorPortal.DoctorLoginDto
+
+@{
+    ViewData["Title"] = "Doctor Login";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-primary bg-gradient min-vh-100 d-flex align-items-center">
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-11 col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+
+                    <!-- Header -->
+                    <div class="card-header bg-white text-center pt-5 pb-4 border-0">
+                        <div class="bg-primary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 90px; height: 90px;">
+                            <i class="fas fa-user-md text-white" style="font-size: 45px;"></i>
+                        </div>
+                        <h3 class="fw-bold text-primary mb-1">Doctor Portal</h3>
+                        <p class="text-muted small mb-0">Sign in to access your dashboard</p>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="card-body px-4 px-sm-5 py-4">
+
+                        <div id="loginMessage"></div>
+
+                        <form id="doctorLoginForm" method="post">
+                            @Html.AntiForgeryToken()
+
+                            <!-- Identifier -->
+                            <div class="mb-4">
+                                <label asp-for="Identifier" class="form-label fw-semibold text-dark small mb-2">
+                                    <i class="fas fa-user text-primary me-2"></i>Email, Doctor Code or Phone
+                                </label>
+
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text bg-light border-end-0 rounded-start-3">
+                                        <i class="fas fa-id-card text-muted"></i>
+                                    </span>
+                                    <input asp-for="Identifier"
+                                           id="Identifier"
+                                           class="form-control border-start-0 bg-light rounded-end-3 ps-0"
+                                           placeholder="Enter your identifier" />
+                                </div>
+
+                                <span asp-validation-for="Identifier"
+                                      class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <!-- Password -->
+                            <div class="mb-4">
+                                <label asp-for="Password" class="form-label fw-semibold text-dark small mb-2">
+                                    <i class="fas fa-lock text-primary me-2"></i>Password
+                                </label>
+
+                                <div class="input-group input-group-lg position-relative">
+                                    <span class="input-group-text bg-light border-end-0 rounded-start-3">
+                                        <i class="fas fa-key text-muted"></i>
+                                    </span>
+
+                                    <input asp-for="Password"
+                                           type="password"
+                                           id="Password"
+                                           class="form-control border-start-0 bg-light rounded-end-3 ps-0 pe-5"
+                                           placeholder="Enter your password" />
+
+                                    <button type="button"
+                                            id="togglePassword"
+                                            class="btn position-absolute end-0 top-50 translate-middle-y border-0 bg-transparent pe-3">
+                                        <i class="fas fa-eye text-muted" id="eyeIcon"></i>
+                                    </button>
+                                </div>
+
+                                <span asp-validation-for="Password"
+                                      class="text-danger small mt-1 d-block"></span>
+                            </div>
+
+                            <!-- Remember Me -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    <input asp-for="RememberMe"
+                                           id="rememberCheck"
+                                           class="form-check-input rounded-2"
+                                           type="checkbox"
+                                           style="width: 18px; height: 18px; cursor: pointer;" />
+
+                                    <label for="rememberCheck"
+                                           class="form-check-label text-muted small ms-1"
+                                           style="cursor: pointer;">
+                                        Remember Me
+                                    </label>
+                                </div>
+
+                                <a href="#" class="text-decoration-none text-primary small fw-semibold">Forgot Password?</a>
+                            </div>
+
+                            <!-- Submit -->
+                            <div class="d-grid gap-2 mb-3">
+                                <button type="submit"
+                                        class="btn btn-primary btn-lg rounded-3 fw-semibold py-3 shadow-sm"
+                                        id="loginBtn">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                                </button>
+                            </div>
+
+                            <div class="position-relative my-4">
+                                <hr class="text-muted" />
+                                <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">OR</span>
+                            </div>
+
+                            <div class="text-center">
+                                <p class="text-muted small mb-2">Don't have an account?</p>
+                                <a href="/Home/Index" class="btn btn-outline-primary btn-sm rounded-3 px-4 fw-semibold">
+                                    <i class="fas fa-user-plus me-2"></i>Home Page
+                                </a>
+                            </div>
+                        </form>
+
+                    </div>
+
+                    <div class="card-footer bg-light border-0 text-center py-3">
+                        <p class="text-muted small mb-0">
+                            <i class="fas fa-shield-alt text-success me-1"></i>
+                            Secure Login • Protected by HMS
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="text-center mt-4">
+                    <p class="text-white small mb-1">
+                        <i class="fas fa-headset me-2"></i>Need Help? Contact Support
+                    </p>
+                    <p class="text-white-50 small mb-0">
+                        © 2024 Hospital Management System. All rights reserved.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // 🔥 FIXED PASSWORD TOGGLE
+            $("#togglePassword").click(function () {
+                var passwordInput = $("#Password");
+                var eyeIcon = $("#eyeIcon");
+
+                if (passwordInput.attr("type") === "password") {
+                    passwordInput.attr("type", "text");
+                    eyeIcon.removeClass("fa-eye").addClass("fa-eye-slash");
+                } else {
+                    passwordInput.attr("type", "password");
+                    eyeIcon.removeClass("fa-eye-slash").addClass("fa-eye");
+                }
+            });
+
+            // 🔥 FIXED AJAX LOGIN
+            $("#doctorLoginForm").submit(function (e) {
+                e.preventDefault();
+
+                var token = $('input[name="__RequestVerificationToken"]').val();
+                var loginBtn = $("#loginBtn");
+                var originalBtnText = loginBtn.html();
+
+                loginBtn.prop('disabled', true).html(
+                    '<span class="spinner-border spinner-border-sm me-2"></span>Signing in...'
+                );
+
+                var formData = {
+                    Identifier: $("#Identifier").val(),
+                    Password: $("#Password").val(),
+                    RememberMe: $("#rememberCheck").is(":checked")
+                };
+
+                $.ajax({
+                    url: '@Url.Action("Login", "DoctorPortal")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    headers: { 'RequestVerificationToken': token },
+
+                    success: function (res) {
+                        if (res.success) {
+                            $("#loginMessage").html(
+                                '<div class="alert alert-success rounded-3 shadow-sm">' +
+                                '<i class="fas fa-check-circle me-2"></i>Login successful! Redirecting…' +
+                                '</div>'
+                            );
+
+                            setTimeout(() => window.location.href = res.redirectUrl, 1000);
+                        } else {
+                            loginBtn.prop('disabled', false).html(originalBtnText);
+
+                            $("#loginMessage").html(
+                                '<div class="alert alert-danger rounded-3 shadow-sm">' +
+                                '<i class="fas fa-exclamation-triangle me-2"></i>' + res.message +
+                                '</div>'
+                            );
+                        }
+                    },
+
+                    error: function (xhr) {
+                        loginBtn.prop('disabled', false).html(originalBtnText);
+
+                        $("#loginMessage").html(
+                            '<div class="alert alert-danger rounded-3 shadow-sm">' +
+                            '<i class="fas fa-times-circle me-2"></i>Login failed.' +
+                            '</div>'
+                        );
+                    }
+                });
+            });
+
+            // Focus effects
+            $('input').on('focus', function () {
+                $(this).closest('.input-group').addClass('shadow-sm');
+            }).on('blur', function () {
+                $(this).closest('.input-group').removeClass('shadow-sm');
+            });
+        });
+    </script>
+
+</body>
+</html>

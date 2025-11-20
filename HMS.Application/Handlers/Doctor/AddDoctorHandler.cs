@@ -25,6 +25,10 @@ namespace HMS.Application.Features.Doctors.Handlers
             // Map DTO to DTO (or entity if repository requires)
             var doctorDto = _mapper.Map<AddDoctorDto>(request.Doctor);
 
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(request.Doctor.PasswordHash);
+
+            doctorDto.PasswordHash = passwordHash;
+
             // Call repository which executes the SP
             var newDoctorId = await _doctorRepository.AddDoctorAsync(doctorDto);
 

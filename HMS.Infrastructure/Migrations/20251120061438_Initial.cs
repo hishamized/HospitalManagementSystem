@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HMS.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -68,6 +68,26 @@ namespace HMS.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Departments", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LabTests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TestName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SampleType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NormalRange = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LabTests", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -173,6 +193,33 @@ namespace HMS.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Wards", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Payments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PatientId = table.Column<int>(type: "int", nullable: true),
+                    VisitId = table.Column<int>(type: "int", nullable: true),
+                    BillId = table.Column<int>(type: "int", nullable: false),
+                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    PaymentStatus = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, defaultValue: "Unpaid"),
+                    PaymentMode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Payments_Bill_BillId",
+                        column: x => x.BillId,
+                        principalTable: "Bill",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -290,13 +337,13 @@ namespace HMS.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DoctorCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DoctorCode = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Specialization = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Qualification = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ExperienceYears = table.Column<int>(type: "int", nullable: false),
@@ -308,7 +355,9 @@ namespace HMS.Infrastructure.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     SlotId = table.Column<int>(type: "int", nullable: true),
-                    DepartmentId = table.Column<int>(type: "int", nullable: true)
+                    DepartmentId = table.Column<int>(type: "int", nullable: true),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -317,6 +366,12 @@ namespace HMS.Infrastructure.Migrations
                         name: "FK_Doctors_Departments_DepartmentId",
                         column: x => x.DepartmentId,
                         principalTable: "Departments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Doctors_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -633,6 +688,38 @@ namespace HMS.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LabRequests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PatientId = table.Column<int>(type: "int", nullable: true),
+                    DoctorId = table.Column<int>(type: "int", nullable: true),
+                    RequestDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LabRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LabRequests_Doctors_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "Doctors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_LabRequests_Patients_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "Patients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MessageStatuses",
                 columns: table => new
                 {
@@ -698,6 +785,100 @@ namespace HMS.Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "LabRequestItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LabRequestId = table.Column<int>(type: "int", nullable: true),
+                    LabTestId = table.Column<int>(type: "int", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LabRequestItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LabRequestItems_LabRequests_LabRequestId",
+                        column: x => x.LabRequestId,
+                        principalTable: "LabRequests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_LabRequestItems_LabTests_LabTestId",
+                        column: x => x.LabTestId,
+                        principalTable: "LabTests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LabResults",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LabRquestItemId = table.Column<int>(type: "int", nullable: true),
+                    ResultValue = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ResultNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ResultDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DoctorId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LabResults", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LabResults_Doctors_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "Doctors",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_LabResults_LabRequestItems_LabRquestItemId",
+                        column: x => x.LabRquestItemId,
+                        principalTable: "LabRequestItems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Samples",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    LabRequestItemId = table.Column<int>(type: "int", nullable: true),
+                    CollectionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CollectedByUserId = table.Column<int>(type: "int", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Samples", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Samples_LabRequestItems_LabRequestItemId",
+                        column: x => x.LabRequestItemId,
+                        principalTable: "LabRequestItems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Samples_Users_CollectedByUserId",
+                        column: x => x.CollectedByUserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Allergies_PatientId",
                 table: "Allergies",
@@ -754,6 +935,29 @@ namespace HMS.Infrastructure.Migrations
                 column: "DepartmentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Doctors_DoctorCode",
+                table: "Doctors",
+                column: "DoctorCode",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Doctors_Email",
+                table: "Doctors",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Doctors_PhoneNumber",
+                table: "Doctors",
+                column: "PhoneNumber",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Doctors_RoleId",
+                table: "Doctors",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Doctors_SlotId",
                 table: "Doctors",
                 column: "SlotId");
@@ -777,6 +981,38 @@ namespace HMS.Infrastructure.Migrations
                 name: "IX_Insurance_PatientId",
                 table: "Insurance",
                 column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LabRequestItems_LabRequestId",
+                table: "LabRequestItems",
+                column: "LabRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LabRequestItems_LabTestId",
+                table: "LabRequestItems",
+                column: "LabTestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LabRequests_DoctorId",
+                table: "LabRequests",
+                column: "DoctorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LabRequests_PatientId",
+                table: "LabRequests",
+                column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LabResults_DoctorId",
+                table: "LabResults",
+                column: "DoctorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LabResults_LabRquestItemId",
+                table: "LabResults",
+                column: "LabRquestItemId",
+                unique: true,
+                filter: "[LabRquestItemId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MedicalHistories_PatientId",
@@ -846,6 +1082,28 @@ namespace HMS.Infrastructure.Migrations
                 column: "PatientId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Payments_BillId",
+                table: "Payments",
+                column: "BillId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_PaymentStatus",
+                table: "Payments",
+                column: "PaymentStatus");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Samples_CollectedByUserId",
+                table: "Samples",
+                column: "CollectedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Samples_LabRequestItemId",
+                table: "Samples",
+                column: "LabRequestItemId",
+                unique: true,
+                filter: "[LabRequestItemId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserOtp_UserId",
                 table: "UserOtp",
                 column: "UserId");
@@ -878,9 +1136,6 @@ namespace HMS.Infrastructure.Migrations
                 name: "Appointments");
 
             migrationBuilder.DropTable(
-                name: "Bill");
-
-            migrationBuilder.DropTable(
                 name: "ChatRoomUsers");
 
             migrationBuilder.DropTable(
@@ -899,6 +1154,9 @@ namespace HMS.Infrastructure.Migrations
                 name: "Insurance");
 
             migrationBuilder.DropTable(
+                name: "LabResults");
+
+            migrationBuilder.DropTable(
                 name: "MedicalHistories");
 
             migrationBuilder.DropTable(
@@ -911,13 +1169,16 @@ namespace HMS.Infrastructure.Migrations
                 name: "PatientVisits");
 
             migrationBuilder.DropTable(
+                name: "Payments");
+
+            migrationBuilder.DropTable(
+                name: "Samples");
+
+            migrationBuilder.DropTable(
                 name: "UserOtp");
 
             migrationBuilder.DropTable(
                 name: "UserRoles");
-
-            migrationBuilder.DropTable(
-                name: "Doctors");
 
             migrationBuilder.DropTable(
                 name: "Messages");
@@ -926,16 +1187,10 @@ namespace HMS.Infrastructure.Migrations
                 name: "Bed");
 
             migrationBuilder.DropTable(
-                name: "Patients");
+                name: "Bill");
 
             migrationBuilder.DropTable(
-                name: "Roles");
-
-            migrationBuilder.DropTable(
-                name: "Departments");
-
-            migrationBuilder.DropTable(
-                name: "Slots");
+                name: "LabRequestItems");
 
             migrationBuilder.DropTable(
                 name: "ChatRooms");
@@ -945,6 +1200,27 @@ namespace HMS.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Wards");
+
+            migrationBuilder.DropTable(
+                name: "LabRequests");
+
+            migrationBuilder.DropTable(
+                name: "LabTests");
+
+            migrationBuilder.DropTable(
+                name: "Doctors");
+
+            migrationBuilder.DropTable(
+                name: "Patients");
+
+            migrationBuilder.DropTable(
+                name: "Departments");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "Slots");
         }
     }
 }

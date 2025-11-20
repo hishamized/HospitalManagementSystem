@@ -15,6 +15,7 @@ namespace HMS.Domain.Interfaces
         IRoleRepository RoleRepository { get; }
 
         IPatientPortalRepository PatientPortalRepository { get; }
+        IDoctorPortalRepository DoctorPortalRepository { get; }
 
         IPaymentRepository PaymentRepository { get; }
 

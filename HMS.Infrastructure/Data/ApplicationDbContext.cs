@@ -151,7 +151,14 @@ namespace HMS.Infrastructure.Data
             modelBuilder.Entity<Doctor>(entity =>
             {
                 entity.HasKey(d => d.Id);
-
+                entity.HasIndex(d => d.Email)
+                        .IsUnique();
+                entity.HasIndex(d => d.PhoneNumber)
+                        .IsUnique();
+                entity.HasIndex(d => d.DoctorCode)
+                        .IsUnique();
+                entity.Property(d => d.PasswordHash)
+                        .IsRequired();
                 // Doctor → Department (many doctors per department)
                 entity.HasOne(d => d.Department)
                       .WithMany(dep => dep.Doctors)
@@ -163,6 +170,12 @@ namespace HMS.Infrastructure.Data
                       .WithMany(s => s.Doctors)
                       .HasForeignKey(d => d.SlotId)
                       .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(d => d.Role)
+                .WithMany()
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             });
 
 

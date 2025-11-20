@@ -8,7 +8,7 @@ namespace HMS.Application.DTO.Doctor
 {
     public class AddDoctorDto
     {
-        public string DoctorCode { get; set; }       // Optional: can be generated in SP
+        public string DoctorCode { get; set; }       
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Gender { get; set; }
@@ -23,6 +23,7 @@ namespace HMS.Application.DTO.Doctor
         public string State { get; set; }
         public string ZipCode { get; set; }
         public bool IsActive { get; set; } = true;
+        public string PasswordHash { get; set; }
         // 🆕 Foreign Keys
         public int SlotId { get; set; }
         public int DepartmentId { get; set; }

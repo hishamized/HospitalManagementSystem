@@ -31,6 +31,7 @@ namespace HMS.Infrastructure.Repositories
         private IPatientPortalRepository _patientPortalRepository;
         private IPaymentRepository _paymentRepository;
         private ILabRepository _labRepository;
+        private IDoctorPortalRepository _doctorPortalRepository;
 
 
 
@@ -75,6 +76,16 @@ namespace HMS.Infrastructure.Repositories
                     ? new LabRepository(_dbRepository)
                     : _labRepository;
                 return _labRepository;
+            }
+        }
+        public IDoctorPortalRepository DoctorPortalRepository
+        {
+            get
+            {
+                _doctorPortalRepository = (_doctorPortalRepository == null)
+                    ? new DoctorPortalRepository(_dbRepository)
+                    : _doctorPortalRepository;
+                return _doctorPortalRepository;
             }
         }
 
