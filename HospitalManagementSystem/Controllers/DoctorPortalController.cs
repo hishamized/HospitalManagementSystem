@@ -1,5 +1,6 @@
 ﻿using HMS.Application.Commands.DoctorPortal;
 using HMS.Application.DTO.DoctorPortal;
+using HMS.Application.DTO.Patient;
 using HMS.Application.DTO.PatientPortal;
 using HMS.Application.Queries.DoctorPortal;
 using HMS.Application.Queries.PatientPortal;
@@ -154,6 +155,83 @@ namespace HMS.Web.Controllers
                     message = ex.Message
                 });
             }
+        }
+        [HttpPost]
+        [Authorize(Roles = "Doctor")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ViewPatient(int patientId) {
+            var doctorIdClaim = User.FindFirst("DoctorId")?.Value;
+            if (string.IsNullOrEmpty(doctorIdClaim) || !int.TryParse(doctorIdClaim, out int doctorId)) {
+                return Unauthorized(new { success = false, message = "Doctor not authenticated" });
+            }
+            try
+            {
+                var query = new ViewPatientQuery(doctorId, patientId);
+                var patientData = await _mediator.Send(query);
+                if (patientData == null)
+                {
+                    TempData["Error"] = "Patient not found";
+                    return RedirectToAction("PatientManager");
+                }
+                return View(patientData);
+            }
+            catch (Exception ex) {
+                return StatusCode(500, new {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+        [HttpGet]
+        [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> FetchValidTests()
+        {
+            try
+            {
+                var query = new FetchValidTestsQuery();
+                var result = await _mediator.Send(query);
+                return Ok(new { 
+                    success = true,
+                    data = result
+                });
+            }
+            catch (Exception ex) {
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> SubmitLabRequest([FromBody] LabRequestDto payload)
+        {
+            // Get DoctorId from claims
+            var doctorIdClaim = User.FindFirst("DoctorId")?.Value;
+            if (string.IsNullOrEmpty(doctorIdClaim) || !int.TryParse(doctorIdClaim, out int doctorId))
+            {
+                return Unauthorized(new { success = false, message = "Doctor not authenticated" });
+            }
+
+            // Inject DoctorId into the main LabRequest object
+            payload.LabRequest.DoctorId = doctorId;
+
+            // Call CQRS pipeline
+            var result = await _mediator.Send(new CreateLabRequestCommand(payload));
+
+            if (result == null || result.LabRequestId <= 0)
+            {
+                return BadRequest(new { success = false, message = "Failed to create Lab Request" });
+            }
+
+            return Ok(new
+            {
+                success = true,
+                message = "Lab request created successfully!",
+                labRequestId = result.LabRequestId
+            });
         }
     }
 }

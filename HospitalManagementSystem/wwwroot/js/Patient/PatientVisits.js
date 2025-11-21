@@ -278,11 +278,11 @@ $("#editVisitType").on("change", function () {
 
         // Other fields
         $('#editVisitType').val(visitData.visitType);
-        $('#editVisitDate').val(visitData.visitDate.split('T')[0]);
+        $('#editVisitDate').val(toDateTimeLocalFormat(visitData.visitDate));
         $('#editDoctorName').val(visitData.doctorName ?? '');
         $('#editDoctorId').val(visitData.doctorId ?? '');
-        $('#editAdmissionDate').val(visitData.admissionDate ? visitData.admissionDate.split('T')[0] : '');
-        $('#editDischargeDate').val(visitData.dischargeDate ? visitData.dischargeDate.split('T')[0] : '');
+        $('#editAdmissionDate').val(toDateTimeLocalFormat(visitData.admissionDate));
+        $('#editDischargeDate').val(toDateTimeLocalFormat(visitData.dischargeDate));
         $('#editRoomNumber').val(visitData.roomNumber ?? '');
         $('#editTreatmentDetails').val(visitData.treatmentDetails ?? '');
         $('#editNotes').val(visitData.notes ?? '');
@@ -406,5 +406,19 @@ $("#editVisitType").on("change", function () {
         window.open(url, '_blank');
     }
 
+    function toDateTimeLocalFormat(dateString) {
+        if (!dateString) return "";
+
+        const date = new Date(dateString);
+
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
 
 });

@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace HMS.Application.DTO.DoctorPortal
+{
+    public class LabRequestDto
+    {
+        public LabRequestCreateDto LabRequest { get; set; }
+        public List<LabRequestItemCreateDto> LabRequestItems { get; set; }
+    }
+
+}

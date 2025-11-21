@@ -42,9 +42,13 @@
             pinned: 'right',
             maxWidth: 160,
             cellRenderer: params => `
-            <button class="btn btn-primary btn-sm view-patient-btn" data-patient-id="${params.value}">
-                <i class="bi bi-eye"></i> View
-            </button>`
+            <form method="post" action="/DoctorPortal/ViewPatient">
+                <input type="hidden" name="patientId" value="${params.value}" />
+                <input name="__RequestVerificationToken" type="hidden" value="${window.__RequestVerificationToken}" />
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="bi bi-eye"></i> View
+                </button>
+            </form>`
         }
     ];
 
@@ -129,21 +133,6 @@
             }
         });
     }
-
-    // View patient function
-    function viewPatient(patientId) {
-        // Redirect to patient detail page or open modal
-        window.location.href = `/DoctorPortal/PatientDetails/${patientId}`;
-
-        // Alternative: Show modal with patient details
-        // showPatientDetailsModal(patientId);
-    }
-
-    // Event delegation for view patient button
-    $(document).on('click', '.view-patient-btn', function () {
-        const patientId = $(this).data('patient-id');
-        viewPatient(patientId);
-    });
 
     // Toast notification helper
     function showToast(title, message, type) {

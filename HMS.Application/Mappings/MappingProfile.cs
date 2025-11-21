@@ -11,6 +11,7 @@ using HMS.Application.DTO.Bill;
 using HMS.Application.DTO.Department;
 using HMS.Application.DTO.Doctor;
 using HMS.Application.DTO.DoctorDocument;
+using HMS.Application.DTO.DoctorPortal;
 using HMS.Application.DTO.Feedback;
 using HMS.Application.DTO.Insurance;
 using HMS.Application.DTO.MedicalHistory;
@@ -330,6 +331,14 @@ namespace HMS.Application.Mappings
             CreateMap<Patient, GetPatientByIdentifierDto>().ReverseMap();
             CreateMap<AddPaymentDto, Payment>().ReverseMap();
 
+            // Map main LabRequest create DTO → Domain Entity
+            CreateMap<LabRequestCreateDto, LabRequest>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore()); // identity column
+
+            // Map each LabRequestItem DTO → Domain Entity
+            CreateMap<LabRequestItemCreateDto, LabRequestItem>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore()) // identity
+                .ForMember(dest => dest.LabRequestId, opt => opt.Ignore());     // FK set after insert
         }
     }
 }

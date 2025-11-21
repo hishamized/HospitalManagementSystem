@@ -1,6 +1,7 @@
 ﻿using HMS.Application.Dto;
 using HMS.Application.Dto.Doctor;
 using HMS.Application.DTO.Doctor;
+using HMS.Application.DTO.DoctorPortal;
 using System.Threading.Tasks;
 
 namespace HMS.Application.Interfaces
