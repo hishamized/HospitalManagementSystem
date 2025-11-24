@@ -11,7 +11,7 @@ namespace HMS.Domain.Entities
         public int Id { get; set; }
 
         public int PatientId { get; set; }
-        public int VisitId { get; set; } // FK to PatientVisit
+        public int? VisitId { get; set; } // FK to PatientVisit
         public string VisitType { get; set; } = string.Empty; // "Inpatient" or "Outpatient"
 
         public DateTime BillDate { get; set; } = DateTime.UtcNow;
@@ -38,6 +38,8 @@ namespace HMS.Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         public bool IsActive { get; set; } = true;
+        public PatientVisit? PatientVisit { get; set; }
+
     }
 
 }

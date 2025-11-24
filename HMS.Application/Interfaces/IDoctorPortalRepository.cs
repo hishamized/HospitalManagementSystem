@@ -1,4 +1,5 @@
 ﻿using HMS.Application.Commands.DoctorPortal;
+using HMS.Application.Commands.LabTest;
 using HMS.Application.DTO.DoctorPortal;
 using HMS.Application.Queries.DoctorPortal;
 using HMS.Domain.Entities;
@@ -19,6 +20,7 @@ namespace HMS.Application.Interfaces
         Task<IEnumerable<FetchValidTestsDto>> FetchValidTestsAsync(FetchValidTestsQuery request, CancellationToken cancellationToken);
         Task<int> CreateLabRequestAsync(CancellationToken cancellationToken, LabRequest labRequest, DataTable itemsTable);
         Task<IEnumerable<FetchLabRequestsWithItemsByPatientDto>> FetchLabRequestsWithItemsByPatientAsync(FetchLabRequestsWithItemsByPatientCommand request, CancellationToken cancellationToken);
+        Task<long> UpdateLabRequestItemStatusAsync(UpdateLabRequestItemStatusCommand request, CancellationToken cancellationToken);
 
     }
 }

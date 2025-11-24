@@ -207,7 +207,7 @@ namespace HMS.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("VisitId")
+                    b.Property<int?>("VisitId")
                         .HasColumnType("int");
 
                     b.Property<string>("VisitType")
@@ -215,6 +215,8 @@ namespace HMS.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("VisitId");
 
                     b.ToTable("Bill");
                 });
@@ -1444,6 +1446,15 @@ namespace HMS.Infrastructure.Migrations
                     b.Navigation("Ward");
                 });
 
+            modelBuilder.Entity("HMS.Domain.Entities.Bill", b =>
+                {
+                    b.HasOne("HMS.Domain.Entities.PatientVisit", "PatientVisit")
+                        .WithMany("Bill")
+                        .HasForeignKey("VisitId");
+
+                    b.Navigation("PatientVisit");
+                });
+
             modelBuilder.Entity("HMS.Domain.Entities.ChatRoomUser", b =>
                 {
                     b.HasOne("HMS.Domain.Entities.ChatRoom", "ChatRoom")
@@ -1808,6 +1819,11 @@ namespace HMS.Infrastructure.Migrations
                     b.Navigation("MedicalHistories");
 
                     b.Navigation("PatientVisits");
+                });
+
+            modelBuilder.Entity("HMS.Domain.Entities.PatientVisit", b =>
+                {
+                    b.Navigation("Bill");
                 });
 
             modelBuilder.Entity("HMS.Domain.Entities.Role", b =>

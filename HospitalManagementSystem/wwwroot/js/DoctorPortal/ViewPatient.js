@@ -90,8 +90,6 @@
             LabRequestItems: selectedTests
         };
 
-        console.log("🚀 FINAL PAYLOAD:", finalPayload);
-
         Swal.fire({
             title: "Submitting...",
             text: "Please wait while we submit the lab request.",
@@ -189,6 +187,17 @@
             cellClass: 'px-3 py-3 small lh-base'
         },
         {
+            headerName: 'Request Item Status',
+            field: 'labRequestItemStatus',
+            minWidth: 320,
+            flex: 1,
+            wrapText: true,
+            autoHeight: true,
+            filter: 'agTextColumnFilter',
+            tooltipField: 'labRequestItemStatus',
+            cellClass: 'px-3 py-3 small lh-base'
+        },
+        {
             headerName: 'Sample Type',
             field: 'sampleType',
             minWidth: 150,
@@ -230,20 +239,45 @@
             headerName: 'Actions',
             field: 'labRequestItemId',
             pinned: 'right',
-            minWidth: 150,
-            maxWidth: 160,
+            minWidth: 200,
+            maxWidth: 220,
             filter: false,
             sortable: false,
             cellClass: 'px-2 py-2',
-            cellRenderer: params => `
-            <button 
-                class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 px-3 py-1 view-test-detail-btn"
-                data-item-id="${params.value}">
-                <i class="bi bi-eye"></i>
-                View
-            </button>
-        `
+            cellRenderer: params => {
+                const status = (params.data.labRequestItemStatus || '').toLowerCase();
+
+
+                let updateBtn = '';
+                if (status === 'pending') {
+                    updateBtn = `
+                <button 
+                    class="btn btn-outline-success btn-sm update-status-btn d-flex align-items-center gap-1 px-2 py-1"
+                    data-item-id="${params.value}"
+                    data-lab-request-id="${params.data.labRequestId}"
+                    data-lab-test-id="${params.data.labTestId}"
+                    data-patient-id="${params.data.patientId}"
+                    data-current-status="${params.data.labRequestItemStatus}">
+                    <i class="bi bi-pencil-square"></i>
+                    Update
+                </button>
+            `;
+                }
+
+                return `
+            <div class="d-flex gap-2">
+                <button 
+                    class="btn btn-outline-primary btn-sm view-test-detail-btn d-flex align-items-center gap-1 px-2 py-1"
+                    data-item-id="${params.value}">
+                    <i class="bi bi-eye"></i>
+                    View
+                </button>
+                ${updateBtn}
+            </div>
+        `;
+            }
         }
+
     ];
 
 
@@ -328,7 +362,6 @@
         const itemId = $(this).data('item-id');
         // TODO: Implement view test detail functionality
         showToast('Info', `View details for test item ID: ${itemId}`, 'info');
-        console.log('View test detail for item ID:', itemId);
     });
 
     // Toast notification helper
@@ -360,5 +393,44 @@
             $(this).remove();
         });
     }
+
+    let updateStatusModal = new bootstrap.Modal(document.getElementById("updateStatusModal"));
+
+    $(document).on('click', '.update-status-btn', function () {
+        $("#us_LabRequestItemId").val($(this).data("item-id"));
+        $("#us_LabRequestId").val($(this).data("lab-request-id"));
+        $("#us_LabTestId").val($(this).data("lab-test-id"));
+        $("#us_PatientId").val($(this).data("patient-id"));
+
+        const currentStatus = $(this).data("current-status");
+        $("#us_NewStatus").val(currentStatus);
+
+        updateStatusModal.show();
+    });
+    $("#btn-save-status").on("click", function () {
+        const payload = {
+            DoctorId: 0,  // controller will override
+            LabRequestItemId: Number($("#us_LabRequestItemId").val()),
+            LabRequestId: Number($("#us_LabRequestId").val()),
+            LabTestId: Number($("#us_LabTestId").val()),
+            PatientId: Number($("#us_PatientId").val()),
+            NewStatus: $("#us_NewStatus").val()
+        };
+
+        $.ajax({
+            url: "/DoctorPortal/UpdateLabRequestItemStatus",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(payload),
+            success: function (res) {
+                updateStatusModal.hide();
+                showToast("Success", "Status updated successfully", "success");
+                loadTestRequests(); // refresh grid
+            },
+            error: function (xhr) {
+                showToast("Error", xhr.responseJSON?.message || "Failed to update status", "danger");
+            }
+        });
+    });
 
 });

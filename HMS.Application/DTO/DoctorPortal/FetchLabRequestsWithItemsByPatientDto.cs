@@ -19,5 +19,8 @@ namespace HMS.Application.DTO.DoctorPortal
         public string SampleType { get; set; } = string.Empty;
         public string NormalRange { get; set; } = string.Empty;
         public decimal Price { get; set; }
+        public string LabRequestStatus { get; set; } = string.Empty;
+        public string LabRequestItemStatus { get; set; } = string.Empty;
+
     }
 }

@@ -1,5 +1,7 @@
 ﻿using HMS.Application.Commands.DoctorPortal;
+using HMS.Application.Commands.LabTest;
 using HMS.Application.DTO.DoctorPortal;
+using HMS.Application.DTO.LabTest;
 using HMS.Application.DTO.Patient;
 using HMS.Application.DTO.PatientPortal;
 using HMS.Application.Queries.DoctorPortal;
@@ -253,6 +255,40 @@ namespace HMS.Web.Controllers
                 return StatusCode(500, new { 
                     success = false,
                     message = Ex.Message
+                });
+            }
+        }
+        [HttpPost]
+        [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> UpdateLabRequestItemStatus([FromBody] UpdateLabRequestItemStatusDto dto) {
+            try
+            {
+                var doctorIdClaim = User.FindFirst("DoctorId")?.Value;
+                if (string.IsNullOrEmpty(doctorIdClaim) || !int.TryParse(doctorIdClaim, out int doctorId))
+                {
+                    return Unauthorized(new { success = false, message = "Doctor not authenticated" });
+                }
+                dto.DoctorId = doctorId;
+                var command = new UpdateLabRequestItemStatusCommand(dto);
+                var result = await _mediator.Send(command);
+                if (result != -1) {
+                    return Ok(new { 
+                        success = true,
+                        data = result
+                    }); 
+                }
+                else
+                {
+                    return StatusCode(500, new { 
+                        success = false,
+                        message = "Internal Server Error"
+                    });
+                }
+            }
+            catch (Exception ex) {
+                return StatusCode(500, new {
+                    success = false,
+                    message = ex.Message
                 });
             }
         }

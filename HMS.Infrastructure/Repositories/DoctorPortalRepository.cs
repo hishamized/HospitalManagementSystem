@@ -1,4 +1,5 @@
 ﻿using HMS.Application.Commands.DoctorPortal;
+using HMS.Application.Commands.LabTest;
 using HMS.Application.DTO.DoctorPortal;
 using HMS.Application.DTO.PatientPortal;
 using HMS.Application.Interfaces;
@@ -109,6 +110,19 @@ namespace HMS.Infrastructure.Repositories
                 new (){ParameterName = "@patientId", ParameterValue = request.PatientId, ParameterType=DbType.Int64, ParameterDirection = ParameterDirection.Input}
             };
             var result = await _dbRepository.ExecuteSpListAsync<FetchLabRequestsWithItemsByPatientDto>(cancellationToken, Procedure, Parameters);
+            return result;
+        }
+        public async Task<long> UpdateLabRequestItemStatusAsync(UpdateLabRequestItemStatusCommand request, CancellationToken cancellationToken) { 
+            string Procedure = "sp_UpdateLabRequestItemStatus";
+            var Parameters = new List<ParametersCollection> { 
+                new() {ParameterName="@DoctorId", ParameterValue=request.Dto.DoctorId, ParameterType = DbType.Int64, ParameterDirection = ParameterDirection.Input},
+                new() {ParameterName="@LabRequestItemId", ParameterValue=request.Dto.LabRequestItemId, ParameterType = DbType.Int64, ParameterDirection = ParameterDirection.Input},
+                new() { ParameterName="@LabRequestId", ParameterValue=request.Dto.LabRequestId, ParameterType = DbType.Int64, ParameterDirection = ParameterDirection.Input},
+                new() {ParameterName="@LabTestId", ParameterValue = request.Dto.LabTestId, ParameterType=DbType.Int64, ParameterDirection = ParameterDirection.Input},
+                new(){ ParameterName="@PatientId", ParameterValue = request.Dto.PatientId, ParameterType=DbType.Int64, ParameterDirection = ParameterDirection.Input},
+                new() { ParameterName = "@NewStatus", ParameterValue=request.Dto.NewStatus, ParameterType=DbType.String, ParameterDirection = ParameterDirection.Input}
+            };
+            var result = await _dbRepository.ExecuteSpReturnValueAsync(cancellationToken, Procedure, Parameters);
             return result;
         }
     }

@@ -6,41 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HMS.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Initialize : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Bill",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PatientId = table.Column<int>(type: "int", nullable: false),
-                    VisitId = table.Column<int>(type: "int", nullable: false),
-                    VisitType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BillDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    DiscountAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    NetAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    PaymentStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PaymentMode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    RoomCharges = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    ProcedureCharges = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    MedicationCharges = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    ConsultationCharges = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    OpdConsultationFee = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Bill", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "ChatRooms",
                 columns: table => new
@@ -193,33 +163,6 @@ namespace HMS.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Wards", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Payments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PatientId = table.Column<int>(type: "int", nullable: true),
-                    VisitId = table.Column<int>(type: "int", nullable: true),
-                    BillId = table.Column<int>(type: "int", nullable: false),
-                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
-                    PaymentStatus = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, defaultValue: "Unpaid"),
-                    PaymentMode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Payments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Payments_Bill_BillId",
-                        column: x => x.BillId,
-                        principalTable: "Bill",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -527,6 +470,41 @@ namespace HMS.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Bill",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PatientId = table.Column<int>(type: "int", nullable: false),
+                    VisitId = table.Column<int>(type: "int", nullable: true),
+                    VisitType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BillDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DiscountAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    NetAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    PaymentStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentMode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RoomCharges = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    ProcedureCharges = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    MedicationCharges = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    ConsultationCharges = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    OpdConsultationFee = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Bill", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bill_PatientVisits_VisitId",
+                        column: x => x.VisitId,
+                        principalTable: "PatientVisits",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Appointments",
                 columns: table => new
                 {
@@ -786,6 +764,33 @@ namespace HMS.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Payments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PatientId = table.Column<int>(type: "int", nullable: true),
+                    VisitId = table.Column<int>(type: "int", nullable: true),
+                    BillId = table.Column<int>(type: "int", nullable: false),
+                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: true),
+                    PaymentStatus = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, defaultValue: "Unpaid"),
+                    PaymentMode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Payments_Bill_BillId",
+                        column: x => x.BillId,
+                        principalTable: "Bill",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "LabRequestItems",
                 columns: table => new
                 {
@@ -898,6 +903,11 @@ namespace HMS.Infrastructure.Migrations
                 name: "IX_Bed_WardId",
                 table: "Bed",
                 column: "WardId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bill_VisitId",
+                table: "Bill",
+                column: "VisitId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ChatRoomUsers_UserId",
@@ -1166,9 +1176,6 @@ namespace HMS.Infrastructure.Migrations
                 name: "PatientBedWards");
 
             migrationBuilder.DropTable(
-                name: "PatientVisits");
-
-            migrationBuilder.DropTable(
                 name: "Payments");
 
             migrationBuilder.DropTable(
@@ -1200,6 +1207,9 @@ namespace HMS.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Wards");
+
+            migrationBuilder.DropTable(
+                name: "PatientVisits");
 
             migrationBuilder.DropTable(
                 name: "LabRequests");

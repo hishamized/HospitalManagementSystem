@@ -337,6 +337,13 @@ namespace HMS.Infrastructure.Data
                 .WithMany()
                 .HasForeignKey(ms => ms.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Bill>()
+                .HasOne(b => b.PatientVisit)
+                .WithMany(pv => pv.Bill)
+                .HasForeignKey(b => b.VisitId)
+                .IsRequired(false);
+
+
             modelBuilder.Entity<Payment>(entity =>
             {
                 entity.ToTable("Payments");
