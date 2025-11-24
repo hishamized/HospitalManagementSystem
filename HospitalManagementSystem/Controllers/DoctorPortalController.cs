@@ -233,5 +233,28 @@ namespace HMS.Web.Controllers
                 labRequestId = result.LabRequestId
             });
         }
+        [HttpPost]
+        [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> FetchLabRequestsWithItemsByPatient(int patientId) {
+            var doctorIdClaim = User.FindFirst("DoctorId")?.Value;
+            if (string.IsNullOrEmpty(doctorIdClaim) || !int.TryParse(doctorIdClaim, out int doctorId)) {
+                return Unauthorized(new { success = false, message = "Doctor not authenticated" });
+            }
+            try
+            {
+                var command = new FetchLabRequestsWithItemsByPatientCommand(doctorId, patientId);
+                var result = await _mediator.Send(command);
+                return Ok(new { 
+                    success = true,
+                    data = result
+                });
+            }
+            catch (Exception Ex) {
+                return StatusCode(500, new { 
+                    success = false,
+                    message = Ex.Message
+                });
+            }
+        }
     }
 }

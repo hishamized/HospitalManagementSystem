@@ -18,7 +18,7 @@ namespace HMS.Application.Interfaces
         Task<ViewPatientDto> ViewPatientAsync(ViewPatientQuery request, CancellationToken cancellationToken);
         Task<IEnumerable<FetchValidTestsDto>> FetchValidTestsAsync(FetchValidTestsQuery request, CancellationToken cancellationToken);
         Task<int> CreateLabRequestAsync(CancellationToken cancellationToken, LabRequest labRequest, DataTable itemsTable);
-
+        Task<IEnumerable<FetchLabRequestsWithItemsByPatientDto>> FetchLabRequestsWithItemsByPatientAsync(FetchLabRequestsWithItemsByPatientCommand request, CancellationToken cancellationToken);
 
     }
 }

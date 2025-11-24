@@ -101,5 +101,15 @@ namespace HMS.Infrastructure.Repositories
 
             return (int)result;
         }
+        public async Task<IEnumerable<FetchLabRequestsWithItemsByPatientDto>> FetchLabRequestsWithItemsByPatientAsync(FetchLabRequestsWithItemsByPatientCommand request, CancellationToken cancellationToken) {
+            string Procedure = "sp_FetchLabRequestsWithItemsByPatient";
+            var Parameters = new List<ParametersCollection>
+            {
+                new (){ParameterName = "@DoctorId", ParameterValue = request.DoctorId, ParameterType=DbType.Int64, ParameterDirection = ParameterDirection.Input},
+                new (){ParameterName = "@patientId", ParameterValue = request.PatientId, ParameterType=DbType.Int64, ParameterDirection = ParameterDirection.Input}
+            };
+            var result = await _dbRepository.ExecuteSpListAsync<FetchLabRequestsWithItemsByPatientDto>(cancellationToken, Procedure, Parameters);
+            return result;
+        }
     }
 }
