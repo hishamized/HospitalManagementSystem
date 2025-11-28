@@ -2,56 +2,62 @@
     ViewData["Title"] = "ManageTestsCore";
 }
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="page-title-box d-flex justify-content-between align-items-center">
-                <h4 class="page-title">Manage Lab Tests</h4>
-                <button type="button" class="btn btn-primary" id="addTestBtn">
-                    <i class="mdi mdi-plus-circle"></i> Add Test
-                </button>
-            </div>
-        </div>
+<div class="container mx-auto mt-4 px-4 sm:px-6 lg:px-8">
+    <!-- Page Header -->
+    <div class="mb-4 flex items-center justify-between">
+        <h4 class="text-xl font-bold text-purple-600">Manage Lab Tests</h4>
+        <button type="button"
+                id="addTestBtn"
+                class="flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white shadow hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <i class="fas fa-plus-circle"></i> Add Test
+        </button>
     </div>
 
     <!-- AG Grid Container -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <div id="labTestsGrid" class="ag-theme-alpine" style="height: 600px; width: 100%;"></div>
-                </div>
-            </div>
-        </div>
+    <div class="rounded-lg bg-gray-900 p-4 shadow">
+        <div id="labTestsGrid" class="ag-theme-alpine-dark h-[600px] w-full"></div>
     </div>
 </div>
 
 <!-- Add Lab Test Modal -->
-<div class="modal fade" id="addLabTestModal" tabindex="-1" aria-labelledby="addLabTestModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addLabTestModalLabel">
-                    <i class="mdi mdi-test-tube"></i> Add New Lab Test
+<div id="addLabTestModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="addLabTestModalLabel">
+    <div class="absolute inset-0 bg-black/50"></div>
+    <div class="relative z-10 flex min-h-screen items-center justify-center p-4">
+        <div class="w-full max-w-3xl overflow-hidden rounded-lg bg-gray-900 shadow-lg">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between bg-purple-600 px-4 py-3 text-white">
+                <h5 class="flex items-center gap-2 text-base font-semibold" id="addLabTestModalLabel">
+                    <i class="fas fa-vial"></i> Add New Lab Test
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button"
+                        onclick="hideModal('addLabTestModal')"
+                        data-modal="addLabTestModal"
+                        aria-label="Close"
+                        class="inline-flex h-8 w-8 items-center justify-center rounded hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="modal-body">
+
+            <!-- Modal Body -->
+            <div class="p-4">
                 <form id="addLabTestForm">
                     @Html.AntiForgeryToken()
 
-                    <div class="row">
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <!-- Test Name -->
-                        <div class="col-md-6 mb-3">
-                            <label for="testName" class="form-label">Test Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="testName" name="TestName" required placeholder="e.g., Complete Blood Count">
-                            <div class="invalid-feedback">Please provide a test name.</div>
+                        <div class="mb-3">
+                            <label for="testName" class="mb-1 block font-semibold text-gray-100">Test Name <span class="text-red-500">*</span></label>
+                            <input type="text" id="testName" name="TestName" required
+                                   placeholder="e.g., Complete Blood Count"
+                                   class="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500">
+                            <div class="mt-1 hidden text-sm text-red-500">Please provide a test name.</div>
                         </div>
 
                         <!-- Sample Type -->
-                        <div class="col-md-6 mb-3">
-                            <label for="sampleType" class="form-label">Sample Type</label>
-                            <select class="form-select" id="sampleType" name="SampleType">
+                        <div class="mb-3">
+                            <label for="sampleType" class="mb-1 block font-semibold text-gray-100">Sample Type</label>
+                            <select id="sampleType" name="SampleType"
+                                    class="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500">
                                 <option value="">Select Sample Type</option>
                                 <option value="Blood">Blood</option>
                                 <option value="Urine">Urine</option>
@@ -64,48 +70,56 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <!-- Normal Range -->
-                        <div class="col-md-6 mb-3">
-                            <label for="normalRange" class="form-label">Normal Range <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="normalRange" name="NormalRange" required placeholder="e.g., 4.5-11.0 x10^9/L">
-                            <div class="invalid-feedback">Please provide the normal range.</div>
+                        <div class="mb-3">
+                            <label for="normalRange" class="mb-1 block font-semibold text-gray-100">Normal Range <span class="text-red-500">*</span></label>
+                            <input type="text" id="normalRange" name="NormalRange" required
+                                   placeholder="e.g., 4.5-11.0 x10^9/L"
+                                   class="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500">
+                            <div class="mt-1 hidden text-sm text-red-500">Please provide the normal range.</div>
                         </div>
 
                         <!-- Price -->
-                        <div class="col-md-6 mb-3">
-                            <label for="price" class="form-label">Price</label>
-                            <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <input type="number" class="form-control" id="price" name="Price" step="0.01" min="0" placeholder="0.00">
+                        <div class="mb-3">
+                            <label for="price" class="mb-1 block font-semibold text-gray-100">Price</label>
+                            <div class="flex items-center">
+                                <span class="rounded-l-md border border-r-0 border-gray-700 bg-gray-700 px-3 py-2 text-gray-100">$</span>
+                                <input type="number" id="price" name="Price" step="0.01" min="0" placeholder="0.00"
+                                       class="w-full rounded-r-md border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-500">
                             </div>
                         </div>
                     </div>
 
                     <!-- Description -->
                     <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="Description" rows="3" placeholder="Enter test description, purpose, and any special instructions..."></textarea>
+                        <label for="description" class="mb-1 block font-semibold text-gray-100">Description</label>
+                        <textarea id="description" name="Description" rows="3"
+                                  placeholder="Enter test description, purpose, and any special instructions..."
+                                  class="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500"></textarea>
                     </div>
 
                     <!-- Is Active -->
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="isActive" name="IsActive" checked>
-                        <label class="form-check-label" for="isActive">
-                            Active Test
-                        </label>
+                    <div class="mb-3 flex items-center gap-2">
+                        <input type="checkbox" id="isActive" name="IsActive" checked
+                               class="h-4 w-4 rounded border-gray-700 bg-gray-800 text-purple-600 focus:ring-purple-500">
+                        <label for="isActive" class="font-medium text-gray-100">Active Test</label>
                     </div>
 
-                    <!-- Hidden fields for timestamps -->
+                    <!-- Hidden fields -->
                     <input type="hidden" id="createdAt" name="CreatedAt">
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="mdi mdi-close"></i> Cancel
+
+            <!-- Modal Footer -->
+            <div class="flex justify-end gap-2 bg-gray-800 px-4 py-3">
+                <button type="button" onclick="hideModal('addLabTestModal')" data-modal="addLabTestModal"
+                        class="flex items-center gap-2 rounded bg-gray-700 px-4 py-2 text-gray-100 shadow hover:bg-gray-600 focus:ring-2 focus:ring-purple-500">
+                    <i class="fas fa-times"></i> Cancel
                 </button>
-                <button type="submit" form="addLabTestForm" class="btn btn-primary" id="submitBtn">
-                    <i class="mdi mdi-content-save"></i> Save Lab Test
+                <button type="submit" form="addLabTestForm"
+                        class="flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white shadow hover:bg-purple-700 focus:ring-2 focus:ring-purple-500">
+                    <i class="fas fa-save"></i> Save Lab Test
                 </button>
             </div>
         </div>
@@ -113,34 +127,44 @@
 </div>
 
 <!-- Edit Lab Test Modal -->
-<div class="modal fade" id="editLabTestModal" tabindex="-1" aria-labelledby="editLabTestModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editLabTestModalLabel">
-                    <i class="mdi mdi-pencil"></i> Edit Lab Test
+<div id="editLabTestModal" class="fixed inset-0 z-50 hidden" role="dialog" aria-modal="true" aria-labelledby="editLabTestModalLabel">
+    <div class="absolute inset-0 bg-black/50"></div>
+    <div class="relative z-10 flex min-h-screen items-center justify-center p-4">
+        <div class="w-full max-w-3xl overflow-hidden rounded-lg bg-gray-900 shadow-lg">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between bg-purple-600 px-4 py-3 text-white">
+                <h5 class="flex items-center gap-2 text-base font-semibold" id="editLabTestModalLabel">
+                    <i class="fas fa-pencil-alt"></i> Edit Lab Test
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" data-modal="editLabTestModal"
+                        aria-label="Close"
+                        onclick="hideModal('editLabTestModal')"
+                        class="inline-flex h-8 w-8 items-center justify-center rounded hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="modal-body">
+
+            <!-- Modal Body -->
+            <div class="p-4">
                 <form id="editLabTestForm">
                     @Html.AntiForgeryToken()
-
-                    <!-- Hidden ID field -->
                     <input type="hidden" id="editTestId" name="Id">
 
-                    <div class="row">
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <!-- Test Name -->
-                        <div class="col-md-6 mb-3">
-                            <label for="editTestName" class="form-label">Test Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="editTestName" name="TestName" required placeholder="e.g., Complete Blood Count">
-                            <div class="invalid-feedback">Please provide a test name.</div>
+                        <div class="mb-3">
+                            <label for="editTestName" class="mb-1 block font-semibold text-gray-100">Test Name <span class="text-red-500">*</span></label>
+                            <input type="text" id="editTestName" name="TestName" required
+                                   placeholder="e.g., Complete Blood Count"
+                                   class="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500">
+                            <div class="mt-1 hidden text-sm text-red-500">Please provide a test name.</div>
                         </div>
 
                         <!-- Sample Type -->
-                        <div class="col-md-6 mb-3">
-                            <label for="editSampleType" class="form-label">Sample Type</label>
-                            <select class="form-select" id="editSampleType" name="SampleType">
+                        <div class="mb-3">
+                            <label for="editSampleType" class="mb-1 block font-semibold text-gray-100">Sample Type</label>
+                            <select id="editSampleType" name="SampleType"
+                                    class="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500">
                                 <option value="">Select Sample Type</option>
                                 <option value="Blood">Blood</option>
                                 <option value="Urine">Urine</option>
@@ -153,54 +177,63 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <!-- Normal Range -->
-                        <div class="col-md-6 mb-3">
-                            <label for="editNormalRange" class="form-label">Normal Range <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="editNormalRange" name="NormalRange" required placeholder="e.g., 4.5-11.0 x10^9/L">
-                            <div class="invalid-feedback">Please provide the normal range.</div>
+                        <div class="mb-3">
+                            <label for="editNormalRange" class="mb-1 block font-semibold text-gray-100">Normal Range <span class="text-red-500">*</span></label>
+                            <input type="text" id="editNormalRange" name="NormalRange" required
+                                   placeholder="e.g., 4.5-11.0 x10^9/L"
+                                   class="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500">
+                            <div class="mt-1 hidden text-sm text-red-500">Please provide the normal range.</div>
                         </div>
 
                         <!-- Price -->
-                        <div class="col-md-6 mb-3">
-                            <label for="editPrice" class="form-label">Price</label>
-                            <div class="input-group">
-                                <span class="input-group-text">$</span>
-                                <input type="number" class="form-control" id="editPrice" name="Price" step="0.01" min="0" placeholder="0.00">
+                        <div class="mb-3">
+                            <label for="editPrice" class="mb-1 block font-semibold text-gray-100">Price</label>
+                            <div class="flex items-center">
+                                <span class="rounded-l-md border border-r-0 border-gray-700 bg-gray-700 px-3 py-2 text-gray-100">$</span>
+                                <input type="number" id="editPrice" name="Price" step="0.01" min="0" placeholder="0.00"
+                                       class="w-full rounded-r-md border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100 focus:border-purple-500 focus:ring-2 focus:ring-purple-500">
                             </div>
                         </div>
                     </div>
 
                     <!-- Description -->
                     <div class="mb-3">
-                        <label for="editDescription" class="form-label">Description</label>
-                        <textarea class="form-control" id="editDescription" name="Description" rows="3" placeholder="Enter test description, purpose, and any special instructions..."></textarea>
+                        <label for="editDescription" class="mb-1 block font-semibold text-gray-100">Description</label>
+                        <textarea id="editDescription" name="Description" rows="3"
+                                  placeholder="Enter test description, purpose, and any special instructions..."
+                                  class="w-full rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-500"></textarea>
                     </div>
 
                     <!-- Is Active -->
-                    <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="editIsActive" name="IsActive">
-                        <label class="form-check-label" for="editIsActive">
-                            Active Test
-                        </label>
+                    <div class="mb-3 flex items-center gap-2">
+                        <input type="checkbox" id="editIsActive" name="IsActive"
+                               class="h-4 w-4 rounded border-gray-700 bg-gray-800 text-purple-600 focus:ring-purple-500">
+                        <label for="editIsActive" class="font-medium text-gray-100">Active Test</label>
                     </div>
 
-                    <!-- Hidden fields for timestamps -->
                     <input type="hidden" id="editCreatedAt" name="CreatedAt">
                     <input type="hidden" id="editUpdatedAt" name="UpdatedAt">
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="mdi mdi-close"></i> Cancel
+
+            <!-- Modal Footer -->
+            <div class="flex justify-end gap-2 bg-gray-800 px-4 py-3">
+                <button type="button" data-modal="editLabTestModal"
+                        onclick="hideModal('editLabTestModal')"   
+                        class="flex items-center gap-2 rounded bg-gray-700 px-4 py-2 text-gray-100 shadow hover:bg-gray-600 focus:ring-2 focus:ring-purple-500">
+                    <i class="fas fa-times"></i> Cancel
                 </button>
-                <button type="submit" form="editLabTestForm" class="btn btn-warning" id="updateBtn">
-                    <i class="mdi mdi-content-save"></i> Update Lab Test
+                <button type="submit" form="editLabTestForm"
+                        class="flex items-center gap-2 rounded bg-purple-600 px-4 py-2 text-white shadow hover:bg-purple-700 focus:ring-2 focus:ring-purple-500">
+                    <i class="fas fa-save"></i> Update Lab Test
                 </button>
             </div>
         </div>
     </div>
 </div>
+
 @section Scripts {
     <script src="~/js/Lab/ManageTestsCore.js"></script>
 }

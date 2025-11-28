@@ -13,15 +13,12 @@ namespace HMS.Application.Validators.Bill
             RuleFor(x => x.Bill.PatientId)
                 .GreaterThan(0).WithMessage("Patient Id is required.");
 
-            RuleFor(x => x.Bill.VisitId)
-                .GreaterThan(0).WithMessage("Visit Id is required.");
-
             RuleFor(x => x.Bill.BillDate)
                 .NotEmpty().WithMessage("Bill date is required.");
 
             RuleFor(x => x.Bill.PaymentStatus)
                 .NotEmpty().WithMessage("Payment status is required.")
-                .Must(x => new[] { "Paid", "Unpaid", "Partial" }.Contains(x))
+                .Must(x => new[] { "Paid", "Unpaid", "Partial", "Pending", "Cancelled" }.Contains(x))
                 .WithMessage("Invalid payment status.");
 
             RuleFor(x => x.Bill.PaymentMode)

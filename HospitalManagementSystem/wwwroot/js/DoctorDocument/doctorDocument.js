@@ -1,4 +1,20 @@
-﻿$(document).ready(function () {
+﻿/**
+ * Toggle Tailwind modal visibility
+ * @param {string} modalId - The ID of the modal (e.g., 'addDocumentModal')
+ * @param {string} action - 'show' or 'hide'
+ */
+function toggleModal(modalId, action) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return; // Exit if modal not found
+
+    if (action === 'show') {
+        modal.classList.remove('hidden'); // Reveal modal
+    } else if (action === 'hide') {
+        modal.classList.add('hidden'); // Hide modal
+    }
+}
+
+$(document).ready(function () {
 
     // ✅ Initialize AG Grid configuration
     const gridOptions = {
@@ -212,7 +228,7 @@
         $('#editFileUpload').val('');
 
         // Open modal
-        $('#editDocumentModal').modal('show');
+        toggleModal('editDocumentModal', 'show')
     }
 
 
@@ -389,7 +405,7 @@
     $('#btnAddDocument').on('click', function () {
         resetForm();
         loadDoctorsDropdown();
-        $('#addDocumentModal').modal('show');
+        toggleModal('addDocumentModal', 'show')
     });
 
     // ✅ Global search

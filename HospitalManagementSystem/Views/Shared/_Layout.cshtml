@@ -9,12 +9,6 @@
     <link rel="shortcut icon" href="~/images/favicon.ico">
 
     @await RenderSectionAsync("adminCssBefore", false)
-    <!-- App css -->
-    <link href="~/css/config/modern/bootstrap.min.css" rel="stylesheet" type="text/css" id="bs-default-stylesheet" />
-    <link href="~/css/config/modern/app.min.css" rel="stylesheet" type="text/css" id="app-default-stylesheet" />
-
-    <link href="~/css/config/modern/bootstrap-dark.min.css" rel="stylesheet" type="text/css" id="bs-dark-stylesheet" />
-    <link href="~/css/config/modern/app-dark.min.css" rel="stylesheet" type="text/css" id="app-dark-stylesheet" />
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet" />
 
@@ -22,22 +16,20 @@
     <link href="~/css/icons.min.css" rel="stylesheet" type="text/css" />
 
     <script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/js/bootstrap.js"></script>
-    <script src="~/lib/bootstrap/js/ag-grid-enterprise.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-grid.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-alpine.css">
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community/styles/ag-theme-alpine-dark.css" />
+    @* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" /> *@
     @await RenderSectionAsync("Styles", false)
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
-
+    
 <!-- body start -->
 <body class="loading" data-layout-mode="detached" data-layout='{"mode": "light", "width": "fluid", "menuPosition": "fixed", "sidebar": { "color": "light", "size": "default", "showuser": true}, "topbar": {"color": "dark"}, "showRightSidebarOnPageLoad": true}'>
 
     <!-- Begin page -->
-    <div id="wrapper">
+    <div id="wrapper" class="min-h-screen bg-gray-900 text-gray-200">
+
 
         <!-- Topbar Start -->
         @await Html.PartialAsync("~/Views/Shared/Partials/UBoldAdmin/_topbar.cshtml")
@@ -68,7 +60,7 @@
 
             </div> <!-- content -->
             <!-- Footer Start -->
-            @await Html.PartialAsync("~/Views/Shared/Partials/UBoldAdmin/_footer.cshtml")
+            @await Html.PartialAsync("~/Views/Shared/Partials/_footer.cshtml")
             <!-- end Footer -->
 
         </div>
@@ -100,6 +92,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/dist/ag-grid-community.min.js"></script>
 
     @await RenderSectionAsync("scriptsAfter", required: false)
     @await RenderSectionAsync("scripts", required: false)
@@ -110,5 +103,25 @@
             $("#selectLanguage").submit();
         }
     </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine JS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            DEFAULT: '#6d28d9', // purple-700
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+
+
 </body>
 </html>

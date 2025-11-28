@@ -67,740 +67,912 @@
     }
 </style>
 
-<div class="card shadow-sm mt-4">
-    <div class="card-body">
-        <div class="card-header d-flex justify-content-between align-items-center mb-3">
-            <h5 class="card-title mb-0">Patient Bills</h5>
-            <div class="d-flex flex-wrap gap-2">
+<div class="mt-4 rounded-xl border border-gray-700 bg-gray-800 shadow-lg">
+    <div class="p-4">
 
-                @if (@Model.IsActive == true)
+        <!-- Header -->
+        <div class="mb-4 flex items-center justify-between">
+            <h5 class="text-xl font-semibold text-gray-200">Patient Bills</h5>
+
+            <div class="flex flex-wrap gap-2">
+
+                @if (Model.IsActive == true)
                 {
                     <button id="dischargeSummaryBtn"
-                            class="btn btn-danger btn-sm"
-                            data-visitid="@Model.VisitId">
-                        <i class="bi bi-box-arrow-right me-1"></i> Discharge Summary
+                            data-visitid="@Model.VisitId"
+                            class="flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700">
+                        <i class="bi bi-box-arrow-right"></i> Discharge Summary
                     </button>
                 }
 
                 <button id="dischargePatientBtn"
-                        class="btn btn-danger btn-sm"
-                        data-visitid="@Model.VisitId">
-                    <i class="bi bi-box-arrow-right me-1"></i> Discharge
+                        data-visitid="@Model.VisitId"
+                        class="flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700">
+                    <i class="bi bi-box-arrow-right"></i> Discharge
                 </button>
 
                 <button id="GenerateFinalBillBtn"
-                        class="btn btn-danger btn-sm"
                         data-visitid="@Model.VisitId"
-                        data-patientid="@Model.PatientId">
-                    <i class="bi bi-receipt-cutoff me-1"></i> Final Bill
+                        data-patientid="@Model.PatientId"
+                        class="flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700">
+                    <i class="bi bi-receipt-cutoff"></i> Final Bill
                 </button>
 
                 <button id="btnReloadBills"
-                        class="btn btn-outline-primary btn-sm">
-                    <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                        class="flex items-center gap-1 rounded-lg border border-purple-500 px-3 py-1.5 text-sm text-purple-400 hover:bg-purple-600 hover:text-white">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh
                 </button>
 
                 <button id="btnAddBill"
-                        class="btn btn-primary btn-sm">
-                    <i class="bi bi-plus-lg me-1"></i> Add Bill
+                        class="flex items-center gap-1 rounded-lg bg-purple-600 px-3 py-1.5 text-sm text-white hover:bg-purple-700">
+                    <i class="bi bi-plus-lg"></i> Add Bill
                 </button>
 
                 <button id="btnAllotBed"
-                        class="btn btn-primary btn-sm">
-                    <i class="bi bi-hospital me-1"></i> Allot Bed
+                        class="flex items-center gap-1 rounded-lg bg-purple-600 px-3 py-1.5 text-sm text-white hover:bg-purple-700">
+                    <i class="bi bi-hospital"></i> Allot Bed
                 </button>
 
-                <button class="btn btn-info btn-sm check-bed-btn"
+                <button class="check-bed-btn flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700"
                         data-patient-id="@Model.PatientId">
-                    <i class="bi bi-search me-1"></i> Check Bed
+                    <i class="bi bi-search"></i> Check Bed
                 </button>
 
                 <button id="removeWardBed"
-                        class="btn btn-danger btn-sm d-none"
                         data-has-bed="0"
-                        data-patient-bed-ward-id="">
-                    <i class="bi bi-x-circle me-1"></i> Remove Ward/Bed
+                        data-patient-bed-ward-id=""
+                        class="flex hidden items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-sm text-white hover:bg-red-700">
+                    <i class="bi bi-x-circle"></i> Remove Ward/Bed
                 </button>
 
                 <button id="btnAddDoctorRound"
-                        class="btn btn-primary btn-sm">
-                    <i class="bi bi-plus-circle me-1"></i> Add Doctor Round
+                        class="flex items-center gap-1 rounded-lg bg-purple-600 px-3 py-1.5 text-sm text-white hover:bg-purple-700">
+                    <i class="bi bi-plus-circle"></i> Add Doctor Round
                 </button>
 
                 <button id="btnViewRoundHistory"
-                        class="btn btn-info btn-sm">
-                    <i class="bi bi-clock-history me-1"></i> Round History
+                        class="flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700">
+                    <i class="bi bi-clock-history"></i> Round History
                 </button>
 
             </div>
         </div>
-        <!-- AG Grid container -->
-        <div id="billsGrid" class="ag-theme-quartz" style="height: 400px; width: 100%;"></div>
+
+        <!-- AG Grid -->
+        <div id="billsGrid" class="ag-theme-alpine-dark" style="height: 400px; width: 100%;"></div>
+
     </div>
 </div>
 
 
-<div class="container-fluid mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-    
-        <h4 class="fw-bold">Inpatient Visit Manager</h4>
-        <button class="btn btn-secondary" onclick="window.history.back();">← Back</button>
+<div class="mt-6 w-full px-4">
+
+    <!-- Header -->
+    <div class="mb-4 flex items-center justify-between">
+        <h4 class="text-2xl font-bold text-gray-200">Inpatient Visit Manager</h4>
+
+        <button onclick="window.history.back();"
+                class="flex items-center gap-2 rounded-lg bg-gray-700 px-4 py-2 text-gray-200 hover:bg-gray-600">
+            ← Back
+        </button>
     </div>
 
-    <div id="inpatient-details-section" class="card shadow-sm">
-        <div class="card-body">
-            <h5 class="card-title mb-3">Patient Information</h5>
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <strong>Patient Name:</strong> @Model.FullName
-                </div>
-                <div class="col-md-4">
-                    <strong>Gender:</strong> @Model.Gender
-                </div>
-                <div class="col-md-4">
-                    <strong>Contact:</strong> @Model.ContactNumber
-                </div>
-            </div>
+    <!-- Patient Information Card -->
+    <div id="inpatient-details-section"
+         class="rounded-xl border border-gray-700 bg-gray-800 p-6 text-gray-200 shadow-lg">
 
-            <div class="row">
-                <div class="col-md-3">
-                    <strong>Visit Type:</strong> @Model.VisitType
-                </div>
-                <div class="col-md-3">
-                    <strong>Admission Date:</strong> @Model.AdmissionDate?.ToString("dd-MMM-yyyy")
-                </div>
-                <div class="col-md-3">
-                    <strong>Discharge Date:</strong> @Model.DischargeDate?.ToString("dd-MMM-yyyy")
-                </div>
-                <div class="col-md-3">
-                    <strong>Room No:</strong> @Model.RoomNumber
-                </div>
-            </div>
+        <h5 class="mb-4 text-xl font-semibold">Patient Information</h5>
+
+        <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div><strong>Patient Name:</strong> @Model.FullName</div>
+            <div><strong>Gender:</strong> @Model.Gender</div>
+            <div><strong>Contact:</strong> @Model.ContactNumber</div>
         </div>
-    </div>
 
-    <div class="card shadow-sm mt-4">
-        <div class="card-body">
-            <h5 class="card-title mb-3">Treatment Details</h5>
-            <p>@Model.TreatmentDetails</p>
-
-            <h6 class="fw-semibold">Notes</h6>
-            <p class="text-muted">@Model.Notes</p>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
+            <div><strong>Visit Type:</strong> @Model.VisitType</div>
+            <div><strong>Admission Date:</strong> @Model.AdmissionDate?.ToString("dd-MMM-yyyy")</div>
+            <div><strong>Discharge Date:</strong> @Model.DischargeDate?.ToString("dd-MMM-yyyy")</div>
+            <div><strong>Room No:</strong> @Model.RoomNumber</div>
         </div>
+
     </div>
+
+    <!-- Treatment Details Card -->
+    <div class="mt-6 rounded-xl border border-gray-700 bg-gray-800 p-6 text-gray-200 shadow-lg">
+
+        <h5 class="mb-4 text-xl font-semibold">Treatment Details</h5>
+
+        <p class="mb-4">@Model.TreatmentDetails</p>
+
+        <h6 class="text-lg font-semibold">Notes</h6>
+        <p class="text-gray-400">@Model.Notes</p>
+
+    </div>
+
 </div>
+
 
 
 <!-- Add Bill Modal -->
-<div class="modal fade" id="addBillModal" tabindex="-1" aria-labelledby="addBillModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="addBillModalLabel">Add New Bill</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+<div id="addBillModal"
+     class="fixed inset-0 z-50 flex hidden min-h-screen items-center justify-center overflow-y-auto bg-black/60 backdrop-blur-sm">
 
-            <div class="modal-body">
-                <form id="addBillForm">
-                    @Html.AntiForgeryToken()
-                    <div class="row g-3">
-                        <!-- Hidden IDs -->
-                        <input type="hidden" id="PatientId" name="PatientId" value="@Model.PatientId" />
-                        <input type="hidden" id="VisitId" name="VisitId" value="@Model.VisitId" />
-                        <input type="hidden" id="VisitType" name="VisitType" value="@Model.VisitType" />
+    <div class="w-full max-w-3xl rounded-xl border border-gray-700 bg-gray-800 text-gray-200 shadow-xl">
 
-                        <div class="col-md-6">
-                            <label class="form-label">Bill Date</label>
-                            <input type="date" class="form-control" id="BillDate" name="BillDate" required>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Total Amount</label>
-                            <input type="number" class="form-control" id="TotalAmount" name="TotalAmount" readonly>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Discount Amount</label>
-                            <input type="number" class="form-control" id="DiscountAmount" name="DiscountAmount" step="0.01">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Net Amount</label>
-                            <input type="number" class="form-control" id="NetAmount" name="NetAmount" readonly>
-                        </div>
-
-
-                        <div class="col-md-6">
-                            <label class="form-label">Payment Status</label>
-                            <select class="form-select" id="PaymentStatus" name="PaymentStatus">
-                                <option value="Unpaid">Unpaid</option>
-                                <option value="Paid">Paid</option>
-                                <option value="Partial">Partial</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Payment Mode</label>
-                            <select class="form-select" id="PaymentMode" name="PaymentMode">
-                                <option value="">-- Select --</option>
-                                <option value="Cash">Cash</option>
-                                <option value="Card">Card</option>
-                                <option value="Insurance">Insurance</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Room Charges</label>
-                            <input type="number" class="form-control" id="RoomCharges" name="RoomCharges" step="0.01">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Procedure Charges</label>
-                            <input type="number" class="form-control" id="ProcedureCharges" name="ProcedureCharges" step="0.01">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Medication Charges</label>
-                            <input type="number" class="form-control" id="MedicationCharges" name="MedicationCharges" step="0.01">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Consultation Charges</label>
-                            <input type="number" class="form-control" id="ConsultationCharges" name="ConsultationCharges" step="0.01">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">OPD Consultation Fee</label>
-                            <input type="number" class="form-control" id="OpdConsultationFee" name="OpdConsultationFee" step="0.01">
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Notes</label>
-                            <textarea class="form-control" id="Notes" name="Notes" rows="2"></textarea>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" id="btnSaveBill" class="btn btn-primary">Save Bill</button>
-            </div>
+        <!-- Header -->
+        <div class="flex items-center justify-between rounded-t-xl bg-purple-600 px-6 py-4 text-white">
+            <h5 class="text-lg font-semibold">Add New Bill</h5>
+            <button type="button"
+                    class="text-xl text-white hover:text-gray-200"
+                    onclick="closeModal('addBillModal')">
+                ✕
+            </button>
         </div>
-    </div>
-</div>
 
-<!-- Edit Bill Modal -->
-<div class="modal fade" id="editBillModal" tabindex="-1" aria-labelledby="editBillModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title" id="editBillModalLabel">Edit Bill</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <div class="modal-body">
-                <form id="editBillForm">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" id="EditBillId" name="Id" />
-                    <input type="hidden" id="EditPatientId" name="PatientId" />
-                    <input type="hidden" id="EditVisitId" name="VisitId" />
-
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Bill Date</label>
-                            <input type="date" class="form-control" id="EditBillDate" required>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Payment Status</label>
-                            <select class="form-select" id="EditPaymentStatus">
-                                <option value="Unpaid">Unpaid</option>
-                                <option value="Paid">Paid</option>
-                                <option value="Partial">Partial</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Payment Mode</label>
-                            <select class="form-select" id="EditPaymentMode">
-                                <option value="">-- Select --</option>
-                                <option value="Cash">Cash</option>
-                                <option value="Card">Card</option>
-                                <option value="Insurance">Insurance</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Room Charges</label>
-                            <input type="number" class="form-control" id="EditRoomCharges" step="0.01">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Procedure Charges</label>
-                            <input type="number" class="form-control" id="EditProcedureCharges" step="0.01">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Medication Charges</label>
-                            <input type="number" class="form-control" id="EditMedicationCharges" step="0.01">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Consultation Charges</label>
-                            <input type="number" class="form-control" id="EditConsultationCharges" step="0.01">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">OPD Fee</label>
-                            <input type="number" class="form-control" id="EditOpdConsultationFee" step="0.01">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Discount</label>
-                            <input type="number" class="form-control" id="EditDiscountAmount" step="0.01">
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Total Amount</label>
-                            <input type="number" class="form-control" id="EditTotalAmount" readonly>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Net Amount</label>
-                            <input type="number" class="form-control" id="EditNetAmount" readonly>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Notes</label>
-                            <textarea class="form-control" id="EditNotes" rows="2"></textarea>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" id="btnUpdateBill" class="btn btn-warning">Update Bill</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Allot Bed Modal -->
-<div class="modal fade" id="allotBedModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">Allot Bed to Patient</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-                <form id="allotBedForm">
-                    <div class="mb-3">
-                        <label for="wardSelect" class="form-label fw-semibold">Select Ward</label>
-                        <select id="wardSelect" class="form-select" required>
-                            <option value="">-- Select Ward --</option>
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="bedSelect" class="form-label fw-semibold">Select Bed</label>
-                        <select id="bedSelect" class="form-select" disabled required>
-                            <option value="">-- Select Bed --</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="notes" class="form-label fw-semibold">Notes</label>
-                        <textarea id="notes" class="form-control" rows="2" placeholder="Enter any notes (optional)"></textarea>
-                    </div>
-
-                </form>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" form="allotBedForm" class="btn btn-primary">Assign</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="checkBedModal" tabindex="-1" aria-labelledby="checkBedModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-3">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="checkBedModalLabel">Patient Bed Status</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-
-                <div class="ward-info mb-3">
-                    <h6 class="fw-bold">Ward Information</h6>
-                    <div class="row">
-                        <div class="col-md-4"><span class="fw-semibold">Ward:</span> <span id="wardName"></span></div>
-                        <div class="col-md-4"><span class="fw-semibold">Capacity:</span> <span id="wardCapacity"></span></div>
-                        <div class="col-md-4"><span class="fw-semibold">Occupied:</span> <span id="wardOccupied"></span></div>
-                    </div>
-                </div>
-
-                <div id="bedGridContainer" class="d-flex flex-wrap gap-2 justify-content-start"></div>
-
-                <div class="legend mt-4">
-                    <span class="badge bg-success">Available</span>
-                    <span class="badge bg-danger">Occupied</span>
-                    <span class="badge bg-purple">Patient’s Bed</span>
-                </div>
-
-            </div>
-            <div class="modal-footer border-0">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Doctor Round Modal -->
-<div class="modal fade" id="doctorRoundModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content rounded-3 shadow-lg">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">Add Doctor Round</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <form id="doctorRoundForm">
+        <!-- Body -->
+        <div class="p-6">
+            <form id="addBillForm">
                 @Html.AntiForgeryToken()
+
+                <!-- Hidden IDs -->
                 <input type="hidden" id="PatientId" name="PatientId" value="@Model.PatientId" />
                 <input type="hidden" id="VisitId" name="VisitId" value="@Model.VisitId" />
+                <input type="hidden" id="VisitType" name="VisitType" value="@Model.VisitType" />
 
-                <div class="modal-body">
-                    <div class="row g-3">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 
-                        <div class="col-md-6">
-                            <label class="form-label">Doctor</label>
-                            <select id="DoctorId" name="DoctorId" class="form-select" required>
-                                <option value="">Select Doctor</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Round Date</label>
-                            <input type="datetime-local" id="RoundDate" name="RoundDate" class="form-control" required />
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Observations</label>
-                            <textarea id="Observations" name="Observations" class="form-control" rows="2"></textarea>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Diagnosis</label>
-                            <textarea id="Diagnosis" name="Diagnosis" class="form-control" rows="2"></textarea>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Prescriptions</label>
-                            <textarea id="Prescriptions" name="Prescriptions" class="form-control" rows="2"></textarea>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Tests Recommended</label>
-                            <textarea id="TestsRecommended" name="TestsRecommended" class="form-control" rows="2"></textarea>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Treatment Plan</label>
-                            <textarea id="TreatmentPlan" name="TreatmentPlan" class="form-control" rows="2"></textarea>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Follow-up Instructions</label>
-                            <textarea id="FollowUpInstructions" name="FollowUpInstructions" class="form-control" rows="2"></textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Is Critical</label>
-                            <select id="IsCritical" name="IsCritical" class="form-select" required>
-                                <option value="">Select</option>
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                            </select>
-                        </div>
-
-
+                    <div>
+                        <label class="mb-1 block font-medium">Bill Date</label>
+                        <input type="date"
+                               id="BillDate"
+                               name="BillDate"
+                               required
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200
+                                      focus:ring-2 focus:ring-purple-500">
                     </div>
-                </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="btnCloseDoctorRound">Close</button>
-                    <button type="submit" class="btn btn-primary">Save Round</button>
+                    <div>
+                        <label class="mb-1 block font-medium">Total Amount</label>
+                        <input type="number"
+                               id="TotalAmount"
+                               name="TotalAmount"
+                               readonly
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-400">
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Discount Amount</label>
+                        <input type="number"
+                               id="DiscountAmount"
+                               name="DiscountAmount"
+                               step="0.01"
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200
+                                      focus:ring-2 focus:ring-purple-500">
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Net Amount</label>
+                        <input type="number"
+                               id="NetAmount"
+                               name="NetAmount"
+                               readonly
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-400">
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Payment Status</label>
+                        <select id="PaymentStatus"
+                                name="PaymentStatus"
+                                class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200
+                                       focus:ring-2 focus:ring-purple-500">
+                            <option value="Unpaid">Unpaid</option>
+                            <option value="Paid">Paid</option>
+                            <option value="Partial">Partial</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Payment Mode</label>
+                        <select id="PaymentMode"
+                                name="PaymentMode"
+                                class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200
+                                       focus:ring-2 focus:ring-purple-500">
+                            <option value="">-- Select --</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Card">Card</option>
+                            <option value="Insurance">Insurance</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Room Charges</label>
+                        <input type="number"
+                               id="RoomCharges"
+                               name="RoomCharges"
+                               step="0.01"
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200
+                                      focus:ring-2 focus:ring-purple-500">
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Procedure Charges</label>
+                        <input type="number"
+                               id="ProcedureCharges"
+                               name="ProcedureCharges"
+                               step="0.01"
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200
+                                      focus:ring-2 focus:ring-purple-500">
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Medication Charges</label>
+                        <input type="number"
+                               id="MedicationCharges"
+                               name="MedicationCharges"
+                               step="0.01"
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200
+                                      focus:ring-2 focus:ring-purple-500">
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Consultation Charges</label>
+                        <input type="number"
+                               id="ConsultationCharges"
+                               name="ConsultationCharges"
+                               step="0.01"
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200
+                                      focus:ring-2 focus:ring-purple-500">
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">OPD Consultation Fee</label>
+                        <input type="number"
+                               id="OpdConsultationFee"
+                               name="OpdConsultationFee"
+                               step="0.01"
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200
+                                      focus:ring-2 focus:ring-purple-500">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="mb-1 block font-medium">Notes</label>
+                        <textarea id="Notes"
+                                  name="Notes"
+                                  rows="2"
+                                  class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200
+                                         focus:ring-2 focus:ring-purple-500"></textarea>
+                    </div>
+
                 </div>
             </form>
         </div>
+
+        <!-- Footer -->
+        <div class="flex justify-end gap-3 rounded-b-xl border-t border-gray-700 bg-gray-900 px-6 py-4">
+            <button type="button"
+                    class="rounded-lg bg-gray-700 px-4 py-2 text-gray-200 hover:bg-gray-600"
+                    onclick="closeModal('addBillModal')">
+                Cancel
+            </button>
+
+            <button id="btnSaveBill"
+                    class="rounded-lg bg-purple-600 px-4 py-2 font-semibold text-white hover:bg-purple-700">
+                Save Bill
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Edit Bill Modal -->
+<div id="editBillModal"
+     class="fixed inset-0 z-50 flex hidden items-center justify-center bg-black/60 backdrop-blur-sm">
+
+    <div class="w-full max-w-3xl rounded-xl border border-gray-700 bg-gray-800 text-gray-200 shadow-xl">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between rounded-t-xl bg-yellow-500 px-6 py-4 text-black">
+            <h5 class="text-lg font-semibold">Edit Bill</h5>
+            <button type="button"
+                    class="text-xl text-black hover:text-gray-700"
+                    data-bs-dismiss="modal"
+                    onclick="closeModal('editBillModal')">
+                ✕
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6">
+            <form id="editBillForm">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" id="EditBillId" name="Id" />
+                <input type="hidden" id="EditPatientId" name="PatientId" />
+                <input type="hidden" id="EditVisitId" name="VisitId" />
+
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+
+                    <div>
+                        <label class="mb-1 block font-medium">Bill Date</label>
+                        <input type="date"
+                               id="EditBillDate"
+                               required
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200 focus:ring-2 focus:ring-purple-500">
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Payment Status</label>
+                        <select id="EditPaymentStatus"
+                                class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200 focus:ring-2 focus:ring-purple-500">
+                            <option value="Unpaid">Unpaid</option>
+                            <option value="Paid">Paid</option>
+                            <option value="Partial">Partial</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Payment Mode</label>
+                        <select id="EditPaymentMode"
+                                class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200 focus:ring-2 focus:ring-purple-500">
+                            <option value="">-- Select --</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Card">Card</option>
+                            <option value="Insurance">Insurance</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Room Charges</label>
+                        <input type="number" id="EditRoomCharges" step="0.01"
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200 focus:ring-2 focus:ring-purple-500">
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Procedure Charges</label>
+                        <input type="number" id="EditProcedureCharges" step="0.01"
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200 focus:ring-2 focus:ring-purple-500">
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Medication Charges</label>
+                        <input type="number" id="EditMedicationCharges" step="0.01"
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200 focus:ring-2 focus:ring-purple-500">
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Consultation Charges</label>
+                        <input type="number" id="EditConsultationCharges" step="0.01"
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200 focus:ring-2 focus:ring-purple-500">
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">OPD Fee</label>
+                        <input type="number" id="EditOpdConsultationFee" step="0.01"
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200 focus:ring-2 focus:ring-purple-500">
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Discount</label>
+                        <input type="number" id="EditDiscountAmount" step="0.01"
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200 focus:ring-2 focus:ring-purple-500">
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Total Amount</label>
+                        <input type="number" id="EditTotalAmount" readonly
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-400">
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block font-medium">Net Amount</label>
+                        <input type="number" id="EditNetAmount" readonly
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-400">
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="mb-1 block font-medium">Notes</label>
+                        <textarea id="EditNotes" rows="2"
+                                  class="w-full rounded-lg border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200 focus:ring-2 focus:ring-purple-500"></textarea>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="flex justify-end gap-3 rounded-b-xl border-t border-gray-700 bg-gray-900 px-6 py-4">
+            <button type="button"
+                    class="rounded-lg bg-gray-700 px-4 py-2 text-gray-200 hover:bg-gray-600"
+                    data-bs-dismiss="modal"
+                    onclick="closeModal('editBillModal')">
+                Cancel
+            </button>
+
+            <button id="btnUpdateBill"
+                    class="rounded-lg bg-purple-600 px-4 py-2 font-semibold text-white hover:bg-purple-700">
+                Update Bill
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Allot Bed Modal -->
+<div id="allotBedModal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-black/50">
+    <div class="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-xl bg-gray-900 text-gray-100 shadow-xl">
+
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between rounded-t-xl bg-purple-700 px-6 py-4 text-white">
+            <h5 class="text-lg font-semibold">Allot Bed to Patient</h5>
+            <button type="button" class="text-xl font-bold text-white hover:text-gray-200" onclick="document.getElementById('allotBedModal').classList.add('hidden')">&times;</button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="px-6 py-4">
+            <form id="allotBedForm" class="space-y-4">
+
+                <!-- Ward Selection -->
+                <div>
+                    <label for="wardSelect" class="mb-1 block font-semibold">Select Ward</label>
+                    <select id="wardSelect" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100" required>
+                        <option value="">-- Select Ward --</option>
+                    </select>
+                </div>
+
+                <!-- Bed Selection -->
+                <div>
+                    <label for="bedSelect" class="mb-1 block font-semibold">Select Bed</label>
+                    <select id="bedSelect" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100" disabled required>
+                        <option value="">-- Select Bed --</option>
+                    </select>
+                </div>
+
+                <!-- Notes -->
+                <div>
+                    <label for="notes" class="mb-1 block font-semibold">Notes</label>
+                    <textarea id="notes" rows="2" placeholder="Enter any notes (optional)" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100"></textarea>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end gap-3 border-t border-gray-700 px-6 py-4">
+            <button type="button" class="rounded-lg bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-600" onclick="document.getElementById('allotBedModal').classList.add('hidden')">
+                Cancel
+            </button>
+            <button type="submit" form="allotBedForm" class="rounded-lg bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-500">
+                Assign
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Patient Bed Status Modal -->
+<div id="checkBedModal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-black/50">
+    <div class="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-gray-900 text-gray-100 shadow-xl">
+
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between rounded-t-xl bg-purple-700 px-6 py-4 text-white">
+            <h5 class="text-lg font-semibold">Patient Bed Status</h5>
+            <button type="button" class="text-xl font-bold text-white hover:text-gray-200" onclick="document.getElementById('checkBedModal').classList.add('hidden')">&times;</button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="space-y-6 px-6 py-4">
+
+            <!-- Ward Information -->
+            <div class="mb-4">
+                <h6 class="mb-2 font-semibold text-gray-300">Ward Information</h6>
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <div><span class="font-semibold">Ward:</span> <span id="wardName"></span></div>
+                    <div><span class="font-semibold">Capacity:</span> <span id="wardCapacity"></span></div>
+                    <div><span class="font-semibold">Occupied:</span> <span id="wardOccupied"></span></div>
+                </div>
+            </div>
+
+            <!-- Bed Grid -->
+            <div id="bedGridContainer" class="flex flex-wrap gap-2"></div>
+
+            <!-- Legend -->
+            <div class="mt-4 flex items-center gap-3">
+                <span class="rounded-lg bg-green-600 px-3 py-1 text-sm text-white">Available</span>
+                <span class="rounded-lg bg-red-600 px-3 py-1 text-sm text-white">Occupied</span>
+                <span class="rounded-lg bg-purple-600 px-3 py-1 text-sm text-white">Patient’s Bed</span>
+            </div>
+
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end border-t border-gray-700 px-6 py-4">
+            <button type="button" class="rounded-lg bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-600" onclick="document.getElementById('checkBedModal').classList.add('hidden')">
+                Close
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Doctor Round Modal -->
+<div id="doctorRoundModal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-black/50">
+    <div class="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-gray-900 text-gray-100 shadow-xl">
+
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between rounded-t-xl bg-purple-700 px-6 py-4 text-white">
+            <h5 class="text-lg font-semibold">Add Doctor Round</h5>
+            <button type="button" class="text-xl font-bold text-white hover:text-gray-200" onclick="document.getElementById('doctorRoundModal').classList.add('hidden')">&times;</button>
+        </div>
+
+        <!-- Modal Form -->
+        <form id="doctorRoundForm" class="space-y-6 px-6 py-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="PatientId" name="PatientId" value="@Model.PatientId" />
+            <input type="hidden" id="VisitId" name="VisitId" value="@Model.VisitId" />
+
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+
+                <div>
+                    <label class="mb-1 block font-semibold">Doctor</label>
+                    <select id="DoctorId" name="DoctorId" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100" required>
+                        <option value="">Select Doctor</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="mb-1 block font-semibold">Round Date</label>
+                    <input type="datetime-local" id="RoundDate" name="RoundDate" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100" required />
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="mb-1 block font-semibold">Observations</label>
+                    <textarea id="Observations" name="Observations" rows="2" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100"></textarea>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="mb-1 block font-semibold">Diagnosis</label>
+                    <textarea id="Diagnosis" name="Diagnosis" rows="2" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100"></textarea>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="mb-1 block font-semibold">Prescriptions</label>
+                    <textarea id="Prescriptions" name="Prescriptions" rows="2" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100"></textarea>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="mb-1 block font-semibold">Tests Recommended</label>
+                    <textarea id="TestsRecommended" name="TestsRecommended" rows="2" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100"></textarea>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="mb-1 block font-semibold">Treatment Plan</label>
+                    <textarea id="TreatmentPlan" name="TreatmentPlan" rows="2" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100"></textarea>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="mb-1 block font-semibold">Follow-up Instructions</label>
+                    <textarea id="FollowUpInstructions" name="FollowUpInstructions" rows="2" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100"></textarea>
+                </div>
+
+                <div>
+                    <label class="mb-1 block font-semibold">Is Critical</label>
+                    <select id="IsCritical" name="IsCritical" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100" required>
+                        <option value="">Select</option>
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="flex justify-end gap-3 border-t border-gray-700 pt-4">
+                <button type="button" class="rounded-lg bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-600" id="btnCloseDoctorRound" onclick="document.getElementById('doctorRoundModal').classList.add('hidden')">
+                    Close
+                </button>
+                <button type="submit" class="rounded-lg bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-500">
+                    Save Round
+                </button>
+            </div>
+
+        </form>
     </div>
 </div>
 
 <!-- Doctor Round History Modal -->
-<div class="modal fade" id="doctorRoundHistoryModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content rounded-3 shadow-lg">
-            <div class="modal-header bg-info text-white">
-                <h5 class="modal-title">Doctor Round History</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
+<div id="doctorRoundHistoryModal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-black/50">
+    <div class="max-h-[90vh] w-full max-w-6xl overflow-y-auto rounded-xl bg-gray-900 text-gray-100 shadow-xl">
 
-            <div class="modal-body">
-                <div id="doctorRoundHistoryGrid" class="ag-theme-alpine" style="width:100%; height:400px;"></div>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between rounded-t-xl bg-purple-700 px-6 py-4 text-white">
+            <h5 class="text-lg font-semibold">Doctor Round History</h5>
+            <button type="button" class="text-xl font-bold text-white hover:text-gray-200" onclick="document.getElementById('doctorRoundHistoryModal').classList.add('hidden')">&times;</button>
         </div>
+
+        <!-- Modal Body -->
+        <div class="px-6 py-4">
+            <div id="doctorRoundHistoryGrid" class="ag-theme-alpine-dark w-full" style="height:400px;"></div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end gap-3 border-t border-gray-700 px-6 py-4">
+            <button type="button" class="rounded-lg bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-600" onclick="document.getElementById('doctorRoundHistoryModal').classList.add('hidden')">
+                Close
+            </button>
+        </div>
+
     </div>
 </div>
-
 
 <!-- Edit Doctor Round Modal -->
-<div class="modal fade" id="editDoctorRoundModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content rounded-3 shadow-lg">
-            <div class="modal-header bg-warning text-white">
-                <h5 class="modal-title">Edit Doctor Round</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+<div id="editDoctorRoundModal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-black/50">
+    <div class="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-gray-900 text-gray-100 shadow-xl">
+
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between rounded-t-xl bg-purple-700 px-6 py-4 text-white">
+            <h5 class="text-lg font-semibold">Edit Doctor Round</h5>
+            <button type="button" class="text-xl font-bold text-white hover:text-gray-200" onclick="document.getElementById('editDoctorRoundModal').classList.add('hidden')">&times;</button>
+        </div>
+
+        <!-- Modal Form -->
+        <form id="editDoctorRoundForm" class="space-y-6 px-6 py-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="EditRoundId" name="Id" />
+
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+
+                <div>
+                    <label class="mb-1 block font-semibold">Doctor</label>
+                    <input type="text" id="EditDoctorName" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100" disabled />
+                </div>
+
+                <div>
+                    <label class="mb-1 block font-semibold">Ward</label>
+                    <input type="text" id="EditWardName" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100" disabled />
+                </div>
+
+                <div>
+                    <label class="mb-1 block font-semibold">Round Date</label>
+                    <input type="datetime-local" id="EditRoundDate" name="RoundDate" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100" required />
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="mb-1 block font-semibold">Observations</label>
+                    <textarea id="EditObservations" name="Observations" rows="2" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100"></textarea>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="mb-1 block font-semibold">Diagnosis</label>
+                    <textarea id="EditDiagnosis" name="Diagnosis" rows="2" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100"></textarea>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="mb-1 block font-semibold">Prescriptions</label>
+                    <textarea id="EditPrescriptions" name="Prescriptions" rows="2" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100"></textarea>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="mb-1 block font-semibold">Tests Recommended</label>
+                    <textarea id="EditTestsRecommended" name="TestsRecommended" rows="2" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100"></textarea>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="mb-1 block font-semibold">Treatment Plan</label>
+                    <textarea id="EditTreatmentPlan" name="TreatmentPlan" rows="2" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100"></textarea>
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="mb-1 block font-semibold">Follow-up Instructions</label>
+                    <textarea id="EditFollowUpInstructions" name="FollowUpInstructions" rows="2" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100"></textarea>
+                </div>
+
+                <div>
+                    <label class="mb-1 block font-semibold">Critical</label>
+                    <select id="EditIsCritical" name="IsCritical" class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-100">
+                        <option value="false">No</option>
+                        <option value="true">Yes</option>
+                    </select>
+                </div>
+
             </div>
 
-            <form id="editDoctorRoundForm">
-                @Html.AntiForgeryToken()
-                <input type="hidden" id="EditRoundId" name="Id" />
+            <!-- Modal Footer -->
+            <div class="flex justify-end gap-3 border-t border-gray-700 pt-4">
+                <button type="button" class="rounded-lg bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-600" id="btnCloseEditDoctorRound" onclick="document.getElementById('editDoctorRoundModal').classList.add('hidden')">
+                    Close
+                </button>
+                <button type="submit" class="rounded-lg bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-500">
+                    Update Round
+                </button>
+            </div>
 
-                <div class="modal-body">
-                    <div class="row g-3">
-
-                        <div class="col-md-6">
-                            <label class="form-label">Doctor</label>
-                            <input type="text" id="EditDoctorName" class="form-control" disabled />
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Ward</label>
-                            <input type="text" id="EditWardName" class="form-control" disabled />
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Round Date</label>
-                            <input type="datetime-local" id="EditRoundDate" name="RoundDate" class="form-control" required />
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Observations</label>
-                            <textarea id="EditObservations" name="Observations" class="form-control" rows="2"></textarea>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Diagnosis</label>
-                            <textarea id="EditDiagnosis" name="Diagnosis" class="form-control" rows="2"></textarea>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Prescriptions</label>
-                            <textarea id="EditPrescriptions" name="Prescriptions" class="form-control" rows="2"></textarea>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Tests Recommended</label>
-                            <textarea id="EditTestsRecommended" name="TestsRecommended" class="form-control" rows="2"></textarea>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Treatment Plan</label>
-                            <textarea id="EditTreatmentPlan" name="TreatmentPlan" class="form-control" rows="2"></textarea>
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Follow-up Instructions</label>
-                            <textarea id="EditFollowUpInstructions" name="FollowUpInstructions" class="form-control" rows="2"></textarea>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Critical</label>
-                            <select id="EditIsCritical" name="IsCritical" class="form-select">
-                                <option value="false">No</option>
-                                <option value="true">Yes</option>
-                            </select>
-                        </div>
-
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="btnCloseEditDoctorRound">Close</button>
-                    <button type="submit" class="btn btn-warning">Update Round</button>
-                </div>
-            </form>
-        </div>
+        </form>
     </div>
 </div>
 
+
 <!-- Final Bill Modal -->
-<div class="modal fade" id="finalBillModal" tabindex="-1" aria-labelledby="finalBillModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="finalBillModalLabel">
-                    <i class="bi bi-file-earmark-text"></i> Final Bill Summary
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+<div id="finalBillModal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-black/50">
+    <div class="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-gray-900 text-gray-100 shadow-xl">
+
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between rounded-t-xl bg-purple-700 px-6 py-4 text-white">
+            <h5 class="flex items-center gap-2 text-lg font-semibold">
+                <i class="bi bi-file-earmark-text"></i> Final Bill Summary
+            </h5>
+            <button type="button" class="text-xl font-bold text-white hover:text-gray-200" onclick="document.getElementById('finalBillModal').classList.add('hidden')">&times;</button>
+        </div>
+
+        <!-- Modal Body -->
+        <div id="billContent" class="space-y-6 px-6 py-4">
+
+            <!-- Hospital Header -->
+            <div class="text-center">
+                <h3 class="text-xl font-bold">Hospital Management System</h3>
+                <p class="mb-0 text-gray-400">Final Discharge Bill</p>
             </div>
-            <div class="modal-body" id="billContent">
-                <!-- Hospital Header -->
-                <div class="text-center mb-4">
-                    <h3 class="fw-bold">Hospital Management System</h3>
-                    <p class="text-muted mb-0">Final Discharge Bill</p>
-                </div>
 
-                <hr />
+            <hr class="border-gray-700" />
 
+            <!-- Patient & Visit Information -->
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <!-- Patient Information -->
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <h6 class="fw-bold text-primary">Patient Information</h6>
-                        <table class="table table-sm table-borderless">
+                <div>
+                    <h6 class="mb-2 font-bold text-purple-500">Patient Information</h6>
+                    <table class="w-full table-auto text-gray-100">
+                        <tbody class="text-sm">
                             <tr>
-                                <td class="fw-semibold">Patient Name:</td>
+                                <td class="pr-2 font-semibold">Patient Name:</td>
                                 <td id="billPatientName">@Model.FullName</td>
                             </tr>
                             <tr>
-                                <td class="fw-semibold">Patient Code:</td>
+                                <td class="pr-2 font-semibold">Patient Code:</td>
                                 <td id="billPatientId">@Model.PatientCode</td>
                             </tr>
                             <tr>
-                                <td class="fw-semibold">Gender:</td>
+                                <td class="pr-2 font-semibold">Gender:</td>
                                 <td id="billAgeGender">@Model.Gender</td>
                             </tr>
                             <tr>
-                                <td class="fw-semibold">Contact:</td>
+                                <td class="pr-2 font-semibold">Contact:</td>
                                 <td id="billContactNumber">@Model.ContactNumber</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="col-md-6">
-                        <h6 class="fw-bold text-primary">Visit Information</h6>
-                        <table class="table table-sm table-borderless">
-                            <tr>
-                                <td class="fw-semibold">Visit ID:</td>
-                                <td id="billVisitId">@Model.VisitId</td>
-                            </tr>
-                            <tr>
-                                <td class="fw-semibold">Admission Date:</td>
-                                <td id="billAdmissionDate">@Model.AdmissionDate</td>
-                            </tr>
-                            <tr>
-                                <td class="fw-semibold">Discharge Date:</td>
-                                <td id="billDischargeDate">@Model.DischargeDate</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-
-
-                <hr />
-
-                <!-- Charges Breakdown -->
-                <div class="mb-3">
-                    <h6 class="fw-bold text-primary">Charges Breakdown</h6>
-                    <table class="table table-sm table-bordered">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Description</th>
-                                <th class="text-end">Amount (₹)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Room Charges</td>
-                                <td class="text-end" id="billRoomCharges">0.00</td>
-                            </tr>
-                            <tr>
-                                <td>Consultation Charges</td>
-                                <td class="text-end" id="billConsultationCharges">0.00</td>
-                            </tr>
-                            <tr>
-                                <td>Procedure Charges</td>
-                                <td class="text-end" id="billProcedureCharges">0.00</td>
-                            </tr>
-                            <tr>
-                                <td>Medication Charges</td>
-                                <td class="text-end" id="billMedicationCharges">0.00</td>
-                            </tr>
-                            <tr>
-                                <td>OPD Consultation Fee</td>
-                                <td class="text-end" id="billOpdConsultationFee">0.00</td>
-                            </tr>
-                            <tr class="table-light">
-                                <td class="fw-bold">Subtotal</td>
-                                <td class="text-end fw-bold" id="billSubtotal">0.00</td>
-                            </tr>
-                            <tr class="table-warning">
-                                <td class="fw-semibold">Discount</td>
-                                <td class="text-end fw-semibold" id="billDiscountAmount">0.00</td>
-                            </tr>
-                            <tr class="table-success">
-                                <td class="fw-bold fs-5">Net Amount Payable</td>
-                                <td class="text-end fw-bold fs-5" id="billNetAmount">0.00</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <!-- Notes -->
-                <div class="mb-3" id="billNotesSection" style="display: none;">
-                    <h6 class="fw-bold text-primary">Additional Notes</h6>
-                    <p class="text-muted" id="billNotes"></p>
-                </div>
 
-                <hr />
-
-                <!-- Footer -->
-                <div class="text-center text-muted small">
-                    <p class="mb-1">Thank you for choosing our services!</p>
-                    <p class="mb-0">Generated on: <span id="billGeneratedDate"></span></p>
+                <!-- Visit Information -->
+                <div>
+                    <h6 class="mb-2 font-bold text-purple-500">Visit Information</h6>
+                    <table class="w-full table-auto text-gray-100">
+                        <tbody class="text-sm">
+                            <tr>
+                                <td class="pr-2 font-semibold">Visit ID:</td>
+                                <td id="billVisitId">@Model.VisitId</td>
+                            </tr>
+                            <tr>
+                                <td class="pr-2 font-semibold">Admission Date:</td>
+                                <td id="billAdmissionDate">@Model.AdmissionDate</td>
+                            </tr>
+                            <tr>
+                                <td class="pr-2 font-semibold">Discharge Date:</td>
+                                <td id="billDischargeDate">@Model.DischargeDate</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle"></i> Close
-                </button>
-                <button type="button" class="btn btn-success" id="btnDownloadBill">
-                    <i class="bi bi-download"></i> Download PDF
-                </button>
+
+            <hr class="border-gray-700" />
+
+            <!-- Charges Breakdown -->
+            <div>
+                <h6 class="mb-2 font-bold text-purple-500">Charges Breakdown</h6>
+                <table class="w-full table-auto border border-gray-700 text-sm text-gray-100">
+                    <thead class="bg-gray-800">
+                        <tr>
+                            <th class="px-2 py-1 text-left">Description</th>
+                            <th class="px-2 py-1 text-right">Amount (₹)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="px-2 py-1">Room Charges</td>
+                            <td class="px-2 py-1 text-right" id="billRoomCharges">0.00</td>
+                        </tr>
+                        <tr>
+                            <td class="px-2 py-1">Consultation Charges</td>
+                            <td class="px-2 py-1 text-right" id="billConsultationCharges">0.00</td>
+                        </tr>
+                        <tr>
+                            <td class="px-2 py-1">Procedure Charges</td>
+                            <td class="px-2 py-1 text-right" id="billProcedureCharges">0.00</td>
+                        </tr>
+                        <tr>
+                            <td class="px-2 py-1">Medication Charges</td>
+                            <td class="px-2 py-1 text-right" id="billMedicationCharges">0.00</td>
+                        </tr>
+                        <tr>
+                            <td class="px-2 py-1">OPD Consultation Fee</td>
+                            <td class="px-2 py-1 text-right" id="billOpdConsultationFee">0.00</td>
+                        </tr>
+                        <tr class="bg-gray-800 font-bold">
+                            <td class="px-2 py-1">Subtotal</td>
+                            <td class="px-2 py-1 text-right" id="billSubtotal">0.00</td>
+                        </tr>
+                        <tr class="bg-yellow-600 font-semibold">
+                            <td class="px-2 py-1">Discount</td>
+                            <td class="px-2 py-1 text-right" id="billDiscountAmount">0.00</td>
+                        </tr>
+                        <tr class="bg-green-600 text-lg font-bold">
+                            <td class="px-2 py-1">Net Amount Payable</td>
+                            <td class="px-2 py-1 text-right" id="billNetAmount">0.00</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
+
+            <!-- Additional Notes -->
+            <div id="billNotesSection" class="hidden">
+                <h6 class="mb-1 font-bold text-purple-500">Additional Notes</h6>
+                <p class="text-gray-400" id="billNotes"></p>
+            </div>
+
+            <hr class="border-gray-700" />
+
+            <!-- Footer -->
+            <div class="text-center text-sm text-gray-400">
+                <p class="mb-1">Thank you for choosing our services!</p>
+                <p class="mb-0">Generated on: <span id="billGeneratedDate"></span></p>
+            </div>
+
         </div>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end gap-3 border-t border-gray-700 px-6 py-4">
+            <button type="button" class="rounded-lg bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-600" onclick="document.getElementById('finalBillModal').classList.add('hidden')">
+                <i class="bi bi-x-circle"></i> Close
+            </button>
+            <button type="button" id="btnDownloadBill" class="flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-500">
+                <i class="bi bi-download"></i> Download PDF
+            </button>
+        </div>
+
     </div>
 </div>
+
 
 <!-- Discharge Summary Modal -->
-<div class="modal fade" id="dischargeSummaryModal" tabindex="-1" aria-labelledby="dischargeSummaryLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="dischargeSummaryLabel">Discharge Summary</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+<div id="dischargeSummaryModal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-black/50">
+    <div class="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-gray-900 text-gray-100 shadow-xl">
 
-            <div class="modal-body" id="dischargeSummaryContent">
-                <!-- Dynamic summary content will be injected here -->
-                <div class="text-center text-muted">Loading summary...</div>
-            </div>
-
-            <div class="modal-footer">
-                <button id="downloadPdfBtn" class="btn btn-success">
-                    <i class="bi bi-file-earmark-pdf"></i> Download as PDF
-                </button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between rounded-t-xl bg-purple-700 px-6 py-4 text-white">
+            <h5 class="text-lg font-semibold">Discharge Summary</h5>
+            <button type="button" class="text-xl font-bold text-white hover:text-gray-200" onclick="document.getElementById('dischargeSummaryModal').classList.add('hidden')">&times;</button>
         </div>
+
+        <!-- Modal Body -->
+        <div id="dischargeSummaryContent" class="px-6 py-4">
+            <div class="text-center text-gray-400">Loading summary...</div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end gap-3 border-t border-gray-700 px-6 py-4">
+            <button id="downloadPdfBtn" class="flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white transition hover:bg-purple-500">
+                <i class="bi bi-file-earmark-pdf"></i> Download as PDF
+            </button>
+            <button type="button" class="rounded-lg bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-600" onclick="document.getElementById('dischargeSummaryModal').classList.add('hidden')">Close</button>
+        </div>
+
     </div>
 </div>
+
 
 @section Scripts {
     <script src="/js/Patient/inpatientVisitManager.js"></script>

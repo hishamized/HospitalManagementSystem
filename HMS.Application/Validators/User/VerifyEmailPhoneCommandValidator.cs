@@ -17,10 +17,9 @@ namespace HMS.Application.Validators.User
                 .EmailAddress().WithMessage("Invalid email format.");
 
             RuleFor(x => x.VerifyEmailPhoneDto.PhoneNumber)
-             .NotEmpty().WithMessage("Phone number is required.")
-             .Matches(@"^\+?[1-9]\d{1,14}$")
-             .WithMessage("Invalid phone number format. It should include an optional '+' and up to 15 digits.");
-
+            .NotEmpty().WithMessage("Phone number is required.")
+            .Matches(@"^\+?\d{1,3}\s?\d{8,12}$")
+            .WithMessage("Invalid phone number format. Use format like +91 7889466366.");
         }
     }
 }

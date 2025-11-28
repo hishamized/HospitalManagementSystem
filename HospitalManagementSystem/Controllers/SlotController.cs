@@ -140,7 +140,7 @@ namespace HMS.Web.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete([FromBody] int id)
         {
             try
             {

@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    // 🔹 Define AG Grid columns
+    // 🔹 Define AG Grid columns with dark theme styling
     const columnDefs = [
         { headerName: "Doctor Name", field: "doctorName", flex: 2, sortable: true, filter: true },
         { headerName: "Specialization", field: "specialization", flex: 1, sortable: true, filter: true },
@@ -12,12 +12,16 @@
             field: "id",
             flex: 1,
             cellRenderer: params => `
-                        <button class="btn btn-sm btn-danger unassign-btn" data-id="${params.data.id}">
-                            <i class="bi bi-x-circle"></i> Unassign
-                        </button>`
+                <button class="unassign-btn bg-red-600 hover:bg-red-700 text-white text-sm font-semibold py-2 px-4 rounded-lg transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+                data-id="${params.data.id}">
+                    <i class="fa-solid fa-xmark-circle"></i> Unassign
+                </button>
+
+            `
         }
     ];
-    // 🔹 AG Grid Options
+
+    // 🔹 AG Grid Options with dark theme
     const gridOptions = {
         columnDefs: columnDefs,
         rowData: [],
@@ -26,8 +30,8 @@
         animateRows: true,
         rowSelection: "single",
         getRowId: params => params.data.id,
-
-        // ✅ Right-Click Context Menu for Unassign
+        // Dark theme configuration
+        theme: 'ag-theme-alpine-dark',
         onCellContextMenu: function (params) {
             params.event.preventDefault();
             if (params.node && params.data) {
@@ -50,29 +54,34 @@
                     gridOptions.api.setRowData(response.data);
                 } else {
                     gridOptions.api.setRowData([]);
-                    alert(response.message || "No data found");
+                    showToast("No assignment data found", true);
                 }
             },
             error: function () {
-                alert("Error fetching assignment data.");
+                showToast("Error fetching assignment data", true);
             }
         });
     }
 
-    // 🔹 Load data on page load
+    // 🔹 Load dropdowns and data on page load
     loadAssignments();
-    // Load dropdowns on page load
     loadDoctors();
     loadWards();
 
-    // Refresh lists
+    // 🔹 Refresh button for grid
     $("#refreshBtn").on("click", function () {
-        loadDoctors();
-        loadWards();
         loadAssignments();
+        showToast("Grid refreshed successfully!");
     });
 
-    // 🔹 Date Formatter for "Assigned At"
+    // 🔹 Refresh button for lists
+    $("#refreshListsBtn").on("click", function () {
+        loadDoctors();
+        loadWards();
+        showToast("Lists refreshed successfully!");
+    });
+
+    // 🔹 Date Formatter
     function dateFormatter(params) {
         if (!params.value) return "";
         return new Date(params.value).toLocaleString();
@@ -83,20 +92,23 @@
         const id = $(this).data('id');
         unassignDoctor(id);
     });
-    // 🔹 Context Menu Creation
+
+    // 🔹 Context Menu Creation (Dark Theme with Tailwind)
     function showContextMenu(x, y, rowData) {
+        // Remove any existing context menu
+        $('#contextMenu').remove();
+
         const menu = $(`
-                    <div id="contextMenu" class="dropdown-menu show shadow">
-                        <a class="dropdown-item text-danger fw-bold" href="#" data-id="${rowData.id}">
-                            <i class="bi bi-x-circle"></i> Unassign
-                        </a>
-                    </div>
-                `);
+            <div id="contextMenu" class="absolute z-50 min-w-[180px] rounded-lg border border-gray-700 bg-gray-800 shadow-2xl">
+                <a href="#" data-id="${rowData.id}" class="block px-4 py-2.5 text-red-400 font-semibold hover:bg-gray-700 hover:text-red-300 rounded-lg transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-xmark-circle"></i> Unassign Doctor
+                </a>
+            </div>
+        `);
 
         $('body').append(menu);
-        menu.css({ position: 'absolute', top: y, left: x, zIndex: 10000 });
+        menu.css({ top: y, left: x });
 
-        // Handle click
         menu.find('a').on('click', function (e) {
             e.preventDefault();
             const id = $(this).data('id');
@@ -104,14 +116,13 @@
             menu.remove();
         });
 
-        // Remove on click outside
         $(document).on('click.contextMenu', function () {
             menu.remove();
             $(document).off('click.contextMenu');
         });
     }
 
-    // Submit form
+    // 🔹 Form Submission
     $("#assignForm").on("submit", function (e) {
         e.preventDefault();
 
@@ -145,7 +156,6 @@
     });
 
     // ---------------- Helper Functions ----------------
-
     function loadDoctors() {
         $.getJSON("/Doctor/GetAllDoctors", function (res) {
             const select = $("#doctorSelect");
@@ -169,50 +179,67 @@
             }
         });
     }
-    // 🧭 Function to Unassign a Doctor from a Ward
+
+    // 🔹 Unassign Doctor
     function unassignDoctor(assignmentId) {
         if (!assignmentId || assignmentId <= 0) {
-            alert("Invalid assignment ID.");
+            showToast("Invalid assignment ID", true);
             return;
         }
 
-        // Confirm before proceeding
         if (!confirm("Are you sure you want to unassign this doctor from the ward?")) {
             return;
         }
 
         $.ajax({
-            url: `/Ward/UnassignDoctor?id=${assignmentId}`, // Adjust path if needed
+            url: `/Ward/UnassignDoctor?id=${assignmentId}`,
             type: "DELETE",
             beforeSend: function () {
                 console.log("Unassigning doctor... please wait.");
             },
             success: function (response) {
                 if (response.success) {
-                    loadAssignments
-                    alert(response.message || "Doctor unassigned successfully.");
+                    loadAssignments();
+                    showToast(response.message || "Doctor unassigned successfully");
                 } else {
-                    // ⚠️ Show warning/error from backend
-                    alert(response.message || "Failed to unassign doctor.");
+                    showToast(response.message || "Failed to unassign doctor", true);
                 }
             },
             error: function (xhr, status, error) {
-                // ❌ Handle unexpected errors
                 console.error("Error during unassignment:", error);
-                const msg = xhr.responseJSON?.message || "An unexpected error occurred.";
-                alert(msg);
+                const msg = xhr.responseJSON?.message || "An unexpected error occurred";
+                showToast(msg, true);
             }
         });
     }
 
+    // 🔹 Toast Notifications (Dark Theme with Tailwind)
     function showToast(message, isError = false) {
         const toast = $("#toast");
         const msg = $("#toastMsg");
+        const icon = $("#toastIcon");
+
         msg.text(message);
-        toast.removeClass("bg-success bg-danger").addClass(isError ? "bg-danger" : "bg-success");
-        const bsToast = new bootstrap.Toast(toast[0]);
-        bsToast.show();
+
+        // Update icon based on message type
+        if (isError) {
+            icon.removeClass("fa-check-circle").addClass("fa-exclamation-circle");
+            toast.removeClass("bg-purple-600").addClass("bg-red-600");
+        } else {
+            icon.removeClass("fa-exclamation-circle").addClass("fa-check-circle");
+            toast.removeClass("bg-red-600").addClass("bg-purple-600");
+        }
+
+        toast.removeClass("hidden").addClass("flex");
+
+        setTimeout(() => {
+            toast.removeClass("flex").addClass("hidden");
+        }, 4000);
     }
 
+    // Close toast manually
+    $("#toastClose").on("click", function () {
+        $("#toast").removeClass("flex").addClass("hidden");
+    });
 
 });

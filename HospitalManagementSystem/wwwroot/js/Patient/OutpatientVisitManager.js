@@ -1,7 +1,14 @@
-﻿// ------------------------------
-// OutpatientVisitManager.js (jQuery + Bootstrap Modal Calls Only)
-// ------------------------------
+﻿// Show modal
+function showModal(modalId) {
+    document.getElementById(modalId).classList.remove('hidden');
+    document.body.classList.add('overflow-hidden'); // Prevent background scroll
+}
 
+// Hide modal
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+}
 $(function () {
     const $container = $("#outpatientContainer");
     const patientId = $container.data("patientId");
@@ -80,7 +87,6 @@ $(function () {
                 ? '<span class="badge bg-success">Yes</span>'
                 : '<span class="badge bg-danger">No</span>'
         },
-
         {
             headerName: "Notes",
             field: "notes",
@@ -93,13 +99,17 @@ $(function () {
             cellRenderer: p => {
                 const id = p.data?.id;
                 return `
-                    <button class="btn btn-sm btn-outline-primary me-1" data-id="${id}" data-action="edit">
-                        <i class="bi bi-pencil"></i>
+                <div class="flex space-x-2">
+                    <button class="flex items-center justify-center px-3 py-1 rounded-md border border-purple-500 text-purple-500 hover:bg-purple-600 hover:text-white transition-colors duration-200"
+                            data-id="${id}" data-action="edit" title="Edit">
+                        <i class="fa-solid fa-pencil"></i>
                     </button>
-                    <button class="btn btn-sm btn-outline-danger" data-id="${id}" data-action="delete">
-                        <i class="bi bi-trash"></i>
+                    <button class="flex items-center justify-center px-3 py-1 rounded-md border border-red-500 text-red-500 hover:bg-red-600 hover:text-white transition-colors duration-200"
+                            data-id="${id}" data-action="delete" title="Delete">
+                        <i class="fa-solid fa-trash"></i>
                     </button>
-                `;
+                </div>
+            `;
             }
         }
     ];
@@ -110,7 +120,12 @@ $(function () {
         pagination: true,
         paginationPageSize: 10,
         rowSelection: "single",
-        getRowNodeId: d => d.id?.toString()
+        getRowNodeId: d => d.id?.toString(),
+        // IMPORTANT: Add onGridReady callback
+        onGridReady: function (params) {
+            console.log('Grid is ready, loading bills...');
+            fetchBills();
+        }
     };
 
     const gridDiv = document.querySelector("#outpatientBillGrid");
@@ -122,15 +137,18 @@ $(function () {
     function fetchBills() {
         $.get(`/Bill/GetBillsByPatientId?patientId=${patientId}`)
             .done(res => {
+                console.log('Bills response:', res);
                 const data = Array.isArray(res)
                     ? res
                     : res?.data || res?.result || [];
+
+                console.log('Setting row data:', data);
                 gridOptions.api.setRowData(data);
             })
             .fail(() => alert("Error loading bills."));
     }
 
-    fetchBills();
+    // Remove the immediate fetchBills() call - it will be called in onGridReady
 
     // ------------------------------
     // Add Bill Modal
@@ -138,7 +156,7 @@ $(function () {
     $("#btnAddBill").on("click", () => {
         $("#patientId").val(patientId);
         $("#visitId").val(visitId);
-        $("#addOutpatientBillModal").modal("show");
+        showModal('addOutpatientBillModal');
     });
 
     // Auto calc totals (Add)
@@ -165,7 +183,7 @@ $(function () {
             netAmount: +$("#netAmount").val() || 0,
             paymentStatus: $("#paymentStatus").val(),
             paymentMode: $("#paymentMode").val() || "Not Defined",
-            opdConsultationFee: +$("#opdConsultationFee").val() || 0, 
+            opdConsultationFee: +$("#opdConsultationFee").val() || 0,
             medicationCharges: +$("#medicationCharges").val() || 0,
             procedureCharges: +$("#procedureCharges").val() || 0,
             notes: $("#notes").val()
@@ -179,8 +197,7 @@ $(function () {
             data: JSON.stringify(dto)
         })
             .done(() => {
-                $("#addOutpatientBillModal").modal("hide");
-                $(".modal-backdrop").remove(); // remove leftover gray screen
+                closeModal('addOutpatientBillModal');
                 fetchBills();
             })
             .fail(xhr => alert(xhr.responseJSON?.message || "Failed to add bill."));
@@ -190,25 +207,70 @@ $(function () {
     // Edit Bill Modal
     // ------------------------------
     function editBill(id) {
-        const node = gridOptions.api.getRowNode(id);
-        if (!node) return alert("Bill not found.");
+        console.log('Attempting to edit bill with ID:', id, 'Type:', typeof id);
 
-        const d = node.data;
-        $("#editBillId").val(d.id);
-        $("#editPatientId").val(d.patientId);
-        $("#editVisitId").val(d.visitId);
-        $("#editBillDate").val(d.billDate?.split("T")[0]);
-        $("#editPaymentStatus").val(d.paymentStatus);
-        $("#editPaymentMode").val(d.paymentMode);
-        $("#editOpdConsultationFee").val(d.opdConsultationFee);
-        $("#editMedicationCharges").val(d.medicationCharges);
-        $("#editProcedureCharges").val(d.procedureCharges);
-        $("#editDiscountAmount").val(d.discountAmount);
-        $("#editTotalAmount").val(d.totalAmount);
-        $("#editNetAmount").val(d.netAmount);
-        $("#editNotes").val(d.notes);
+        // First, let's check if the API is ready
+        if (!gridOptions.api) {
+            console.error('Grid API is not available');
+            alert('Grid is not ready. Please try again.');
+            return;
+        }
 
-        $("#editBillModal").modal("show");
+        // Log all available nodes for debugging
+        const allNodes = [];
+        gridOptions.api.forEachNode(node => {
+            allNodes.push({ id: node.id, data: node.data });
+        });
+        console.log('All available nodes:', allNodes);
+
+        // Convert id to string to match getRowNodeId configuration
+        const nodeId = id?.toString();
+        console.log('Looking for node with ID:', nodeId);
+
+        const node = gridOptions.api.getRowNode(nodeId);
+
+        if (!node) {
+            console.error("Bill not found for ID:", id);
+            console.error("Available node IDs:", allNodes.map(n => n.id));
+
+            // Fallback: search manually
+            let foundData = null;
+            gridOptions.api.forEachNode(n => {
+                if (n.data?.id == id) { // Use == for loose comparison
+                    foundData = n.data;
+                }
+            });
+
+            if (foundData) {
+                console.log('Found data via manual search:', foundData);
+                populateEditForm(foundData);
+                showModal('editBillModal');
+                return;
+            }
+
+            alert("Bill not found in grid.");
+            return;
+        }
+
+        console.log('Found node:', node);
+        populateEditForm(node.data);
+        showModal('editBillModal');
+    }
+
+    function populateEditForm(data) {
+        $("#editBillId").val(data.id);
+        $("#editPatientId").val(data.patientId);
+        $("#editVisitId").val(data.visitId ?? 0);
+        $("#editBillDate").val(data.billDate?.split("T")[0]);
+        $("#editPaymentStatus").val(data.paymentStatus);
+        $("#editPaymentMode").val(data.paymentMode);
+        $("#editOpdConsultationFee").val(data.opdConsultationFee || 0);
+        $("#editMedicationCharges").val(data.medicationCharges || 0);
+        $("#editProcedureCharges").val(data.procedureCharges || 0);
+        $("#editDiscountAmount").val(data.discountAmount || 0);
+        $("#editTotalAmount").val(data.totalAmount || 0);
+        $("#editNetAmount").val(data.netAmount || 0);
+        $("#editNotes").val(data.notes || '');
     }
 
     // ------------------------------
@@ -217,6 +279,8 @@ $(function () {
     $("#outpatientBillGrid").on("click", "button", function () {
         const id = $(this).data("id");
         const action = $(this).data("action");
+        console.log('Button clicked - ID:', id, 'Action:', action);
+
         if (action === "edit") {
             editBill(id);
         } else if (action === "delete") {
@@ -263,8 +327,7 @@ $(function () {
             data: JSON.stringify(dto)
         })
             .done(() => {
-                $("#editBillModal").modal("hide");
-                $(".modal-backdrop").remove();
+                closeModal('editBillModal');
                 fetchBills();
                 alert("Bill updated successfully!");
             })
@@ -282,6 +345,7 @@ $(function () {
         })
             .done(() => {
                 gridOptions.api.applyTransaction({ remove: [{ id }] });
+                fetchBills();
                 alert("Bill deleted.");
             })
             .fail(() => alert("Failed to delete bill."));
@@ -307,7 +371,7 @@ $('#GenerateFinalBillBtn').on('click', function () {
             if (response.success && response.data) {
                 console.log(response.data);
                 populateFinalBillModal(response.data);
-                $('#finalBillModal').modal('show');
+                showModal('finalBillModal');
             } else {
                 alert(response.message || "Failed to generate bill.");
             }

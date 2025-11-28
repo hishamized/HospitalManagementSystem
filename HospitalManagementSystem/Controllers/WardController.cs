@@ -156,11 +156,15 @@ namespace HMS.Web.Controllers
         {
             try
             {
+                var AdminIdString = User.FindFirst("UserId")?.Value;
+                if (string.IsNullOrEmpty(AdminIdString) || !int.TryParse(AdminIdString, out int AdminId)) {
+                    return StatusCode(500, new { success=false, message ="Unauthorized" });
+                }
                 if (dto == null || dto.DoctorId <= 0 || dto.WardId <= 0)
                 {
                     return BadRequest(new { success = false, message = "Invalid input data." });
                 }
-
+                dto.AssignedBy = AdminId;
                 // Send command to MediatR
                 var command = new AssignDoctorWardCommand(dto);
                 var result = await _mediator.Send(command);

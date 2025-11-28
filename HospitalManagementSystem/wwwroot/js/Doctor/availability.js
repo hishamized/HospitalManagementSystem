@@ -18,14 +18,14 @@ $(function () {
     $("#doctorSelect").on("change", function () {
         const val = $(this).val();
         if (!val) {
-            $("#availabilityContainer").hide();
+            $("#availabilityContainer").addClass("hidden");
             return;
         }
 
         const doctorId = parseInt(val, 10);
         if (isNaN(doctorId)) {
             console.warn("Selected doctorId is not a number:", val);
-            $("#availabilityContainer").hide();
+            $("#availabilityContainer").addClass("hidden");
             return;
         }
 
@@ -34,7 +34,7 @@ $(function () {
             renderAvailabilityGrid(selectedDoctor);
         } else {
             console.warn("Selected doctor not found in allDoctors:", doctorId);
-            $("#availabilityContainer").hide();
+            $("#availabilityContainer").addClass("hidden");
         }
     });
 });
@@ -87,7 +87,7 @@ function renderAvailabilityGrid(doctor) {
     // optional alert for debugging (remove in production)
     // alert("renderAvailabilityGrid called for " + (doctor.fullName || doctor.FullName || doctor.name));
 
-    $("#availabilityContainer").show();
+    $("#availabilityContainer").removeClass("hidden");
     const $tableBody = $("#availabilityTableBody");
     $tableBody.empty();
 
@@ -141,27 +141,34 @@ function renderAvailabilityGrid(doctor) {
         }
     }
 
-    // Build grid rows: Sunday ... Saturday, columns 8..20
+    // Build grid rows: Sunday ... Saturday, columns 0..23
     for (let d = 0; d < dayNames.length; d++) {
         const day = dayNames[d];
-        const $tr = $("<tr>");
-        const $dayCell = $("<td>").text(day).addClass("fw-bold bg-light");
+        const $tr = $("<tr>").addClass("border-b border-gray-700 hover:bg-gray-800 transition-colors duration-200");
+
+        // Day cell
+        const $dayCell = $("<td>")
+            .text(day)
+            .addClass("px-4 py-3 border border-gray-700 font-semibold text-purple-300 bg-gray-900 sticky left-0 z-10");
         $tr.append($dayCell);
 
         for (let hour = 0; hour < 24; hour++) {
+            const $td = $("<td>").addClass("px-4 py-3 border border-gray-700 text-center rounded-md transition-all duration-200");
 
-            const $td = $("<td>");
-            // available if this day is active AND hour is inside [startHour, endHour)
+            // Available if this day is active AND hour is inside [startHour, endHour)
             if (activeDays.indexOf(day) !== -1 && hour >= startHour && hour < endHour) {
-                $td.addClass("available-box").text("✓");
+                $td.addClass("bg-green-500 text-white font-bold text-center transition-all duration-200 rounded-md hover:bg-green-600 hover:scale-105 cursor-pointer").text("✓");
             } else {
-                $td.addClass("unavailable-box").text("—");
+                $td.addClass("bg-gray-900 text-gray-400 hover:bg-gray-800 cursor-default")
+                    .text("—");
             }
+
             $tr.append($td);
         }
 
         $tableBody.append($tr);
     }
+
 }
 
 // small helper to escape html in option text

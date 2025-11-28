@@ -1,86 +1,95 @@
 ﻿$(document).ready(function () {
 
-    // --------------------------
-    // STEP 1: Open Forgot Password Modal
-    // --------------------------
-    $("#forgotPasswordLink").on("click", function (e) {
-        e.preventDefault();
-        $("#forgotPasswordModal").modal("show");
-    });
-
-    // --------------------------
-    // STEP 2: Verify Email + Phone
-    // --------------------------
+    // -------------------------------------------------------
+    // STEP 2: VERIFY EMAIL + PHONE
+    // -------------------------------------------------------
     $("#forgotPasswordForm").on("submit", function (e) {
         e.preventDefault();
 
         const email = $("#fpEmail").val().trim();
         const phone = $("#fpPhone").val().trim();
-        $("#otpEmail").val(email); 
 
-        $("#fpError").addClass("d-none");
+        $("#otpEmail").val(email);
+        $("#fpError").addClass("hidden");
 
         $.ajax({
             url: "/User/VerifyEmailPhone",
-            method: "POST",
-            contentType: "application/json",      // <-- Tells server it's JSON
-            data: JSON.stringify({                // <-- Converts JS object to JSON string
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
                 email: email,
                 phoneNumber: phone
             }),
+
             success: function (json) {
                 if (json.success) {
-                    $("#forgotPasswordModal").modal("hide");
+
+                    // Close forgot password modal and open OTP modal
+                    window.dispatchEvent(new CustomEvent('close-forgot-modal'));
+                    window.dispatchEvent(new CustomEvent('open-otp-modal'));
+
                     toastr.success("Verification successful! OTP sent to your email.");
-                    $("#otpModal").modal("show");
+
                 } else {
-                    $("#fpError").removeClass("d-none").text(json.message || "Verification failed.");
+                    $("#fpError").removeClass("hidden").text(json.message || "Verification failed.");
                 }
             },
-            error: function (xhr) {
-                console.error(xhr);
-                $("#fpError").removeClass("d-none").text("Server error. Please try again.");
+
+            error: function () {
+                $("#fpError").removeClass("hidden").text("Server error. Please try again.");
             }
         });
     });
 
-
-    // --------------------------
-    // STEP 3: Verify OTP
-    // --------------------------
+    // -------------------------------------------------------
+    // STEP 3: VERIFY OTP
+    // -------------------------------------------------------
     $("#otpForm").on("submit", function (e) {
         e.preventDefault();
 
         const otpCode = $("#otpCode").val().trim();
         const email = $("#otpEmail").val().trim();
-        $("#otpError").addClass("d-none");
+
+        $("#otpError").addClass("hidden");
 
         if (!otpCode) {
-            $("#otpError").removeClass("d-none").text("Please enter your OTP.");
+            $("#otpError").removeClass("hidden").text("Please enter your OTP.");
             return;
         }
 
         $.ajax({
             url: "/User/VerifyOtp",
-            method: "POST",
+            type: "POST",
             contentType: "application/json",
-            data: JSON.stringify({ otpCode: otpCode , Email: email}), // ✅ send as object with property name matching backend
+            data: JSON.stringify({
+                otpCode: otpCode,
+                email: email
+            }),
+
             success: function (json) {
+
                 if (json.success) {
-                    $("#otpModal").modal("hide");
-                    toastr.success("OTP verified! A new password has been generated and sent to your email.");
+
+                    // Close OTP modal
+                    window.dispatchEvent(new CustomEvent('close-otp-modal'));
+
+                    toastr.success("OTP verified! New password sent to your email.");
+
                     alert("Your new password: " + json.newPassword);
+
                 } else {
-                    $("#otpError").removeClass("d-none").text(json.message || "Invalid or expired OTP.");
+                    $("#otpError")
+                        .removeClass("hidden")
+                        .text(json.message || "Invalid or expired OTP.");
                 }
             },
+
             error: function () {
-                $("#otpError").removeClass("d-none").text("Server error. Please try again.");
+                $("#otpError")
+                    .removeClass("hidden")
+                    .text("Server error. Please try again.");
             }
         });
     });
-
-
-
 
 });

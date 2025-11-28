@@ -18,426 +18,497 @@
         }
     }
 </style>
-<div class="container-fluid mt-3">
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow-sm border-0">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h4 class="mb-0 text-primary fw-bold">Outpatient Visit Summary</h4>
-                        <a href="javascript:window.close()" class="btn btn-sm btn-outline-secondary">Close</a>
-                    </div>
+<div class="container mx-auto mt-3 px-4">
+    <!-- Outpatient Visit Summary Card -->
+    <div class="mb-6">
+        <div class="rounded-lg bg-gray-800 p-6 shadow-sm">
+            <!-- Header -->
+            <div class="mb-4 flex items-center justify-between">
+                <h4 class="text-lg font-bold text-purple-500">Outpatient Visit Summary</h4>
+                <button onclick="window.close()" class="rounded border border-gray-500 px-3 py-1 text-gray-200 hover:bg-gray-700">
+                    Close
+                </button>
+            </div>
 
-                    <button class="btn btn-danger" id="GenerateFinalBillBtn" data-visitid="@Model.VisitId" data-patientid="@Model.PatientId">
-                        Final Bill
-                    </button>
+            <!-- Final Bill Button -->
+            <button id="GenerateFinalBillBtn"
+                    data-visitid="@Model.VisitId"
+                    data-patientid="@Model.PatientId"
+                    class="mb-6 rounded bg-red-600 px-4 py-2 font-semibold text-white hover:bg-red-700">
+                Final Bill
+            </button>
 
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <label class="form-label text-muted">Patient Code</label>
-                            <div class="fw-semibold">@Model.PatientCode</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label text-muted">Full Name</label>
-                            <div class="fw-semibold">@Model.FullName</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label text-muted">Gender</label>
-                            <div class="fw-semibold">@Model.Gender</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label text-muted">Date of Birth</label>
-                            <div class="fw-semibold">@Model.DateOfBirth.ToString("dd-MMM-yyyy")</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label text-muted">Contact Number</label>
-                            <div class="fw-semibold">@Model.ContactNumber</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label text-muted">Email</label>
-                            <div class="fw-semibold">@Model.Email</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label text-muted">City</label>
-                            <div class="fw-semibold">@Model.City</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label text-muted">State</label>
-                            <div class="fw-semibold">@Model.State</div>
-                        </div>
-                    </div>
+            <!-- Patient Info Grid -->
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+                <div>
+                    <label class="text-sm text-gray-400">Patient Code</label>
+                    <div class="font-semibold text-gray-200">@Model.PatientCode</div>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400">Full Name</label>
+                    <div class="font-semibold text-gray-200">@Model.FullName</div>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400">Gender</label>
+                    <div class="font-semibold text-gray-200">@Model.Gender</div>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400">Date of Birth</label>
+                    <div class="font-semibold text-gray-200">@Model.DateOfBirth.ToString("dd-MMM-yyyy")</div>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400">Contact Number</label>
+                    <div class="font-semibold text-gray-200">@Model.ContactNumber</div>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400">Email</label>
+                    <div class="font-semibold text-gray-200">@Model.Email</div>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400">City</label>
+                    <div class="font-semibold text-gray-200">@Model.City</div>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400">State</label>
+                    <div class="font-semibold text-gray-200">@Model.State</div>
+                </div>
+            </div>
 
-                    <hr class="my-4" />
+            <hr class="my-6 border-gray-700" />
 
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <label class="form-label text-muted">Visit Date</label>
-                            <div class="fw-semibold">@Model.VisitDate.ToString("dd-MMM-yyyy")</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label text-muted">Doctor Name</label>
-                            <div class="fw-semibold">@Model.DoctorName</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label text-muted">Treatment</label>
-                            <div class="fw-semibold">@Model.TreatmentDetails</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label text-muted">Notes</label>
-                            <div class="fw-semibold">@Model.Notes</div>
-                        </div>
-                    </div>
+            <!-- Visit Info Grid -->
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+                <div>
+                    <label class="text-sm text-gray-400">Visit Date</label>
+                    <div class="font-semibold text-gray-200">@Model.VisitDate.ToString("dd-MMM-yyyy")</div>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400">Doctor Name</label>
+                    <div class="font-semibold text-gray-200">@Model.DoctorName</div>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400">Treatment</label>
+                    <div class="font-semibold text-gray-200">@Model.TreatmentDetails</div>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400">Notes</label>
+                    <div class="font-semibold text-gray-200">@Model.Notes</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="text-primary fw-bold mb-0">Outpatient Billing Information</h5>
-                        <button id="btnAddBill" class="btn btn-sm btn-primary">Add Bill</button>
-                    </div>
-                    <div id="outpatientBillGrid" class="ag-theme-alpine" style="height: 400px; width: 100%;"></div>
-                </div>
+    <!-- Outpatient Billing Information Card -->
+    <div>
+        <div class="rounded-lg bg-gray-800 p-6 shadow-sm">
+            <div class="mb-4 flex items-center justify-between">
+                <h5 class="text-md font-bold text-purple-500">Outpatient Billing Information</h5>
+                <button id="btnAddBill" class="rounded bg-purple-600 px-3 py-1 text-sm font-semibold text-white hover:bg-purple-700">
+                    Add Bill
+                </button>
             </div>
+            <div id="outpatientBillGrid" class="ag-theme-alpine-dark" style="height: 400px; width: 100%;"></div>
         </div>
     </div>
 </div>
+
 
 <!-- Add Outpatient Bill Modal -->
-<div class="modal fade" id="addOutpatientBillModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">Add Outpatient Bill</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="addOutpatientBillForm">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" id="patientId" value="@Model.PatientId" />
-                    <input type="hidden" id="visitId" value="@Model.VisitId" />
-                    <input type="hidden" id="visitType" value="Outpatient" />
-
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label">Bill Date</label>
-                            <input type="date" class="form-control" id="billDate" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" />
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">OPD Consultation Fee</label>
-                            <input type="number" class="form-control" id="opdConsultationFee" step="0.01" min="0" />
-                        </div>
-
-                        <div class="d-none col-md-4">
-                            <label class="form-label">Consultation Charges</label>
-                            <input disabled type="number" class="form-control" id="consultationCharges" step="0.01" min="0" />
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Medication Charges</label>
-                            <input type="number" class="form-control" id="medicationCharges" step="0.01" min="0" />
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Procedure Charges</label>
-                            <input type="number" class="form-control" id="procedureCharges" step="0.01" min="0" />
-                        </div>
-
-                        <div class="col-md-4 d-none">
-                            <label class="form-label">Room Charges</label>
-                            <input type="number" class="form-control" id="roomCharges" step="0.01" min="0" value="0" />
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Discount Amount</label>
-                            <input type="number" class="form-control" id="discountAmount" step="0.01" min="0" />
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Total Amount</label>
-                            <input type="number" class="form-control bg-light" id="totalAmount" readonly />
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Net Amount</label>
-                            <input type="number" class="form-control bg-light" id="netAmount" readonly />
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Payment Mode</label>
-                            <select id="paymentMode" class="form-select">
-                                <option value="">Select</option>
-                                <option value="Cash">Cash</option>
-                                <option value="Card">Card</option>
-                                <option value="UPI">UPI</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Payment Status</label>
-                            <select id="paymentStatus" class="form-select">
-                                <option value="Unpaid" selected>Unpaid</option>
-                                <option value="Paid">Paid</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-12">
-                            <label class="form-label">Notes</label>
-                            <textarea class="form-control" id="notes" rows="2"></textarea>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button class="btn btn-primary" id="saveOutpatientBill">Save Bill</button>
-            </div>
+<div id="addOutpatientBillModal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-black bg-opacity-50">
+    <div class="w-full max-w-3xl rounded-lg bg-gray-800 shadow-lg">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between rounded-t-lg border-b border-gray-700 bg-purple-600 px-6 py-4">
+            <h5 class="text-lg font-semibold text-white">Add Outpatient Bill</h5>
+            <button onclick="document.getElementById('addOutpatientBillModal').classList.add('hidden')" class="text-xl font-bold text-white">&times;</button>
         </div>
-    </div>
-</div>
 
-<div class="modal fade" id="editBillModal" tabindex="-1" aria-labelledby="editBillModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="editBillModalLabel">
-                    <i class="bi bi-receipt-cutoff me-2"></i> Edit Bill
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <form id="editBillForm">
+        <!-- Modal Body -->
+        <div class="px-6 py-4">
+            <form id="addOutpatientBillForm">
                 @Html.AntiForgeryToken()
-                <div class="modal-body">
-                    <input type="hidden" id="editBillId" name="Id" />
-                    <input type="hidden" id="editPatientId" name="PatientId" />
-                    <input type="hidden" id="editVisitId" name="VisitId" />
+                <input type="hidden" id="patientId" value="@Model.PatientId" />
+                <input type="hidden" id="visitId" value="@Model.VisitId" />
+                <input type="hidden" id="visitType" value="Outpatient" />
 
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Bill Date</label>
-                            <input type="date" id="editBillDate" name="BillDate" class="form-control" required />
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Payment Status</label>
-                            <select id="editPaymentStatus" name="PaymentStatus" class="form-select" required>
-                                <option value="">Select</option>
-                                <option value="Pending">Pending</option>
-                                <option value="Paid">Paid</option>
-                                <option value="Cancelled">Cancelled</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Payment Mode</label>
-                            <select id="editPaymentMode" name="PaymentMode" class="form-select">
-                                <option value="">Select</option>
-                                <option value="Cash">Cash</option>
-                                <option value="Card">Card</option>
-                                <option value="UPI">UPI</option>
-                                <option value="Insurance">Insurance</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Room Charges</label>
-                            <input type="hidden" id="editRoomCharges" name="RoomCharges" class="form-control" step="0.01" value="0" />
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Procedure Charges</label>
-                            <input type="number" id="editProcedureCharges" name="ProcedureCharges" class="form-control" step="0.01"  />
-                        </div>
-
-                        <div class="d-none col-md-6">
-                            <label class="form-label">Medication Charges</label>
-                            <input disabled type="number" id="editMedicationCharges" name="MedicationCharges" class="form-control" step="0.01" />
-                        </div>
-
-                        <div class="d-none col-md-6">
-                            <label class="form-label">Consultation Charges</label>
-                            <input disabled type="hidden" id="editConsultationCharges" name="ConsultationCharges" class="form-control" step="0.01" value="0" />
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">OPD Consultation Fee</label>
-                            <input type="number" id="editOpdConsultationFee" name="OpdConsultationFee" class="form-control" step="0.01" />
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Discount Amount</label>
-                            <input type="number" id="editDiscountAmount" name="DiscountAmount" class="form-control" step="0.01" />
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Total Amount</label>
-                            <input type="number" id="editTotalAmount" name="TotalAmount" class="form-control" step="0.01" readonly />
-                        </div>
-
-                        <div class="col-md-6">
-                            <label class="form-label">Net Amount</label>
-                            <input type="number" id="editNetAmount" name="NetAmount" class="form-control" step="0.01" readonly />
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label">Notes</label>
-                            <textarea id="editNotes" name="Notes" class="form-control" rows="3"></textarea>
-                        </div>
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <!-- Bill Date -->
+                    <div>
+                        <label class="mb-1 block text-sm text-gray-400">Bill Date</label>
+                        <input type="date" id="billDate" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500" />
                     </div>
-                </div>
 
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">
-                        <i class="bi bi-save me-1"></i> Save Changes
-                    </button>
+                    <!-- OPD Consultation Fee -->
+                    <div>
+                        <label class="mb-1 block text-sm text-gray-400">OPD Consultation Fee</label>
+                        <input type="number" id="opdConsultationFee" step="0.01" min="0" class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                    </div>
+
+                    <!-- Consultation Charges (Hidden) -->
+                    <div class="hidden">
+                        <label class="mb-1 block text-sm text-gray-400">Consultation Charges</label>
+                        <input type="number" id="consultationCharges" disabled step="0.01" min="0" class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200" />
+                    </div>
+
+                    <!-- Medication Charges -->
+                    <div>
+                        <label class="mb-1 block text-sm text-gray-400">Medication Charges</label>
+                        <input type="number" id="medicationCharges" step="0.01" min="0" class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                    </div>
+
+                    <!-- Procedure Charges -->
+                    <div>
+                        <label class="mb-1 block text-sm text-gray-400">Procedure Charges</label>
+                        <input type="number" id="procedureCharges" step="0.01" min="0" class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                    </div>
+
+                    <!-- Room Charges (Hidden) -->
+                    <div class="hidden">
+                        <label class="mb-1 block text-sm text-gray-400">Room Charges</label>
+                        <input type="number" id="roomCharges" step="0.01" min="0" value="0" class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200" />
+                    </div>
+
+                    <!-- Discount Amount -->
+                    <div>
+                        <label class="mb-1 block text-sm text-gray-400">Discount Amount</label>
+                        <input type="number" id="discountAmount" step="0.01" min="0" class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                    </div>
+
+                    <!-- Total Amount (Read-only) -->
+                    <div>
+                        <label class="mb-1 block text-sm text-gray-400">Total Amount</label>
+                        <input type="number" id="totalAmount" readonly class="w-full rounded border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200" />
+                    </div>
+
+                    <!-- Net Amount (Read-only) -->
+                    <div>
+                        <label class="mb-1 block text-sm text-gray-400">Net Amount</label>
+                        <input type="number" id="netAmount" readonly class="w-full rounded border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200" />
+                    </div>
+
+                    <!-- Payment Mode -->
+                    <div>
+                        <label class="mb-1 block text-sm text-gray-400">Payment Mode</label>
+                        <select id="paymentMode" class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option value="">Select</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Card">Card</option>
+                            <option value="UPI">UPI</option>
+                        </select>
+                    </div>
+
+                    <!-- Payment Status -->
+                    <div>
+                        <label class="mb-1 block text-sm text-gray-400">Payment Status</label>
+                        <select id="paymentStatus" class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option value="Unpaid" selected>Unpaid</option>
+                            <option value="Paid">Paid</option>
+                        </select>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="md:col-span-3">
+                        <label class="mb-1 block text-sm text-gray-400">Notes</label>
+                        <textarea id="notes" rows="2" class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                    </div>
                 </div>
             </form>
         </div>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end border-t border-gray-700 px-6 py-4">
+            <button onclick="document.getElementById('addOutpatientBillModal').classList.add('hidden')" class="mr-2 rounded bg-gray-600 px-4 py-2 font-semibold text-white hover:bg-gray-700">
+                Cancel
+            </button>
+            <button id="saveOutpatientBill" class="rounded bg-purple-600 px-4 py-2 font-semibold text-white hover:bg-purple-700">
+                Save Bill
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Bill Modal -->
+<div id="editBillModal" class="fixed inset-0 z-50 flex hidden items-center justify-center bg-black bg-opacity-50">
+    <div class="w-full max-w-3xl rounded-lg bg-gray-800 shadow-lg">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between rounded-t-lg border-b border-gray-700 bg-purple-600 px-6 py-4">
+            <h5 class="flex items-center text-lg font-semibold text-white">
+                <svg class="mr-2 h-5 w-5 text-white" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0a8 8 0 1 0 8 8A8 8 0 0 0 8 0Zm3.5 9.5H9v2a.5.5 0 0 1-1 0v-2H4.5a.5.5 0 0 1 0-1H8V6a.5.5 0 0 1 1 0v2h2.5a.5.5 0 0 1 0 1Z" /></svg>
+                Edit Bill
+            </h5>
+            <button onclick="document.getElementById('editBillModal').classList.add('hidden')" class="text-xl font-bold text-white">&times;</button>
+        </div>
+
+        <!-- Modal Body -->
+        <form id="editBillForm" class="px-6 py-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="editBillId" name="Id" />
+            <input type="hidden" id="editPatientId" name="PatientId" />
+            <input type="hidden" id="editVisitId" name="VisitId" />
+
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <!-- Bill Date -->
+                <div>
+                    <label class="mb-1 block text-sm text-gray-400">Bill Date</label>
+                    <input type="date" id="editBillDate" name="BillDate" required
+                           class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                </div>
+
+                <!-- Payment Status -->
+                <div>
+                    <label class="mb-1 block text-sm text-gray-400">Payment Status</label>
+                    <select id="editPaymentStatus" name="PaymentStatus" required
+                            class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <option value="">Select</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Paid">Paid</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+
+                <!-- Payment Mode -->
+                <div>
+                    <label class="mb-1 block text-sm text-gray-400">Payment Mode</label>
+                    <select id="editPaymentMode" name="PaymentMode"
+                            class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <option value="">Select</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Card">Card</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Insurance">Insurance</option>
+                    </select>
+                </div>
+
+                <!-- Room Charges (Hidden) -->
+                <input type="hidden" id="editRoomCharges" name="RoomCharges" step="0.01" value="0" />
+
+                <!-- Procedure Charges -->
+                <div>
+                    <label class="mb-1 block text-sm text-gray-400">Procedure Charges</label>
+                    <input type="number" id="editProcedureCharges" name="ProcedureCharges" step="0.01"
+                           class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                </div>
+
+                <!-- Medication Charges (Hidden) -->
+                <div class="hidden">
+                    <label class="mb-1 block text-sm text-gray-400">Medication Charges</label>
+                    <input disabled type="number" id="editMedicationCharges" name="MedicationCharges" step="0.01"
+                           class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200" />
+                </div>
+
+                <!-- Consultation Charges (Hidden) -->
+                <div class="hidden">
+                    <input type="hidden" id="editConsultationCharges" name="ConsultationCharges" step="0.01" value="0" />
+                </div>
+
+                <!-- OPD Consultation Fee -->
+                <div>
+                    <label class="mb-1 block text-sm text-gray-400">OPD Consultation Fee</label>
+                    <input type="number" id="editOpdConsultationFee" name="OpdConsultationFee" step="0.01"
+                           class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                </div>
+
+                <!-- Discount Amount -->
+                <div>
+                    <label class="mb-1 block text-sm text-gray-400">Discount Amount</label>
+                    <input type="number" id="editDiscountAmount" name="DiscountAmount" step="0.01"
+                           class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                </div>
+
+                <!-- Total Amount -->
+                <div>
+                    <label class="mb-1 block text-sm text-gray-400">Total Amount</label>
+                    <input type="number" id="editTotalAmount" name="TotalAmount" step="0.01" readonly
+                           class="w-full rounded border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200" />
+                </div>
+
+                <!-- Net Amount -->
+                <div>
+                    <label class="mb-1 block text-sm text-gray-400">Net Amount</label>
+                    <input type="number" id="editNetAmount" name="NetAmount" step="0.01" readonly
+                           class="w-full rounded border border-gray-600 bg-gray-700 px-3 py-2 text-gray-200" />
+                </div>
+
+                <!-- Notes -->
+                <div class="md:col-span-2">
+                    <label class="mb-1 block text-sm text-gray-400">Notes</label>
+                    <textarea id="editNotes" name="Notes" rows="3"
+                              class="w-full rounded border border-gray-600 bg-gray-900 px-3 py-2 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="mt-6 flex justify-end border-t border-gray-700 pt-4">
+                <button type="button" onclick="document.getElementById('editBillModal').classList.add('hidden')"
+                        class="mr-2 rounded bg-gray-600 px-4 py-2 font-semibold text-white hover:bg-gray-700">
+                    Cancel
+                </button>
+                <button type="submit" class="flex items-center rounded bg-purple-600 px-4 py-2 font-semibold text-white hover:bg-purple-700">
+                    <svg class="mr-1 h-4 w-4" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0a8 8 0 1 0 8 8A8 8 0 0 0 8 0Zm2.5 8.5H9v2a.5.5 0 0 1-1 0v-2H5.5a.5.5 0 0 1 0-1H8V5a.5.5 0 0 1 1 0v2h1.5a.5.5 0 0 1 0 1Z" /></svg>
+                    Save Changes
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
 <!-- Final Bill Modal -->
-<div class="modal fade" id="finalBillModal" tabindex="-1" aria-labelledby="finalBillModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="finalBillModalLabel">
-                    <i class="bi bi-file-earmark-text"></i> Final Bill Summary
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+<div id="finalBillModal" class="fixed inset-0 z-50 flex hidden items-center justify-center overflow-auto bg-black bg-opacity-50">
+    <div class="mx-4 my-6 w-full max-w-4xl rounded-lg bg-gray-800 shadow-lg">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between rounded-t-lg border-b border-gray-700 bg-purple-600 px-6 py-4">
+            <h5 class="flex items-center text-lg font-semibold text-white">
+                <svg class="mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zM4 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z" />
+                </svg>
+                Final Bill Summary
+            </h5>
+            <button onclick="document.getElementById('finalBillModal').classList.add('hidden')" class="text-xl font-bold text-white">&times;</button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="px-6 py-4 text-gray-200">
+            <!-- Hospital Header -->
+            <div class="mb-4 text-center">
+                <h3 class="text-lg font-bold">Hospital Management System</h3>
+                <p class="mb-0 text-gray-400">Final Out Patient</p>
             </div>
-            <div class="modal-body" id="billContent">
-                <!-- Hospital Header -->
-                <div class="text-center mb-4">
-                    <h3 class="fw-bold">Hospital Management System</h3>
-                    <p class="text-muted mb-0">Final Out Patient</p>
+
+            <hr class="mb-4 border-gray-700" />
+
+            <!-- Patient & Visit Info -->
+            <div class="mb-4 grid grid-cols-1 gap-6 md:grid-cols-2">
+                <!-- Patient Info -->
+                <div>
+                    <h6 class="mb-2 font-bold text-purple-500">Patient Information</h6>
+                    <table class="w-full text-sm">
+                        <tr>
+                            <td class="pr-2 font-semibold">Patient Name:</td>
+                            <td id="billPatientName">@Model.FullName</td>
+                        </tr>
+                        <tr>
+                            <td class="pr-2 font-semibold">Patient Code:</td>
+                            <td id="billPatientId">@Model.PatientCode</td>
+                        </tr>
+                        <tr>
+                            <td class="pr-2 font-semibold">Gender:</td>
+                            <td id="billAgeGender">@Model.Gender</td>
+                        </tr>
+                        <tr>
+                            <td class="pr-2 font-semibold">Contact:</td>
+                            <td id="billContactNumber">@Model.ContactNumber</td>
+                        </tr>
+                    </table>
                 </div>
 
-                <hr />
-
-                <!-- Patient Information -->
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <h6 class="fw-bold text-primary">Patient Information</h6>
-                        <table class="table table-sm table-borderless">
-                            <tr>
-                                <td class="fw-semibold">Patient Name:</td>
-                                <td id="billPatientName">@Model.FullName</td>
-                            </tr>
-                            <tr>
-                                <td class="fw-semibold">Patient Code:</td>
-                                <td id="billPatientId">@Model.PatientCode</td>
-                            </tr>
-                            <tr>
-                                <td class="fw-semibold">Gender:</td>
-                                <td id="billAgeGender">@Model.Gender</td>
-                            </tr>
-                            <tr>
-                                <td class="fw-semibold">Contact:</td>
-                                <td id="billContactNumber">@Model.ContactNumber</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="col-md-6">
-                        <h6 class="fw-bold text-primary">Visit Information</h6>
-                        <table class="table table-sm table-borderless">
-                            <tr>
-                                <td class="fw-semibold">Visit ID:</td>
-                                <td id="billVisitId">@Model.VisitId</td>
-                            </tr>
-                            <tr>
-                                <td class="fw-semibold">Visit Date:</td>
-                                <td id="billVisitDate">@Model.VisitDate</td>
-                            </tr>
-                        </table>
-                    </div>
+                <!-- Visit Info -->
+                <div>
+                    <h6 class="mb-2 font-bold text-purple-500">Visit Information</h6>
+                    <table class="w-full text-sm">
+                        <tr>
+                            <td class="pr-2 font-semibold">Visit ID:</td>
+                            <td id="billVisitId">@Model.VisitId</td>
+                        </tr>
+                        <tr>
+                            <td class="pr-2 font-semibold">Visit Date:</td>
+                            <td id="billVisitDate">@Model.VisitDate</td>
+                        </tr>
+                    </table>
                 </div>
+            </div>
 
+            <hr class="mb-4 border-gray-700" />
 
-                <hr />
-
-                <!-- Charges Breakdown -->
-                <div class="mb-3">
-                    <h6 class="fw-bold text-primary">Charges Breakdown</h6>
-                    <table class="table table-sm table-bordered">
-                        <thead class="table-light">
+            <!-- Charges Breakdown -->
+            <div class="mb-4">
+                <h6 class="mb-2 font-bold text-purple-500">Charges Breakdown</h6>
+                <div class="overflow-x-auto">
+                    <table class="w-full border border-gray-700 text-sm">
+                        <thead class="bg-gray-700">
                             <tr>
-                                <th>Description</th>
-                                <th class="text-end">Amount (₹)</th>
+                                <th class="px-2 py-1 text-left">Description</th>
+                                <th class="px-2 py-1 text-right">Amount (₹)</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Room Charges</td>
-                                <td class="text-end" id="billRoomCharges">0.00</td>
+                                <td class="px-2 py-1">Room Charges</td>
+                                <td class="px-2 py-1 text-right" id="billRoomCharges">0.00</td>
                             </tr>
                             <tr>
-                                <td>Consultation Charges</td>
-                                <td class="text-end" id="billConsultationCharges">0.00</td>
+                                <td class="px-2 py-1">Consultation Charges</td>
+                                <td class="px-2 py-1 text-right" id="billConsultationCharges">0.00</td>
                             </tr>
                             <tr>
-                                <td>Procedure Charges</td>
-                                <td class="text-end" id="billProcedureCharges">0.00</td>
+                                <td class="px-2 py-1">Procedure Charges</td>
+                                <td class="px-2 py-1 text-right" id="billProcedureCharges">0.00</td>
                             </tr>
                             <tr>
-                                <td>Medication Charges</td>
-                                <td class="text-end" id="billMedicationCharges">0.00</td>
+                                <td class="px-2 py-1">Medication Charges</td>
+                                <td class="px-2 py-1 text-right" id="billMedicationCharges">0.00</td>
                             </tr>
                             <tr>
-                                <td>OPD Consultation Fee</td>
-                                <td class="text-end" id="billOpdConsultationFee">0.00</td>
+                                <td class="px-2 py-1">OPD Consultation Fee</td>
+                                <td class="px-2 py-1 text-right" id="billOpdConsultationFee">0.00</td>
                             </tr>
-                            <tr class="table-light">
-                                <td class="fw-bold">Subtotal</td>
-                                <td class="text-end fw-bold" id="billSubtotal">0.00</td>
+                            <tr class="bg-gray-700 font-bold">
+                                <td class="px-2 py-1">Subtotal</td>
+                                <td class="px-2 py-1 text-right" id="billSubtotal">0.00</td>
                             </tr>
-                            <tr class="table-warning">
-                                <td class="fw-semibold">Discount</td>
-                                <td class="text-end fw-semibold" id="billDiscountAmount">0.00</td>
+                            <tr class="bg-yellow-100 font-semibold">
+                                <td class="px-2 py-1">Discount</td>
+                                <td class="px-2 py-1 text-right" id="billDiscountAmount">0.00</td>
                             </tr>
-                            <tr class="table-success">
-                                <td class="fw-bold fs-5">Net Amount Payable</td>
-                                <td class="text-end fw-bold fs-5" id="billNetAmount">0.00</td>
+                            <tr class="bg-green-100 text-lg font-bold">
+                                <td class="px-2 py-1">Net Amount Payable</td>
+                                <td class="px-2 py-1 text-right" id="billNetAmount">0.00</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <!-- Notes -->
-                <div class="mb-3" id="billNotesSection" style="display: none;">
-                    <h6 class="fw-bold text-primary">Additional Notes</h6>
-                    <p class="text-muted" id="billNotes"></p>
-                </div>
-
-                <hr />
-
-                <!-- Footer -->
-                <div class="text-center text-muted small">
-                    <p class="mb-1">Thank you for choosing our services!</p>
-                    <p class="mb-0">Generated on: <span id="billGeneratedDate"></span></p>
-                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-circle"></i> Close
-                </button>
-                <button type="button" class="btn btn-success" id="btnDownloadBill">
-                    <i class="bi bi-download"></i> Download PDF
-                </button>
+
+            <!-- Notes -->
+            <div class="mb-4" id="billNotesSection" style="display: none;">
+                <h6 class="mb-1 font-bold text-purple-500">Additional Notes</h6>
+                <p class="text-gray-400" id="billNotes"></p>
             </div>
+
+            <hr class="mb-4 border-gray-700" />
+
+            <!-- Footer Info -->
+            <div class="text-center text-sm text-gray-400">
+                <p class="mb-1">Thank you for choosing our services!</p>
+                <p class="mb-0">Generated on: <span id="billGeneratedDate"></span></p>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex justify-end border-t border-gray-700 px-6 py-4">
+            <button onclick="document.getElementById('finalBillModal').classList.add('hidden')"
+                    class="mr-2 flex items-center rounded bg-gray-600 px-4 py-2 font-semibold text-white hover:bg-gray-700">
+                <svg class="mr-1 h-4 w-4" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M16 8a8 8 0 1 1-16 0 8 8 0 0 1 16 0zM6 6.5l4 4m0-4l-4 4" />
+                </svg>
+                Close
+            </button>
+            <button id="btnDownloadBill"
+                    class="flex items-center rounded bg-purple-600 px-4 py-2 font-semibold text-white hover:bg-purple-700">
+                <svg class="mr-1 h-4 w-4" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M.5 9.9v5.6a.5.5 0 0 0 .5.5h14a.5.5 0 0 0 .5-.5V9.9H14v5H2v-5H.5zm7-7.4v6.4l3.5-3.5-.7-.7-2.3 2.3V2h-1z" />
+                </svg>
+                Download PDF
+            </button>
         </div>
     </div>
 </div>
+
 <div id="outpatientContainer"
      data-patient-id="@Model.PatientId"
-     data-visit-id="@Model.VisitId">
+     data-visit-id="@Model.VisitId"
+     class="rounded-lg bg-gray-800 p-4 text-gray-200 shadow-sm">
 </div>
+
 @section Scripts {
     <script src="~/js/Patient/OutpatientVisitManager.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>

@@ -1,8 +1,23 @@
-﻿$(document).ready(function () {
+﻿function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+
+    modal.classList.add('hidden');
+}
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+
+    modal.classList.remove('hidden');
+}
+
+
+
+$(document).ready(function () {
 
     // Open modal on button click
     $("#btnAddAppointment").click(function () {
-        $("#addAppointmentModal").modal("show");
+        $("#addAppointmentModal").removeClass("hidden");
         loadPatients();
         loadDoctors();
     });
@@ -53,7 +68,6 @@
             type: 'GET',
             success: function (response) {
                 if (response.success) {
-                    console.log(response.data);
 
                     let doctorSelect = $("#DoctorId");
                     doctorSelect.empty().append('<option value="">Select Doctor</option>');
@@ -103,7 +117,11 @@
 
         let slots = doctorSlots[doctorId] || [];
         if (slots.length === 0) {
-            slotsDiv.append('<span class="text-danger">No slots available for this doctor.</span>');
+            slotsDiv.append(`
+                <span class="text-red-500 font-medium">
+                    No slots available for this doctor.
+                </span>
+            `);
             container.show();
             return;
         }
@@ -111,13 +129,19 @@
         // Display each slot as badge
         slots.forEach(function (slot) {
             slot.daysOfWeek.forEach(function (day) {
-                slotsDiv.append(`<span class="badge bg-success">${day}: ${slot.startTime} - ${slot.endTime}</span>`);
+                slotsDiv.append(`
+                    <span class="inline-block rounded-full bg-green-600 px-3 py-1 text-sm font-semibold text-white">
+                        ${day}: ${slot.startTime} - ${slot.endTime}
+                    </span>
+                `);
+
             });
         });
 
 
 
-        container.show();
+        $("#doctorSlotsContainer").removeClass("hidden");
+
     });
 
 
@@ -183,7 +207,7 @@
             success: function (res) {
                 if (res.success) {
                     alert(res.message);
-                    $("#addAppointmentModal").modal("hide");
+                    $("#addAppointmentModal").addClass("hidden");
                     $("#appointmentForm")[0].reset();
                     fetchAppointments();
                 } else {
@@ -209,11 +233,18 @@
                 headerName: "Actions",
                 cellRenderer: function (params) {
                     return `
-                <button class="btn btn-sm btn-warning rescheduleBtn">Reschedule</button>
-                <button class="btn btn-sm btn-danger deleteBtn">Delete</button>
-            `;
+                      <div class="flex gap-2">
+                          <button class="flex items-center gap-1 rounded-lg bg-yellow-500 px-3 py-1 text-white text-sm hover:bg-yellow-600 rescheduleBtn">
+                              <i class="fa fa-calendar-alt"></i> Reschedule
+                          </button>
+                          <button class="flex items-center gap-1 rounded-lg bg-red-500 px-3 py-1 text-white text-sm hover:bg-red-600 deleteBtn">
+                              <i class="fa fa-trash"></i> Delete
+                          </button>
+                      </div>
+                    `;
                 }
             }
+
         ]
 ,
         defaultColDef: { flex: 1, sortable: true, filter: true },
@@ -257,7 +288,6 @@
             type: 'GET',
             success: function (res) {
                 if (res.success) {
-                    console.log(res.data);
                     gridOptions.api.setRowData(res.data);
                 } else {
                     alert("Failed to fetch appointments.");
@@ -304,7 +334,8 @@
         });
 
         $("#RescheduleDate").val(data.appointmentDate.split("T")[0] + "T" + data.appointmentDate.split("T")[1].substring(0, 5)); // prefill
-        $("#rescheduleModal").modal("show");
+        openModal("rescheduleModal");
+
     }
 
 
@@ -348,7 +379,7 @@
             data: JSON.stringify(appointmentData),
             success: function (res) {
                 if (res.success) {
-                    $("#rescheduleModal").modal("hide");
+                    closeModal("rescheduleModal");
                     fetchAppointments();
                 } else {
                     if (res.errors) {

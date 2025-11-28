@@ -1,61 +1,78 @@
 ﻿@{
     ViewData["Title"] = "Patient Portal";
 }
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card shadow-sm">
-                <div class="card-body p-4">
-                    <h2 class="card-title text-center mb-4">Patient Portal</h2>
-                    <p class="text-muted text-center mb-4">Search for your patient record</p>
 
-                    <form id="patientSearchForm" method="post">
-                        @Html.AntiForgeryToken()
-                        <div class="mb-3">
-                            <label for="identifier" class="form-label">
-                                Enter your Patient Code, Email or Phone Number
-                            </label>
-                            <input type="text"
-                                   class="form-control"
-                                   id="identifier"
-                                   name="identifier"
-                                   placeholder="e.g., P12345 or email@example.com"
-                                   required />
-                            <div class="form-text">
-                                Enter any of: Patient Code, Email Address, or Contact Number
-                            </div>
-                        </div>
+<div class="min-h-screen bg-gray-900 px-4 py-12 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-md">
+        <div class="rounded-lg border border-purple-900/50 bg-gray-800 shadow-xl">
+            <div class="p-8">
+                <h2 class="mb-2 text-center text-3xl font-bold text-purple-400">Patient Portal</h2>
+                <p class="mb-8 text-center text-gray-400">Search for your patient record</p>
 
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-search me-2"></i>Search
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                <form id="patientSearchForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-6">
+                        <label for="identifier" class="mb-2 block text-sm font-medium text-gray-300">
+                            Enter your Patient Code, Email or Phone Number
+                        </label>
+                        <input type="text"
+                               class="w-full rounded-lg border border-gray-600 bg-gray-700 px-4 py-3 text-white placeholder-gray-400 transition focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500"
+                               id="identifier"
+                               name="identifier"
+                               placeholder="e.g., P12345 or email@example.com"
+                               required />
+                        <p class="mt-2 text-sm text-gray-400">
+                            Enter any of: Patient Code, Email Address, or Contact Number
+                        </p>
+                    </div>
+
+                    <div>
+                        <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-purple-600 px-6 py-3 font-semibold text-white shadow-md transition duration-200 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-800">
+                            <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            Search
+                        </button>
+                    </div>
+                </form>
             </div>
+        </div>
 
-            <div class="text-center mt-3">
-                <small class="text-muted">
-                    <i class="bi bi-shield-lock me-1"></i>Your information is secure and confidential
-                </small>
-            </div>
+        <div class="mt-6 text-center">
+            <p class="flex items-center justify-center text-sm text-gray-400">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+                Your information is secure and confidential
+            </p>
         </div>
     </div>
 </div>
 
-<!-- 🔹 Hidden Patient Info Modal -->
-<div class="modal fade" id="patientModal" tabindex="-1" aria-labelledby="patientModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-4 shadow-lg">
-            <div class="modal-header">
-                <h5 class="modal-title" id="patientModalLabel">Patient Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Patient Info Modal -->
+<div id="patientModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="patientModalLabel" aria-modal="true" role="dialog">
+    <div class="flex min-h-screen items-center justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
+        <!-- Background overlay -->
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-75 backdrop-blur-sm transition-opacity" aria-hidden="true" id="modalOverlay"></div>
+
+        <!-- Center modal -->
+        <span class="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
+
+        <div class="modal-content inline-block scale-95 transform overflow-hidden rounded-lg border border-purple-900/50 bg-gray-800 text-left align-bottom opacity-0 shadow-xl transition-all duration-200 ease-out sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
+            <div class="border-b border-gray-700 bg-gray-800 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <h5 class="text-xl font-semibold text-purple-400" id="patientModalLabel">Patient Details</h5>
+                    <button type="button" class="text-gray-400 transition hover:text-gray-200 focus:outline-none" id="modalCloseBtn">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
-            <div class="modal-body" id="patientModalBody">
+            <div class="bg-gray-800 px-6 py-4" id="patientModalBody">
                 <!-- Patient details will be inserted here dynamically -->
             </div>
-            <div class="modal-footer" id="patientModalFooter">
+            <div class="border-t border-gray-700 bg-gray-800 px-6 py-4" id="patientModalFooter">
                 <!-- Button will appear dynamically -->
             </div>
         </div>

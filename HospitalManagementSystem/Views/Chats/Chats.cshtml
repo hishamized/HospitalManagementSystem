@@ -2,6 +2,26 @@
 @{
     ViewData["Title"] = "Chats";
 }
+
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    'dark-bg': '#0f172a',
+                    'dark-card': '#1e293b',
+                    'dark-border': '#334155',
+                    'purple-primary': '#8b5cf6',
+                    'purple-secondary': '#a78bfa',
+                    'purple-dark': '#6d28d9',
+                }
+            }
+        }
+    }
+</script>
+
 <style>
     #messages {
         display: flex;
@@ -20,26 +40,27 @@
 
     .message-right {
         align-self: flex-end;
-        background-color: #ffffff;
-        color: #000;
+        background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+        color: #ffffff;
         border-top-right-radius: 0;
     }
 
     .message-left {
         align-self: flex-start;
-        background-color: #dcf8c6; /* WhatsApp greenish */
-        color: #000;
+        background-color: #334155;
+        color: #e2e8f0;
         border-top-left-radius: 0;
     }
+
     .message-meta {
         font-size: 0.7rem;
-        color: #555;
+        color: rgba(255, 255, 255, 0.7);
         margin-bottom: 2px;
     }
 
     .typing-indicator {
         font-size: 0.7rem;
-        color: #888;
+        color: #a78bfa;
         margin-top: 2px;
     }
 
@@ -51,51 +72,117 @@
         display: inline-block;
         width: 8px;
         height: 8px;
-        background-color: #28a745; /* Bootstrap green */
+        background-color: #10b981;
         border-radius: 50%;
         margin-right: 5px;
         vertical-align: middle;
     }
 
     .online-text {
-        color: #28a745;
+        color: #10b981;
         font-size: 0.75rem;
         vertical-align: middle;
     }
-    .message-seen{
-        color: cyan;
+
+    .message-seen {
+        color: #06b6d4;
         font-weight: bolder;
     }
 
+    /* Custom scrollbar for dark theme */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #1e293b;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #475569;
+        border-radius: 4px;
+    }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+    /* Hover effects */
+    .user-item:hover, .recent-chat:hover {
+        background-color: #334155 !important;
+        cursor: pointer;
+    }
 </style>
 
 <input type="hidden" id="current-user-id" value="@Context.Session.GetString("UserId")" />
 
-<div class="container-fluid vh-100">
+<div class="bg-dark-bg h-screen w-full text-slate-200">
+    <div class="flex h-full">
+        <!-- Users Pane (Left Sidebar) -->
+        <div class="bg-dark-card border-dark-border flex w-1/4 flex-col border-r p-4" id="users-pane">
+            <div class="mb-4">
+                <h2 class="text-purple-secondary mb-3 flex items-center text-xl font-bold">
+                    <svg class="mr-2 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    Users
+                </h2>
+                <input id="user-search"
+                       class="w-full rounded-lg border border-gray-700 bg-gray-900 px-4 py-2 text-white placeholder-gray-400 transition-all
+              focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500"
+                       placeholder="Search by name, email, username" />
 
-    <div class="row h-100">
-        <div class="col-3 border-end d-flex flex-column p-2" id="users-pane">
-            <div class="mb-2">
-                <input id="user-search" class="form-control" placeholder="Search by name, email, username" />
             </div>
-            <div id="users-list" class="flex-grow-1 overflow-auto"></div>
+            <div id="users-list" class="flex-grow space-y-2 overflow-auto"></div>
         </div>
 
-        <div class="col-6 d-flex flex-column p-2 h-100" id="chat-pane">
-            <div id="chat-header" class="border-bottom py-2">Select a user to start chat</div>
-            <div id="messages" class="flex-grow-1 overflow-auto p-2"></div>
-            <div class="pt-2">
-                <div class="input-group">
-                    <input id="message-input" class="form-control" disabled />
-                    <button id="send-btn" class="btn btn-primary" disabled>Send</button>
+        <!-- Chat Pane (Center) -->
+        <div class="bg-dark-bg flex flex-1 flex-col" id="chat-pane">
+            <!-- Chat Header -->
+            <div id="chat-header" class="bg-dark-card border-dark-border border-b px-6 py-4 shadow-lg">
+                <h3 class="text-purple-secondary flex items-center text-lg font-semibold">
+                    <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    Select a user to start chat
+                </h3>
+            </div>
+
+            <!-- Messages Container -->
+            <div id="messages" class="from-dark-bg flex-grow overflow-auto bg-gradient-to-b to-slate-900 p-6"></div>
+
+            <!-- Message Input -->
+            <div class="bg-dark-card border-dark-border border-t p-4">
+                <div class="flex gap-2">
+                    <input id="message-input"
+                           class="flex-grow rounded-lg border border-gray-700 bg-gray-900 px-4 py-3 text-white placeholder-gray-400 transition-all
+              focus:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-500
+              disabled:cursor-not-allowed disabled:opacity-50"
+                           placeholder="Type a message..."
+                           disabled />
+
+                    <button id="send-btn"
+                            class="from-purple-primary to-purple-secondary flex items-center gap-2 rounded-lg bg-gradient-to-r px-6 py-3 font-semibold text-white transition-all hover:from-purple-dark hover:to-purple-primary focus:ring-purple-primary focus:ring-offset-dark-bg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            disabled>
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                        Send
+                    </button>
                 </div>
             </div>
         </div>
 
-
-        <div class="col-3 border-start d-flex flex-column p-2" id="sidebar-pane">
-            <h6>Recent Chats</h6>
-            <div id="recent-chats" class="flex-grow-1 overflow-auto"></div>
+        <!-- Recent Chats Pane (Right Sidebar) -->
+        <div class="bg-dark-card border-dark-border flex w-1/4 flex-col border-l p-4" id="sidebar-pane">
+            <h2 class="text-purple-secondary mb-4 flex items-center text-xl font-bold">
+                <svg class="mr-2 h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Recent Chats
+            </h2>
+            <div id="recent-chats" class="flex-grow space-y-2 overflow-auto"></div>
         </div>
     </div>
 </div>

@@ -2,178 +2,302 @@
     ViewData["Title"] = "Patient Management";
 }
 
-<h1 class="text-3xl font-bold mb-6">Patient Management</h1>
+<div class="bg-gray-900 text-gray-200 min-h-screen p-6">
+    <div class="max-w-screen-xl mx-auto">
 
-<!-- Add Patient Button -->
-<button id="addPatientBtn" class="btn btn-primary my-2">
-    Add Patient
-</button>
+        <!-- Page Header -->
+        <div class="mb-6 flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-purple-400">Patient Management</h1>
 
+            <!-- Add Patient Button -->
+            <button id="addPatientBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2.5 rounded-lg shadow-lg transition duration-200 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Add Patient
+            </button>
+        </div>
 
-<!-- AG Grid Container -->
-<div id="PatientsGrid" class="ag-theme-balham" style="height: 500px; width: 100%;"></div>
-
-<!-- Add Patient Modal (Light Mode) -->
-<div class="modal fade" id="addPatientModal" tabindex="-1" aria-labelledby="addPatientModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content bg-white text-dark border border-secondary shadow-lg">
-            <div class="modal-header border-secondary">
-                <h5 class="modal-title fw-bold" id="addPatientModalLabel">
-                    <i class="bi bi-person-plus me-2 text-primary"></i> Add Patient
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <div class="modal-body">
-                <div class="container-fluid">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <input type="text" id="fullName" class="form-control" placeholder="Full Name" />
-                        </div>
-                        <div class="col-md-6">
-                            <select id="gender" class="form-control">
-                                <option value="">Select Gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Prefer not to say</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-6">
-                            <input type="date" id="dob" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="email" id="email" class="form-control" placeholder="Email" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="contactNumber" class="form-control" placeholder="Contact Number" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="alternateContactNumber" class="form-control" placeholder="Alternate Contact" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="address" class="form-control" placeholder="Address" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="city" class="form-control" placeholder="City" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="state" class="form-control" placeholder="State" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="zipCode" class="form-control" placeholder="Zip Code" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="bloodGroup" class="form-control" placeholder="Blood Group" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="emergencyContactName" class="form-control" placeholder="Emergency Contact Name" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="emergencyContactNumber" class="form-control" placeholder="Emergency Contact Number" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="relationshipWithEmergencyContact" class="form-control" placeholder="Relationship with Emergency Contact" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="password" class="form-control" placeholder="Enter Patient Password" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="modal-footer border-secondary">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button id="savePatientBtn" type="button" class="btn btn-primary">
-                    <i class="bi bi-save me-1"></i> Save
-                </button>
-            </div>
+        <!-- AG Grid Container -->
+        <div class="bg-gray-800 rounded-xl shadow-xl p-4 border border-gray-700">
+            <div id="PatientsGrid" class="ag-theme-alpine-dark" style="height: 600px; width: 100%;"></div>
         </div>
     </div>
 </div>
 
+
+<!-- Add Patient Modal -->
+<div id="addPatientModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+    <div class="bg-gray-800 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto border border-gray-700">
+
+        <!-- Modal Header -->
+        <div class="sticky top-0 bg-gray-800 border-b border-gray-700 px-6 py-4 flex justify-between items-center">
+            <h2 class="text-2xl font-bold text-purple-400 flex items-center gap-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+                Add Patient
+            </h2>
+            <button type="button" class="text-gray-400 hover:text-white transition" onclick="closeAddModal()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Full Name *</label>
+                    <input type="text" id="fullName" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Enter full name" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Gender *</label>
+                    <select id="gender" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Prefer not to say</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Date of Birth *</label>
+                    <input type="date" id="dob" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Email *</label>
+                    <input type="email" id="email" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="email@example.com" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Contact Number *</label>
+                    <input type="text" id="contactNumber" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="+1 234 567 8900" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Alternate Contact Number</label>
+                    <input type="text" id="alternateContactNumber" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="+1 234 567 8900" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Address</label>
+                    <input type="text" id="address" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Street address" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">City</label>
+                    <input type="text" id="city" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="City" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">State</label>
+                    <input type="text" id="state" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="State" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Zip Code</label>
+                    <input type="text" id="zipCode" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="12345" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Blood Group</label>
+                    <input type="text" id="bloodGroup" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="A+, B+, O-, etc." />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Emergency Contact Name</label>
+                    <input type="text" id="emergencyContactName" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Emergency contact name" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Emergency Contact Number</label>
+                    <input type="text" id="emergencyContactNumber" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="+1 234 567 8900" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Relationship with Emergency Contact</label>
+                    <input type="text" id="relationshipWithEmergencyContact" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="e.g., Spouse, Parent, Sibling" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Password *</label>
+                    <input type="password" id="password" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Enter password" />
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="sticky bottom-0 bg-gray-800 border-t border-gray-700 px-6 py-4 flex justify-end gap-3">
+            <button type="button" onclick="closeAddModal()" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-2.5 rounded-lg transition duration-200">
+                Cancel
+            </button>
+            <button id="savePatientBtn" type="button" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2.5 rounded-lg transition duration-200 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                </svg>
+                Save Patient
+            </button>
+        </div>
+
+    </div>
+</div>
 
 <!-- Edit Patient Modal -->
-<div class="modal fade" id="editPatientModal" tabindex="-1" aria-labelledby="editPatientModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content border border-secondary shadow-lg">
-            <div class="modal-header border-secondary">
-                <h5 class="modal-title fw-bold" id="editPatientModalLabel">
-                    <i class="bi bi-person-lines-fill me-2 text-primary"></i> Edit Patient
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+<div id="editPatientModal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+    <div class="bg-gray-800 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto border border-gray-700">
 
-            <div class="modal-body">
-                <input type="hidden" id="editId" />
-                <div class="container-fluid">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <input type="text" id="editFullName" class="form-control" placeholder="Full Name" />
-                        </div>
-                        <div class="col-md-6">
-                            <select id="editGender" class="form-control">
-                                <option value="">Select Gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Prefer not to say</option>
-                            </select>
-                        </div>
+        <!-- Modal Header -->
+        <div class="sticky top-0 bg-gray-800 border-b border-gray-700 px-6 py-4 flex justify-between items-center">
+            <h2 class="text-2xl font-bold text-purple-400 flex items-center gap-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Edit Patient
+            </h2>
+            <button type="button" class="text-gray-400 hover:text-white transition" onclick="closeEditModal()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
 
-                        <div class="col-md-6">
-                            <input type="date" id="editDob" class="form-control" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="email" id="editEmail" class="form-control" placeholder="Email" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="editContactNumber" class="form-control" placeholder="Contact Number" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="editAlternateContactNumber" class="form-control" placeholder="Alternate Contact" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="editAddress" class="form-control" placeholder="Address" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="editCity" class="form-control" placeholder="City" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="editState" class="form-control" placeholder="State" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="editZipCode" class="form-control" placeholder="Zip Code" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="editBloodGroup" class="form-control" placeholder="Blood Group" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="editEmergencyContactName" class="form-control" placeholder="Emergency Contact Name" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="editEmergencyContactNumber" class="form-control" placeholder="Emergency Contact Number" />
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" id="editRelationshipWithEmergencyContact" class="form-control" placeholder="Relationship with Emergency Contact" />
-                        </div>
-                    </div>
+        <!-- Modal Body -->
+        <div class="p-6">
+            <input type="hidden" id="editId" />
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Full Name *</label>
+                    <input type="text" id="editFullName" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Enter full name" />
                 </div>
-            </div>
 
-            <div class="modal-footer border-secondary">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button id="updatePatientBtn" type="button" class="btn btn-primary">
-                    <i class="bi bi-save me-1"></i> Update
-                </button>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Gender *</label>
+                    <select id="editGender" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Prefer not to say</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Date of Birth *</label>
+                    <input type="date" id="editDob" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Email *</label>
+                    <input type="email" id="editEmail" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="email@example.com" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Contact Number *</label>
+                    <input type="text" id="editContactNumber" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="+1 234 567 8900" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Alternate Contact Number</label>
+                    <input type="text" id="editAlternateContactNumber" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="+1 234 567 8900" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Address</label>
+                    <input type="text" id="editAddress" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Street address" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">City</label>
+                    <input type="text" id="editCity" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="City" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">State</label>
+                    <input type="text" id="editState" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="State" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Zip Code</label>
+                    <input type="text" id="editZipCode" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="12345" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Blood Group</label>
+                    <input type="text" id="editBloodGroup" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="A+, B+, O-, etc." />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Emergency Contact Name</label>
+                    <input type="text" id="editEmergencyContactName" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="Emergency contact name" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Emergency Contact Number</label>
+                    <input type="text" id="editEmergencyContactNumber" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="+1 234 567 8900" />
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Relationship with Emergency Contact</label>
+                    <input type="text" id="editRelationshipWithEmergencyContact" class="w-full bg-gray-700 border border-gray-600 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="e.g., Spouse, Parent, Sibling" />
+                </div>
+
             </div>
         </div>
+
+        <!-- Modal Footer -->
+        <div class="sticky bottom-0 bg-gray-800 border-t border-gray-700 px-6 py-4 flex justify-end gap-3">
+            <button type="button" onclick="closeEditModal()" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-2.5 rounded-lg transition duration-200">
+                Cancel
+            </button>
+            <button id="updatePatientBtn" type="button" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-6 py-2.5 rounded-lg transition duration-200 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Update Patient
+            </button>
+        </div>
+
     </div>
 </div>
+@section Styles{
+  <style>
+            /* AG Grid Dark Theme Customization */
+            .ag-theme-alpine-dark {
+                --ag-background-color: #1f2937 !important;
+                --ag-header-background-color: #374151 !important;
+                --ag-odd-row-background-color: #1f2937 !important;
+                --ag-row-hover-color: #374151 !important;
+                --ag-foreground-color: #e5e7eb !important;
+                --ag-border-color: #4b5563 !important;
+                --ag-header-foreground-color: #a78bfa !important;
+            }
 
+            .ag-theme-alpine-dark ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
 
+            .ag-theme-alpine-dark ::-webkit-scrollbar-track {
+                background: #1f2937;
+            }
 
+            .ag-theme-alpine-dark ::-webkit-scrollbar-thumb {
+                background: #6b7280;
+                border-radius: 4px;
+            }
+
+            .ag-theme-alpine-dark ::-webkit-scrollbar-thumb:hover {
+                background: #9333ea;
+            }
+    </style>
+}
 @section scripts {
+
     <script src="@Url.Content("~/js/Patient/Patients.js")"></script>
 }
-
-

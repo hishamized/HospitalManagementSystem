@@ -4,125 +4,178 @@
     ViewData["Title"] = "Login";
 }
 
-<div class="container-fluid">
-    <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
-        <div class="col-md-5 col-lg-4">
-            <div class="card shadow-lg border-0">
-                <div class="card-body p-4">
-                    <h4 class="text-center mb-4 text-uppercase fw-bold text-dark">Login to HMS</h4>
+<div class="min-h-screen flex items-center justify-center bg-gray-900">
 
-                    @if (!ViewData.ModelState.IsValid)
-                    {
-                        <div class="alert alert-danger mb-3">
-                            Please fix the errors below.
-                        </div>
-                    }
+    <div class="w-full max-w-md bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-700">
 
-                    @if (ViewData.ModelState.ErrorCount > 0)
-                    {
-                        foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                        {
-                            <div class="alert alert-danger py-2 mb-2">
-                                @error.ErrorMessage
-                            </div>
-                        }
-                    }
+        <h2 class="text-center text-2xl font-bold text-purple-400 mb-6">Login to HMS</h2>
 
-                    <form asp-action="Login" method="post">
-                        <div class="mb-3">
-                            <label asp-for="UsernameOrEmail" class="form-label fw-semibold">Username or Email</label>
-                            <input asp-for="UsernameOrEmail" class="form-control" placeholder="Enter username or email" />
-                            <span asp-validation-for="UsernameOrEmail" class="text-danger small"></span>
-                        </div>
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="bg-red-600/20 text-red-400 p-3 rounded-lg mb-3">
+                Please fix the errors below.
+            </div>
+        }
 
-                        <div class="mb-3">
-                            <label asp-for="Password" class="form-label fw-semibold">Password</label>
-                            <input asp-for="Password" type="password" class="form-control" placeholder="Enter password" />
-                            <span asp-validation-for="Password" class="text-danger small"></span>
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="form-check">
-                                <input asp-for="RememberMe" type="checkbox" class="form-check-input" id="rememberMeCheck" />
-                                <label class="form-check-label" for="rememberMeCheck">Remember Me</label>
-                            </div>
-                            <a href="#" id="forgotPasswordLink" class="text-danger small text-decoration-none">Forgot password?</a>
-
-                        </div>
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-danger fw-bold">
-                                <i class="mdi mdi-login me-1"></i> Login
-                            </button>
-                        </div>
-                    </form>
+        @if (ViewData.ModelState.ErrorCount > 0)
+        {
+            foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div class="bg-red-600/20 text-red-300 p-2 rounded-md mb-2">
+                    @error.ErrorMessage
                 </div>
+            }
+        }
+
+        <form asp-action="Login" method="post" class="space-y-4">
+            <div>
+                <label asp-for="UsernameOrEmail" class="block text-gray-300 font-semibold mb-1">Username or Email</label>
+                <input asp-for="UsernameOrEmail"
+                       class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                       placeholder="Enter username or email" />
+
+                <span asp-validation-for="UsernameOrEmail" class="text-red-400 text-sm"></span>
             </div>
 
-            <div class="text-center mt-3">
-                <small class="text-muted">© @DateTime.Now.Year HMS Admin Portal</small>
+            <div>
+                <label asp-for="Password" class="block text-gray-300 font-semibold mb-1">Password</label>
+                <input asp-for="Password" type="password"
+                       class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                       placeholder="Enter password" />
+
+                <span asp-validation-for="Password" class="text-red-400 text-sm"></span>
             </div>
-        </div>
+
+            <div class="flex items-center justify-between text-sm">
+                <label class="flex items-center space-x-2 text-gray-300">
+                    <input asp-for="RememberMe" type="checkbox"
+                           class="w-4 h-4 rounded bg-gray-700 border-gray-600 text-purple-500 focus:ring-purple-600" />
+                    <span>Remember Me</span>
+                </label>
+
+                <button type="button"
+                        id="btnOpenForgotModal"
+                        class="text-purple-400 hover:underline">
+                    Forgot password?
+                </button>
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg shadow-lg transition">
+                Login
+            </button>
+        </form>
+
+        <p class="text-center text-gray-500 mt-6 text-sm">
+            © @DateTime.Now.Year HMS Admin Portal
+        </p>
     </div>
-</div>
 
-<!-- Forgot Password: Step 1 - Verify Email & Phone -->
-<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Forgot Password</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="forgotPasswordForm">
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" id="fpEmail" class="form-control" placeholder="Enter your registered email" required />
+
+
+    <!-- ⭐ Forgot Password Modal -->
+    <div x-data="{ forgotModal: false }"
+         @@open-forgot-modal.window="forgotModal = true"
+         @@close-forgot-modal.window="forgotModal = false">
+
+        <div x-show="forgotModal"
+             x-transition
+             @@click.self="forgotModal = false"
+             class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50"
+             style="display: none;">
+
+            <div class="bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl w-full max-w-md p-6">
+
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-purple-400">Forgot Password</h3>
+                    <button @@click="forgotModal = false"
+                            class="text-gray-400 hover:text-gray-200 text-xl">
+                        &times;
+                    </button>
+                </div>
+
+                <form id="forgotPasswordForm" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-300 mb-1">Email</label>
+                        <input id="fpEmail" type="email"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                               placeholder="Enter your email"
+                               required />
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Phone Number</label>
-                        <input type="text" id="fpPhone" class="form-control" placeholder="Enter your registered phone number" required />
+
+                    <div>
+                        <label class="block text-gray-300 mb-1">Phone Number</label>
+                        <input id="fpPhone" type="text"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                               placeholder="Enter your phone number"
+                               required />
                     </div>
-                    <div id="fpError" class="text-danger small mb-2 d-none"></div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-danger fw-bold">Verify</button>
-                    </div>
+
+                    <div id="fpError" class="text-red-400 text-sm hidden"></div>
+
+                    <button type="submit"
+                            class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg shadow-md transition">
+                        Verify
+                    </button>
                 </form>
             </div>
+
         </div>
     </div>
-</div>
-<!-- OTP Verification Modal -->
-<div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="otpModalLabel">Verify OTP</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="otpForm">
-                    <input type="hidden" name="otpEmail" id="otpEmail" value="" />
-                    <div class="mb-3">
-                        <label for="otpCode" class="form-label fw-semibold">Enter OTP sent to your email</label>
-                        <input type="text" id="otpCode" class="form-control" maxlength="6" placeholder="Enter 6-digit OTP" required>
-                        <div id="otpError" class="text-danger small mt-2 d-none"></div>
+
+
+
+    <!-- ⭐ OTP Modal -->
+    <div x-data="{ otpModal: false }"
+         @@open-otp-modal.window="otpModal = true"
+         @@close-otp-modal.window="otpModal = false">
+
+        <div x-show="otpModal"
+             x-transition
+             @@click.self="otpModal = false"
+             class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50"
+             style="display: none;">
+
+            <div class="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-md p-6">
+
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-purple-400">Verify OTP</h3>
+                    <button @@click="otpModal = false"
+                            class="text-gray-400 hover:text-gray-200 text-xl">
+                        &times;
+                    </button>
+                </div>
+
+                <form id="otpForm" class="space-y-4">
+                    <input type="hidden" id="otpEmail" />
+
+                    <div>
+                        <label class="block text-gray-300 mb-1">Enter OTP sent to your email</label>
+                        <input id="otpCode" type="text" maxlength="6"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-3 py-2 text-center text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-purple-500"
+                               placeholder="000000"
+                               required />
+                        <div id="otpError" class="text-red-400 text-sm mt-2 hidden"></div>
                     </div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-danger fw-bold">Verify OTP</button>
-                    </div>
+
+                    <button type="submit"
+                            class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg shadow-md transition">
+                        Verify OTP
+                    </button>
                 </form>
             </div>
+
         </div>
     </div>
+
 </div>
-
-
-
-
 
 @section Scripts {
+    <script>
+        // Open forgot password modal
+        document.getElementById('btnOpenForgotModal').addEventListener('click', function() {
+            window.dispatchEvent(new CustomEvent('open-forgot-modal'));
+        });
+    </script>
     <script src="~/js/User/login.js"></script>
 }
-

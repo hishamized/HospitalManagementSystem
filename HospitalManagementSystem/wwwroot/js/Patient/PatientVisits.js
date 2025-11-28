@@ -18,17 +18,33 @@
             width: 300,
             cellRenderer: function (params) {
                 return `
-                <button class="btn btn-sm btn-info view-btn" data-id="${params.value}" data-patientid="${params.data.patientId}" data-visittype="${params.data.visitType}">
+            <div class="flex gap-2">
+                <button 
+                    class="px-3 py-1 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-700 view-btn"
+                    data-id="${params.value}" 
+                    data-patientid="${params.data.patientId}" 
+                    data-visittype="${params.data.visitType}">
                     View
                 </button>
-                <button class="btn btn-sm btn-warning edit-btn" data-id="${params.value}">Edit</button>
 
-                <button class="btn btn-sm btn-danger delete-btn" data-id="${params.value}">Delete</button>
-            `;
+                <button 
+                    class="px-3 py-1 text-sm rounded-lg bg-yellow-600 text-black hover:bg-yellow-700 edit-btn"
+                    data-id="${params.value}">
+                    Edit
+                </button>
+
+                <button 
+                    class="px-3 py-1 text-sm rounded-lg bg-red-600 text-white hover:bg-red-700 delete-btn"
+                    data-id="${params.value}">
+                    Delete
+                </button>
+            </div>
+        `;
             },
             sortable: false,
             filter: false
         }
+
     ];
 
 
@@ -74,9 +90,10 @@
     // 6️⃣ Delete Button Click
     $('#patientVisitGrid').on('click', '.delete-btn', function () {
         var visitId = $(this).data('id');
-        //console.log('Delete visit:', visitId);
-        // Open delete confirmation modal
-        $('#deleteVisitModal').modal('show');
+        selectedVisitId = visitId; // store ID if needed
+
+        // Show Tailwind modal
+        $('#deleteVisitModal').removeClass('hidden');
     });
 
 
@@ -115,19 +132,20 @@
     });
 
 
-
-
     // 1️⃣ Show modal on button click
     $("#btnAddVisit").on("click", function () {
 
         getDoctorList('#doctorNameSelect', '');
-
-
+        loadPatients();
+        getDoctorList('#doctorNameSelect', '');
         $("#visitModalLabel").text("Add Patient Visit");
         $("#visitForm")[0].reset();
         $(".inpatient-field").hide();
-        $("#visitModal").modal("show");
+
+        // Show Tailwind modal
+        $("#visitModal").removeClass("hidden");
     });
+
 
     // 2️⃣ Toggle inpatient-specific fields
     $("#visitType").on("change", function () {
@@ -192,7 +210,9 @@ $("#editVisitType").on("change", function () {
             success: function (res) {
                 if (res.success) {
                     //console.log('Patient visit added successfully:', res.visitId);
-                    $('#visitModal').modal('hide');
+                    // Hide modal (Tailwind)
+                    document.getElementById("visitModal").classList.add("hidden");
+
                     loadPatientVisits();
                     // TODO: Refresh AG Grid here
                 } else {
@@ -222,7 +242,9 @@ $("#editVisitType").on("change", function () {
 
     $('#patientVisitGrid').on('click', '.delete-btn', function () {
         selectedVisitId = $(this).data('id');
-        $('#deleteVisitModal').modal('show');
+
+        // Show Tailwind modal (remove hidden)
+        $('#deleteVisitModal').removeClass('hidden');
     });
 
 
@@ -235,14 +257,14 @@ $("#editVisitType").on("change", function () {
             data: { id: selectedVisitId },
             success: function (res) {
                 if (res.success) {
-                    //console.log('Patient visit deleted successfully:', selectedVisitId);
+                    loadPatientVisits();
                     // Remove from AG Grid
                     var rowNode = gridOptions.api.getRowNode(selectedVisitId.toString());
                     if (rowNode) gridOptions.api.applyTransaction({ remove: [rowNode.data] });
                 } else {
                     console.warn('Delete failed:', res.message);
                 }
-                $('#deleteVisitModal').modal('hide');
+                $('#deleteVisitModal').addClass('hidden');
             },
             error: function (xhr, status, error) {
                 console.error('AJAX Delete Error:', status, error, xhr.responseText);
@@ -292,7 +314,8 @@ $("#editVisitType").on("change", function () {
         else $('.inpatient-field').hide();
 
         // Show modal
-        $('#editVisitModal').modal('show');
+        document.getElementById("editVisitModal").classList.remove("hidden");
+
     });
 
     // When update button is clicked
@@ -323,7 +346,7 @@ $("#editVisitType").on("change", function () {
                 // Check the 'success' property
                 if (response && response.success) {
                     loadPatientVisits();
-                    $('#editVisitModal').modal('hide');
+                    document.getElementById('editVisitModal').classList.add('hidden');
                     fetchPatientVisitList();
                     alert(response.message || 'Patient visit updated successfully!');
                 } else {

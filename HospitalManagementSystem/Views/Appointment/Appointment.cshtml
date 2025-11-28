@@ -2,119 +2,202 @@
     ViewData["Title"] = "Appointment";
 }
 
-<h1>Appointment</h1>
+<div class="lg:mx-64">
+    <h1 class="mb-4 text-2xl font-semibold text-white">Appointment</h1>
 
-<!-- Add Appointment Button -->
-<button class="btn btn-primary mb-3" id="btnAddAppointment">
-    <i class="fa fa-plus"></i> Add Appointment
-</button>
+    <!-- Add Appointment Button -->
+    <button id="btnAddAppointment"
+            class="mb-3 flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white transition-all hover:bg-purple-700">
+        <i class="fa fa-plus"></i>
+        Add Appointment
+    </button>
+</div>
 
-<!-- AG Grid Table -->
-<div class="ag-theme-alpine" style="height: 500px; width: 100%;" id="appointmentGrid"></div>
 
-<!-- Bootstrap Modal -->
-<div class="modal fade" id="addAppointmentModal" tabindex="-1" aria-labelledby="addAppointmentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="addAppointmentModalLabel">Add Appointment</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="appointmentForm">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="PatientId" class="form-label">Patient</label>
-                            <select class="form-select" id="PatientId" name="PatientId" required>
-                                <option value="">Select Patient</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="DoctorId" class="form-label">Doctor</label>
-                            <select class="form-select" id="DoctorId" name="DoctorId" required>
-                                <option value="">Select Doctor</option>
-                            </select>
-                        </div>
+<!-- AG Grid Table (with AG Grid's dark theme retained) -->
+<div class="overflow-x-auto lg:mx-64">
+    <div id="appointmentGrid"
+         class="ag-theme-alpine-dark w-full rounded-lg border border-gray-700 bg-gray-900 p-2 shadow-lg"
+         style="height: 500px;">
+    </div>
+</div>
+
+<!-- Tailwind Modal -->
+<div id="addAppointmentModal"
+     class="fixed inset-0 z-50 flex hidden items-center justify-center bg-black bg-opacity-60"
+     aria-hidden="true">
+    <div class="w-full max-w-3xl rounded-xl border border-gray-700 bg-gray-900 shadow-2xl">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between rounded-t-xl bg-purple-600 px-6 py-4">
+            <h5 class="text-lg font-semibold text-white">Add Appointment</h5>
+            <button class="text-xl text-white hover:text-gray-200"
+                    data-close-modal onclick="closeModal('addAppointmentModal')">
+                &times;
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="px-6 py-6">
+            <form id="appointmentForm" class="space-y-6">
+
+                <!-- Patient / Doctor -->
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div>
+                        <label class="mb-1 block text-gray-300">Patient</label>
+                        <select id="PatientId"
+                                name="PatientId"
+                                required
+                                class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:ring-2 focus:ring-purple-500">
+                            <option value="">Select Patient</option>
+                        </select>
                     </div>
 
-                    <div class="mb-3" id="doctorSlotsContainer" style="display:none;">
-                        <label class="form-label">Available Slots</label>
-                        <div id="doctorSlots" class="d-flex flex-wrap gap-2">
-                            <!-- Slots will be displayed here -->
-                        </div>
+                    <div>
+                        <label class="mb-1 block text-gray-300">Doctor</label>
+                        <select id="DoctorId"
+                                name="DoctorId"
+                                required
+                                class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:ring-2 focus:ring-purple-500">
+                            <option value="">Select Doctor</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Slots -->
+                <div id="doctorSlotsContainer" class="hidden">
+                    <label class="mb-2 block text-gray-300">Available Slots</label>
+                    <div id="doctorSlots" class="flex flex-wrap gap-2">
+                        <!-- Slot buttons generated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Date / Status -->
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div>
+                        <label class="mb-1 block text-gray-300">Appointment Date & Time</label>
+                        <input type="datetime-local"
+                               id="AppointmentDate"
+                               name="AppointmentDate"
+                               required
+                               class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:ring-2 focus:ring-purple-500" />
                     </div>
 
-
-                    <div class="row mb-3">
-
-                        <div class="col-md-6">
-                            <label for="AppointmentDate" class="form-label">Appointment Date & Time</label>
-                            <input type="datetime-local" class="form-control" id="AppointmentDate" name="AppointmentDate" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label for="Status" class="form-label">Status</label>
-                            <select class="form-select" id="Status" name="Status" required>
-                                <option value="Scheduled">Scheduled</option>
-                                <option value="Cancelled">Cancelled</option>
-                                <option value="Completed">Completed</option>
-                            </select>
-                        </div>
+                    <div>
+                        <label class="mb-1 block text-gray-300">Status</label>
+                        <select id="Status"
+                                name="Status"
+                                required
+                                class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:ring-2 focus:ring-purple-500">
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="Cancelled">Cancelled</option>
+                            <option value="Completed">Completed</option>
+                        </select>
                     </div>
+                </div>
 
-                    <div class="mb-3">
-                        <label for="Remarks" class="form-label">Remarks</label>
-                        <textarea class="form-control" id="Remarks" name="Remarks" rows="3"></textarea>
-                    </div>
+                <!-- Remarks -->
+                <div>
+                    <label class="mb-1 block text-gray-300">Remarks</label>
+                    <textarea id="Remarks"
+                              name="Remarks"
+                              rows="3"
+                              class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:ring-2 focus:ring-purple-500"></textarea>
+                </div>
 
-                    <button type="submit" class="btn btn-success">Save Appointment</button>
-                </form>
-            </div>
+                <!-- Submit Button -->
+                <button type="submit"
+                        class="rounded-lg bg-purple-600 px-5 py-2 text-white shadow-md transition hover:bg-purple-700">
+                    Save Appointment
+                </button>
+
+            </form>
         </div>
     </div>
 </div>
 
 
+
 <!-- Reschedule Modal -->
-<div class="modal fade" id="rescheduleModal" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div id="rescheduleModal"
+     class="fixed inset-0 z-50 flex hidden items-center justify-center bg-black bg-opacity-60"
+     aria-hidden="true">
+    <div class="w-full max-w-lg rounded-xl border border-gray-700 bg-gray-900 shadow-2xl">
         <form id="rescheduleForm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="rescheduleModalLabel">Reschedule Appointment</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            <!-- Header -->
+            <div class="flex items-center justify-between rounded-t-xl bg-purple-600 px-6 py-4">
+                <h5 class="text-lg font-semibold text-white">Reschedule Appointment</h5>
+                <button type="button"
+                        data-close-modal
+                        class="text-xl text-white hover:text-gray-200"
+                        onclick="closeModal('rescheduleModal')">
+                    &times;
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="space-y-5 px-6 py-6">
+                <input type="hidden" id="RescheduleAppointmentId" />
+
+                <!-- Patient -->
+                <div>
+                    <label class="mb-1 block text-gray-300">Patient</label>
+                    <input type="text"
+                           id="ReschedulePatient"
+                           disabled
+                           class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-gray-400" />
                 </div>
-                <div class="modal-body">
-                    <input type="hidden" id="RescheduleAppointmentId" />
 
-                    <div class="mb-3">
-                        <label for="ReschedulePatient" class="form-label">Patient</label>
-                        <input type="text" class="form-control" id="ReschedulePatient" disabled />
-                    </div>
+                <!-- Doctor + Slots -->
+                <div>
+                    <label class="mb-1 block text-gray-300">Doctor</label>
+                    <select id="RescheduleDoctor"
+                            class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:ring-2 focus:ring-purple-500"></select>
 
-                    <div class="mb-3">
-                        <label for="RescheduleDoctor" class="form-label">Doctor</label>
-                        <select class="form-control" id="RescheduleDoctor"></select>
-                        <div id="rescheduleDoctorSlots" class="mt-2"></div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="RescheduleDate" class="form-label">Appointment Date & Time</label>
-                        <input type="datetime-local" class="form-control" id="RescheduleDate" required />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="RescheduleRemarks" class="form-label">Remarks</label>
-                        <textarea class="form-control" id="RescheduleRemarks"></textarea>
+                    <div id="rescheduleDoctorSlots" class="mt-3 flex flex-wrap gap-2">
+                        <!-- Dynamic slot buttons will be inserted -->
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                <!-- New Date -->
+                <div>
+                    <label class="mb-1 block text-gray-300">
+                        Appointment Date & Time
+                    </label>
+                    <input type="datetime-local"
+                           id="RescheduleDate"
+                           required
+                           class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:ring-2 focus:ring-purple-500" />
+                </div>
+
+                <!-- Remarks -->
+                <div>
+                    <label class="mb-1 block text-gray-300">Remarks</label>
+                    <textarea id="RescheduleRemarks"
+                              class="w-full rounded-lg border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:ring-2 focus:ring-purple-500"></textarea>
                 </div>
             </div>
+
+            <!-- Footer -->
+            <div class="flex justify-end gap-3 rounded-b-xl border-t border-gray-700 bg-gray-800 px-6 py-4">
+                <button type="submit"
+                        class="rounded-lg bg-purple-600 px-4 py-2 text-white shadow-md transition hover:bg-purple-700">
+                    Save Changes
+                </button>
+
+                <button type="button"
+                        data-close-modal
+                        class="rounded-lg bg-gray-700 px-4 py-2 text-white transition hover:bg-gray-600"
+                        onclick="closeModal('rescheduleModal')">
+                    Close
+                </button>
+            </div>
+
         </form>
     </div>
 </div>
+
 
 
 @section Scripts {

@@ -2,20 +2,47 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="d-flex align-items-center justify-content-center vh-100 bg-light">
-    <div class="card shadow-lg p-5 text-center" style="max-width: 500px; border-radius: 1rem;">
-        <h1 class="display-4 text-danger mb-4">Welcome to HMS</h1>
-        <p class="text-secondary mb-4">
-            Manage hospital operations efficiently with our ASP.NET Core web application,
-            built using <strong>Onion Architecture</strong> for scalable and maintainable code.
+<!-- Home page fully rewritten WITHOUT any absolute positioning -->
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-black to-purple-800 text-white p-6 z-0">
+
+    <div class="w-full max-w-xl p-10 rounded-3xl backdrop-blur-xl bg-white/5 shadow-2xl border border-white/10 text-center space-y-8">
+
+        <!-- Decorative Gradient Rings (no absolute) -->
+        <div class="flex justify-center">
+            <div class="w-40 h-40 rounded-full bg-gradient-to-tr from-purple-600/40 to-purple-300/20 blur-2xl animate-pulse"></div>
+        </div>
+
+        <h1 class="text-5xl font-extrabold text-purple-300 drop-shadow-lg tracking-wide animate-fade-in">
+            Welcome to HMS
+        </h1>
+
+        <p class="text-gray-300 leading-relaxed">
+            Manage hospital operations seamlessly using our advanced ASP.NET Core platform,
+            built with <span class="text-purple-400 font-semibold">Onion Architecture</span> for enterprise-grade
+            scalability, maintainability, and high performance.
         </p>
 
-        <a asp-controller="User" asp-action="Login" class="btn btn-danger btn-lg btn-block mb-3">
+        <!-- Another decorative glow (still no absolute) -->
+        <div class="flex justify-center">
+            <div class="w-24 h-24 rounded-full bg-gradient-to-br from-fuchsia-500/40 to-purple-700/40 blur-2xl animate-spin-slow"></div>
+        </div>
+
+        <a asp-controller="User" asp-action="Login"
+           class="block w-full py-3 bg-purple-600 hover:bg-purple-700 transition-all duration-300 rounded-xl text-lg font-bold shadow-lg shadow-purple-700/40 hover:shadow-purple-500/60">
             Login
         </a>
 
-        <small class="text-muted">
-            Learn more about <a href="https://learn.microsoft.com/aspnet/core" class="text-danger">ASP.NET Core</a>.
+        <small class="text-gray-400">
+            Learn more about
+            <a href="https://learn.microsoft.com/aspnet/core" class="text-purple-300 underline hover:text-purple-400 transition">
+                ASP.NET Core
+            </a>.
         </small>
+
+        <!-- Bottom glow (non absolute) -->
+        <div class="flex justify-center">
+            <div class="w-32 h-32 rounded-full bg-gradient-to-tl from-purple-400/30 to-fuchsia-300/20 blur-2xl animate-bounce"></div>
+        </div>
+
     </div>
 </div>

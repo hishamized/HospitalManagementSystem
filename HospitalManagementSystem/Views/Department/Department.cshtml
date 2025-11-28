@@ -2,83 +2,240 @@
     ViewData["Title"] = "Departments";
 }
 
-<h1>Departments Page</h1>
+<div class="min-h-screen bg-gray-900 p-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 overflow-hidden">
+            <!-- Header -->
+            <div class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-2xl font-bold text-purple-400 flex items-center gap-2">
+                        <i class="fas fa-building"></i>
+                        Department Management
+                    </h4>
+                    <button class="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold px-4 py-2 rounded-lg shadow-lg transition-all flex items-center gap-2"
+                            id="btnAddDepartment">
+                        <i class="fas fa-plus-circle"></i>
+                        Add Department
+                    </button>
+                </div>
+            </div>
 
-<!-- Add Department Button -->
-<button id="btnAddDepartment" class="btn btn-primary mb-3">
-    Add Department
-</button>
-
-<!-- AG Grid placeholder -->
-<div id="departmentsGrid" class="ag-theme-alpine" style="height: 400px; width: 100%;"></div>
+            <!-- Grid Body -->
+            <div class="p-6">
+                <div id="departmentsGrid" class="ag-theme-alpine-dark" style="height: 600px; width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Add Department Modal -->
-<div class="modal fade" id="addDepartmentModal" tabindex="-1" aria-labelledby="addDepartmentLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="addDepartmentLabel">Add Department</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="addDepartmentForm">
-                    <div class="mb-3">
-                        <label for="departmentName" class="form-label">Department Name</label>
-                        <input type="text" class="form-control" id="departmentName" name="Name" placeholder="Enter department name" required>
-                        <div class="invalid-feedback" id="nameError"></div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="departmentDescription" class="form-label">Description</label>
-                        <textarea class="form-control" id="departmentDescription" name="Description" placeholder="Enter description (optional)"></textarea>
-                        <div class="invalid-feedback" id="descriptionError"></div>
-                    </div>
-                    <button type="submit" class="btn btn-success">Save Department</button>
-                </form>
-                <div id="formError" class="text-danger mt-2"></div>
-            </div>
+<div class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden"
+     id="addDepartmentModal"
+     tabindex="-1">
+    <div class="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-md transform transition-all">
+        <!-- Modal Header -->
+        <div class="bg-purple-600 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+            <h5 class="text-xl font-bold text-white flex items-center gap-2">
+                <i class="fas fa-plus-circle"></i>
+                Add Department
+            </h5>
+            <button type="button"
+                    class="text-white hover:text-gray-200 text-2xl transition-colors"
+                    onclick="document.getElementById('addDepartmentModal').classList.add('hidden')">
+                &times;
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6">
+            <form id="addDepartmentForm" class="space-y-4">
+                <div>
+                    <label for="departmentName" class="block text-gray-300 font-semibold mb-2">
+                        <i class="fas fa-tag text-purple-400 mr-2"></i>Department Name
+                    </label>
+                    <input type="text"
+                           class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                           id="departmentName"
+                           name="Name"
+                           placeholder="Enter department name"
+                           required>
+                    <div class="text-red-400 text-sm mt-1 hidden" id="nameError"></div>
+                </div>
+
+                <div>
+                    <label for="departmentDescription" class="block text-gray-300 font-semibold mb-2">
+                        <i class="fas fa-align-left text-purple-400 mr-2"></i>Description
+                    </label>
+                    <textarea class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+                              id="departmentDescription"
+                              name="Description"
+                              placeholder="Enter description (optional)"
+                              rows="4"></textarea>
+                    <div class="text-red-400 text-sm mt-1 hidden" id="descriptionError"></div>
+                </div>
+
+                <div class="text-red-400 text-sm hidden" id="formError"></div>
+
+                <div class="flex items-center justify-end gap-3 pt-4">
+                    <button type="button"
+                            class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold rounded-lg transition-colors"
+                            onclick="document.getElementById('addDepartmentModal').classList.add('hidden')">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg shadow-lg transition-all">
+                        Save Department
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 <!-- Edit Department Modal -->
-<div class="modal fade" id="editDepartmentModal" tabindex="-1" aria-labelledby="editDepartmentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content shadow-lg border-0">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="editDepartmentModalLabel">Edit Department</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editDepartmentForm">
-                    <input type="hidden" id="editDepartmentId" />
+<div class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden"
+     id="editDepartmentModal"
+     tabindex="-1">
+    <div class="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-md transform transition-all">
+        <!-- Modal Header -->
+        <div class="bg-purple-600 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+            <h5 class="text-xl font-bold text-white flex items-center gap-2">
+                <i class="fas fa-edit"></i>
+                Edit Department
+            </h5>
+            <button type="button"
+                    class="text-white hover:text-gray-200 text-2xl transition-colors"
+                    onclick="document.getElementById('editDepartmentModal').classList.add('hidden')">
+                &times;
+            </button>
+        </div>
 
-                    <div class="mb-3">
-                        <label for="editDepartmentName" class="form-label fw-semibold">Department Name</label>
-                        <input type="text" class="form-control" id="editDepartmentName" placeholder="Enter department name" />
-                        <small class="text-danger d-block" id="editNameError"></small>
-                    </div>
+        <!-- Modal Body -->
+        <div class="p-6">
+            <form id="editDepartmentForm" class="space-y-4">
+                <input type="hidden" id="editDepartmentId" />
 
-                    <div class="mb-3">
-                        <label for="editDepartmentDescription" class="form-label fw-semibold">Description</label>
-                        <textarea class="form-control" id="editDepartmentDescription" rows="3" placeholder="Enter description (optional)"></textarea>
-                        <small class="text-danger d-block" id="editDescriptionError"></small>
-                    </div>
+                <div>
+                    <label for="editDepartmentName" class="block text-gray-300 font-semibold mb-2">
+                        <i class="fas fa-tag text-purple-400 mr-2"></i>Department Name
+                    </label>
+                    <input type="text"
+                           class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                           id="editDepartmentName"
+                           placeholder="Enter department name"
+                           required>
+                    <div class="text-red-400 text-sm mt-1 hidden" id="editNameError"></div>
+                </div>
 
-                    <div class="text-danger mb-2" id="editFormError"></div>
+                <div>
+                    <label for="editDepartmentDescription" class="block text-gray-300 font-semibold mb-2">
+                        <i class="fas fa-align-left text-purple-400 mr-2"></i>Description
+                    </label>
+                    <textarea class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+                              id="editDepartmentDescription"
+                              placeholder="Enter description (optional)"
+                              rows="4"></textarea>
+                    <div class="text-red-400 text-sm mt-1 hidden" id="editDescriptionError"></div>
+                </div>
 
-                    <div class="modal-footer border-0">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
-                </form>
-            </div>
+                <div class="text-red-400 text-sm hidden" id="editFormError"></div>
+
+                <div class="flex items-center justify-end gap-3 pt-4">
+                    <button type="button"
+                            class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold rounded-lg transition-colors"
+                            onclick="document.getElementById('editDepartmentModal').classList.add('hidden')">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg shadow-lg transition-all">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
+@section Styles {
+    <!-- AG Grid CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/styles/ag-grid.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/styles/ag-theme-alpine.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <style>
+        /* AG Grid Dark Theme Customization */
+        .ag-theme-alpine-dark {
+            --ag-background-color: #1f2937;
+            --ag-header-background-color: #374151;
+            --ag-odd-row-background-color: #1f2937;
+            --ag-row-hover-color: #374151;
+            --ag-foreground-color: #e5e7eb;
+            --ag-border-color: #4b5563;
+            --ag-header-foreground-color: #a78bfa;
+        }
 
+            /* Custom scrollbar for dark theme */
+            .ag-theme-alpine-dark ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            .ag-theme-alpine-dark ::-webkit-scrollbar-track {
+                background: #1f2937;
+            }
+
+            .ag-theme-alpine-dark ::-webkit-scrollbar-thumb {
+                background: #6b7280;
+                border-radius: 4px;
+            }
+
+                .ag-theme-alpine-dark ::-webkit-scrollbar-thumb:hover {
+                    background: #9333ea;
+                }
+    </style>
+}
 
 @section Scripts {
-<script src="~/js/Department/department.js"></script>
+    <!-- AG Grid JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/dist/ag-grid-community.min.js"></script>
+
+    <script>
+        // Modal helper functions
+        window.showModal = function(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        };
+
+        window.hideModal = function(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        };
+
+        // Add Department button click
+        document.getElementById('btnAddDepartment').addEventListener('click', function() {
+            showModal('addDepartmentModal');
+        });
+
+        // Close modals on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideModal('addDepartmentModal');
+                hideModal('editDepartmentModal');
+            }
+        });
+
+        // Close modals on backdrop click
+        document.getElementById('addDepartmentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideModal('addDepartmentModal');
+            }
+        });
+
+        document.getElementById('editDepartmentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideModal('editDepartmentModal');
+            }
+        });
+    </script>
+
+    <script src="~/js/Department/department.js"></script>
 }

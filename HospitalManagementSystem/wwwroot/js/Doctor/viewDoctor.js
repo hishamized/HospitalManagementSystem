@@ -1,4 +1,14 @@
-﻿document.addEventListener('DOMContentLoaded', function () {
+﻿/**
+ * Hides a Tailwind modal
+ * @param {HTMLElement} btn - The button that was clicked
+ */
+function hideModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return; // Exit if modal not found
+    modal.classList.add('hidden'); // Hide modal
+}
+
+document.addEventListener('DOMContentLoaded', function () {
 
     // ✅ Define AG Grid column structure
     const columnDefs = [
@@ -115,7 +125,8 @@ $(document).on('click', '.view-docs-btn', function () {
             }
 
             // Show modal after rendering
-            $('#doctorDocumentsModal').modal('show');
+            document.getElementById('doctorDocumentsModal').classList.remove('hidden');
+
         }
 
     });

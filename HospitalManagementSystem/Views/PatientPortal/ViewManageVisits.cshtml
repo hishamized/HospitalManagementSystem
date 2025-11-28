@@ -2,192 +2,248 @@
     ViewData["Title"] = "ViewManageVisits";
 }
 
-<div style="margin-top:20px;">
-    <h4>Patient Visits</h4>
-    <div id="patientVisitsGrid" class="ag-theme-alpine" style="height: 400px; width: 100%;"></div>
+<div class="mx-64 mt-6 space-y-4">
+
+    <!-- Page Header -->
+    <h4 class="text-xl font-semibold text-purple-400">Patient Visits</h4>
+
+    <!-- Patient Visits AG Grid -->
+    <div id="patientVisitsGrid"
+         class="ag-theme-alpine-dark min-h-[400px] w-full rounded-lg"
+         style="height: 500px;">
+    </div>
+
+    <!-- No Records Message -->
+    <p id="noRecordsMessage" class="mt-2 hidden font-semibold text-red-400">
+        No visit records found.
+    </p>
 </div>
 
-<p id="noRecordsMessage" style="display:none; color:red; font-weight:bold;">
-    No visit records found.
-</p>
 
-<!-- Bills Popup Modal -->
-<div id="billsModal" class="modal" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%;
-     background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+<!-- ========================= -->
+<!-- Bills Modal (Tailwind)   -->
+<!-- ========================= -->
+<div id="billsModal"
+     x-data="{ open: false }"
+     x-show="open"
+     class="fixed inset-0 z-40 flex items-center justify-center bg-black/60"
+     x-transition.opacity
+     style="display:none;">
 
-    <div style="background:white; width:80%; padding:20px; border-radius:8px; position:relative;">
+    <div class="relative w-[85%] rounded-xl bg-gray-900 p-6 text-gray-200 shadow-xl">
 
-        <h3>Patient Bills</h3>
-        <button class="btn btn-danger" id="closeBillsModal" style="position:absolute; right:15px; top:10px;">X</button>
+        <!-- Header -->
+        <h3 class="text-lg font-semibold text-purple-300">Patient Bills</h3>
 
-        <!-- AG Grid bills table -->
-        <div id="patientBillsGrid" style="height:400px; width:100%;" class="ag-theme-alpine"></div>
+        <button id="closeBillsModal"
+                class="absolute right-4 top-3 text-red-400 hover:text-red-500">
+            <i class="fa-solid fa-xmark text-2xl"></i>
+        </button>
+
+        <!-- Bills Grid -->
+        <div id="patientBillsGrid"
+             class="ag-theme-alpine-dark mt-4 w-full rounded-lg"
+             style="height: 400px;">
+        </div>
 
     </div>
 </div>
 
-<!-- Payment Gateway Modal -->
-<div id="paymentModal" class="modal" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%;
-     background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1001;">
 
-    <div style="background:white; width:500px; padding:30px; border-radius:12px; position:relative; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+<!-- ============================== -->
+<!-- Payment Modal (Tailwind/Alpine) -->
+<!-- ============================== -->
+<div id="paymentModal"
+     x-data="{ open: false }"
+     x-show="open"
+     class="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+     x-transition.opacity
+     style="display:none;">
+
+    <div class="relative w-[500px] rounded-xl bg-gray-900 p-6 text-gray-200 shadow-2xl">
 
         <!-- Header -->
-        <div style="border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; margin-bottom: 20px;">
-            <h3 style="margin:0; color:#2d3748;">Complete Your Payment</h3>
-            <button class="btn btn-danger btn-sm" id="closePaymentModal" style="position:absolute; right:20px; top:20px;">✕</button>
+        <div class="mb-4 border-b border-gray-700 pb-3">
+            <h3 class="text-xl font-semibold text-purple-300">
+                Complete Your Payment
+            </h3>
+
+            <button id="closePaymentModal"
+                    class="absolute right-4 top-4 text-red-400 hover:text-red-500">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
         </div>
 
         <!-- Bill Summary -->
-        <div style="background:#f7fafc; padding:15px; border-radius:8px; margin-bottom:20px;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                <span style="color:#718096;">Bill ID:</span>
-                <strong id="paymentBillId">-</strong>
+        <div class="mb-4 space-y-2 rounded-lg bg-gray-800 p-4">
+            <div class="flex justify-between text-gray-400">
+                <span>Bill ID:</span>
+                <span id="paymentBillId" class="font-semibold text-gray-200">-</span>
             </div>
-            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                <span style="color:#718096;">Visit ID:</span>
-                <strong id="paymentVisitId">-</strong>
+            <div class="flex justify-between text-gray-400">
+                <span>Visit ID:</span>
+                <span id="paymentVisitId" class="font-semibold text-gray-200">-</span>
             </div>
-            <div style="display:flex; justify-content:space-between; font-size:18px;">
-                <span style="color:#2d3748; font-weight:600;">Amount to Pay:</span>
-                <strong style="color:#38a169;" id="paymentAmount">₹0.00</strong>
+            <div class="flex justify-between text-lg">
+                <span class="font-semibold text-purple-300">Amount to Pay:</span>
+                <span id="paymentAmount" class="font-bold text-green-400">₹0.00</span>
             </div>
         </div>
 
         <!-- Payment Form -->
-        <form id="paymentForm">
+        <form id="paymentForm" class="space-y-4">
             @Html.AntiForgeryToken();
             <input type="hidden" id="PaymentFormVisitId" name="VisitId" value="" />
-        
 
             <!-- Payment Method -->
-            <div class="form-group" style="margin-bottom:20px;">
-                <label style="font-weight:500; margin-bottom:10px; display:block;">Select Payment Method *</label>
+            <div>
+                <label class="mb-2 block font-medium text-gray-300">
+                    Select Payment Method *
+                </label>
 
-                <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <label class="payment-method-option" style="flex:1; min-width:120px; cursor:pointer;">
-                        <input type="radio" name="paymentMethod" value="credit_card" style="margin-right:8px;" required>
+                <div class="grid grid-cols-2 gap-3">
+
+                    <label class="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-800 p-3 hover:bg-gray-700">
+                        <input type="radio" name="paymentMethod" value="credit_card" required>
                         <span>💳 Credit Card</span>
                     </label>
-                    <label class="payment-method-option" style="flex:1; min-width:120px; cursor:pointer;">
-                        <input type="radio" name="paymentMethod" value="debit_card" style="margin-right:8px;">
+
+                    <label class="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-800 p-3 hover:bg-gray-700">
+                        <input type="radio" name="paymentMethod" value="debit_card">
                         <span>💳 Debit Card</span>
                     </label>
-                    <label class="payment-method-option" style="flex:1; min-width:120px; cursor:pointer;">
-                        <input type="radio" name="paymentMethod" value="upi" style="margin-right:8px;">
+
+                    <label class="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-800 p-3 hover:bg-gray-700">
+                        <input type="radio" name="paymentMethod" value="upi">
                         <span>📱 UPI</span>
                     </label>
-                    <label class="payment-method-option" style="flex:1; min-width:120px; cursor:pointer;">
-                        <input type="radio" name="paymentMethod" value="net_banking" style="margin-right:8px;">
+
+                    <label class="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-800 p-3 hover:bg-gray-700">
+                        <input type="radio" name="paymentMethod" value="net_banking">
                         <span>🏦 Net Banking</span>
                     </label>
+
                 </div>
             </div>
 
-            <!-- Card Details (shown when card is selected) -->
-            <div id="cardDetailsSection" style="display:none; border:1px solid #e2e8f0; padding:15px; border-radius:8px; margin-bottom:15px;">
-                <div class="form-group" style="margin-bottom:12px;">
-                    <label for="cardNumber" style="font-weight:500; margin-bottom:5px; display:block;">Card Number *</label>
-                    <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19"
-                           style="padding:10px; border:1px solid #cbd5e0; border-radius:6px; width:100%;">
+            <!-- Card Details -->
+            <div id="cardDetailsSection"
+                 class="hidden space-y-3 rounded-lg border border-gray-700 p-4">
+
+                <div>
+                    <label class="mb-1 block font-medium">Card Number *</label>
+                    <input id="cardNumber"
+                           maxlength="19"
+                           class="w-full rounded-lg border border-gray-700 bg-gray-800 p-2" />
                 </div>
-                <div style="display:flex; gap:10px;">
-                    <div class="form-group" style="flex:1;">
-                        <label for="cardExpiry" style="font-weight:500; margin-bottom:5px; display:block;">Expiry (MM/YY) *</label>
-                        <input type="text" class="form-control" id="cardExpiry" placeholder="MM/YY" maxlength="5"
-                               style="padding:10px; border:1px solid #cbd5e0; border-radius:6px; width:100%;">
+
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <label class="mb-1 block font-medium">Expiry (MM/YY) *</label>
+                        <input id="cardExpiry"
+                               maxlength="5"
+                               class="w-full rounded-lg border border-gray-700 bg-gray-800 p-2" />
                     </div>
-                    <div class="form-group" style="flex:1;">
-                        <label for="cardCvv" style="font-weight:500; margin-bottom:5px; display:block;">CVV *</label>
-                        <input type="text" class="form-control" id="cardCvv" placeholder="123" maxlength="4"
-                               style="padding:10px; border:1px solid #cbd5e0; border-radius:6px; width:100%;">
+
+                    <div class="flex-1">
+                        <label class="mb-1 block font-medium">CVV *</label>
+                        <input id="cardCvv"
+                               maxlength="4"
+                               class="w-full rounded-lg border border-gray-700 bg-gray-800 p-2" />
                     </div>
                 </div>
             </div>
 
-            <!-- UPI Details (shown when UPI is selected) -->
-            <div id="upiDetailsSection" style="display:none; border:1px solid #e2e8f0; padding:15px; border-radius:8px; margin-bottom:15px;">
-                <div class="form-group" style="margin-bottom:0;">
-                    <label for="upiId" style="font-weight:500; margin-bottom:5px; display:block;">UPI ID *</label>
-                    <input type="text" class="form-control" id="upiId" placeholder="yourname@upi"
-                           style="padding:10px; border:1px solid #cbd5e0; border-radius:6px; width:100%;">
-                </div>
+            <!-- UPI -->
+            <div id="upiDetailsSection"
+                 class="hidden rounded-lg border border-gray-700 p-4">
+                <label class="mb-1 block font-medium">UPI ID *</label>
+                <input id="upiId"
+                       class="w-full rounded-lg border border-gray-700 bg-gray-800 p-2" />
             </div>
 
-            <!-- Net Banking Details (shown when Net Banking is selected) -->
-            <div id="netBankingDetailsSection" style="display:none; border:1px solid #e2e8f0; padding:15px; border-radius:8px; margin-bottom:15px;">
-                <div class="form-group" style="margin-bottom:0;">
-                    <label for="bankName" style="font-weight:500; margin-bottom:5px; display:block;">Select Bank *</label>
-                    <select class="form-control" id="bankName" style="padding:10px; border:1px solid #cbd5e0; border-radius:6px; width:100%;">
-                        <option value="">-- Select Bank --</option>
-                        <option value="sbi">State Bank of India</option>
-                        <option value="hdfc">HDFC Bank</option>
-                        <option value="icici">ICICI Bank</option>
-                        <option value="axis">Axis Bank</option>
-                        <option value="kotak">Kotak Mahindra Bank</option>
-                        <option value="pnb">Punjab National Bank</option>
-                    </select>
-                </div>
+            <!-- Net Banking -->
+            <div id="netBankingDetailsSection"
+                 class="hidden rounded-lg border border-gray-700 p-4">
+                <label class="mb-1 block font-medium">Select Bank *</label>
+                <select id="bankName"
+                        class="w-full rounded-lg border border-gray-700 bg-gray-800 p-2">
+                    <option value="">-- Select Bank --</option>
+                    <option value="sbi">State Bank of India</option>
+                    <option value="hdfc">HDFC Bank</option>
+                    <option value="icici">ICICI Bank</option>
+                    <option value="axis">Axis Bank</option>
+                    <option value="kotak">Kotak Mahindra Bank</option>
+                    <option value="pnb">Punjab National Bank</option>
+                </select>
             </div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="btn btn-success btn-lg" id="submitPayment"
-                    style="width:100%; padding:12px; font-weight:600; border-radius:8px; margin-top:10px;">
+            <!-- Pay Btn -->
+            <button id="submitPayment"
+                    type="submit"
+                    class="w-full rounded-lg bg-purple-600 py-3 font-semibold text-white hover:bg-purple-700">
                 Pay Now
             </button>
         </form>
 
-        <!-- Security Note -->
-        <div style="text-align:center; margin-top:15px; color:#718096; font-size:12px;">
+        <p class="mt-3 text-center text-xs text-gray-500">
             🔒 Your payment information is secure and encrypted
-        </div>
+        </p>
 
     </div>
 </div>
 
-<!-- Payment Successful Modal -->
-<div class="modal fade" id="paymentSuccessModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
 
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">Payment Successful</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <div class="modal-body text-center">
-                <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
-                <p class="mt-3 mb-0 fs-5">The payment has been processed successfully.</p>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success" data-bs-dismiss="modal">OK</button>
-            </div>
-
+<!-- Payment Success Modal -->
+<div id="paymentSuccessModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60">
+    <div class="relative w-[90%] max-w-md rounded-xl bg-green-600 p-6 text-white shadow-2xl">
+        <div class="mb-4 flex items-center justify-between">
+            <h5 class="text-lg font-semibold">Payment Successful</h5>
+            <button id="closePaymentSuccess"
+                    onclick="wrapModal('paymentSuccessModal')"
+                    class="text-2xl transition-colors hover:text-gray-200">
+                &times;
+            </button>
+        </div>
+        <div class="text-center">
+            <i class="fa-solid fa-circle-check text-6xl"></i>
+            <p class="mt-3 text-lg">The payment has been processed successfully.</p>
+        </div>
+        <div class="mt-6 flex justify-center">
+            <button id="okPaymentSuccess"
+                    onclick="wrapModal('paymentSuccessModal')"
+                    class="rounded-lg bg-white px-6 py-2 font-semibold text-green-600 transition-colors hover:bg-gray-100">
+                OK
+            </button>
         </div>
     </div>
 </div>
 
-
-<div class="modal fade" id="dischargeSummaryModal" tabindex="-1" aria-labelledby="dischargeSummaryLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="dischargeSummaryLabel">Discharge Summary</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <div class="modal-body" id="dischargeSummaryContent">
-                <!-- Dynamic summary content will be injected here -->
-                <div class="text-center text-muted">Loading summary...</div>
-            </div>
-
-            <div class="modal-footer">
-                <button id="downloadPdfBtn" class="btn btn-success">
-                    <i class="bi bi-file-earmark-pdf"></i> Download as PDF
-                </button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
+<!-- Discharge Summary Modal -->
+<div id="dischargeSummaryModal"
+     class="fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto bg-black/60">
+    <div class="relative w-[95%] max-w-4xl rounded-xl bg-gray-900 p-6 text-gray-200 shadow-2xl">
+        <div class="mb-4 flex items-center justify-between border-b border-gray-700 pb-3">
+            <h5 class="text-lg font-semibold text-purple-300">Discharge Summary</h5>
+            <button id="closeDischargeSummary"
+                    onclick="wrapModal('dischargeSummaryModal')"
+                    class="text-2xl text-red-400 transition-colors hover:text-red-500">
+                &times;
+            </button>
+        </div>
+        <div id="dischargeSummaryContent" class="max-h-[70vh] overflow-y-auto">
+            <div class="text-center text-gray-400">Loading summary...</div>
+        </div>
+        <div class="mt-6 flex justify-end gap-3">
+            <button id="downloadPdfBtn"
+                    class="flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700">
+                <i class="fa-solid fa-file-pdf"></i> Download as PDF
+            </button>
+            <button id="closeDischargeFooter"
+                    onclick="wrapModal('dischargeSummaryModal')"
+                    class="rounded-lg bg-gray-600 px-4 py-2 text-white transition-colors hover:bg-gray-700">
+                Close
+            </button>
         </div>
     </div>
 </div>

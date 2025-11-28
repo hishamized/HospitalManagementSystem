@@ -1,11 +1,11 @@
 ﻿$(document).ready(function () {
     // Show Add Department modal
     $('#btnAddDepartment').click(function () {
-        $('#addDepartmentModal').modal('show');
+        window.showModal('addDepartmentModal');
         // Clear previous errors
-        $('#nameError').text('');
-        $('#descriptionError').text('');
-        $('#formError').text('');
+        $('#nameError').addClass('hidden').text('');
+        $('#descriptionError').addClass('hidden').text('');
+        $('#formError').addClass('hidden').text('');
         $('#addDepartmentForm')[0].reset();
         $('#departmentName').removeClass('is-invalid');
         $('#departmentDescription').removeClass('is-invalid');
@@ -27,29 +27,30 @@
             data: JSON.stringify(dto),
             success: function (response) {
                 if (response.success) {
-                    $('#addDepartmentModal').modal('hide');
-                    loadDepartmentsGrid(); // refresh grid after adding
+                    window.hideModal('addDepartmentModal');
+                    loadDepartmentsGrid();
+                    toastr.success('Department added successfully!');
                 } else {
                     if (response.errors) {
                         console.log(response.errors);
                         response.errors.forEach(function (err) {
                             if (err.PropertyName === "Name") {
-                                $('#nameError').text(err.ErrorMessage).show();
+                                $('#nameError').removeClass('hidden').text(err.ErrorMessage);
                                 $('#departmentName').addClass('is-invalid');
                             }
                             if (err.PropertyName === "Description") {
-                                $('#descriptionError').text(err.ErrorMessage).show();
+                                $('#descriptionError').removeClass('hidden').text(err.ErrorMessage);
                                 $('#departmentDescription').addClass('is-invalid');
                             }
                         });
                     } else {
-                        $('#formError').text(response.message);
+                        $('#formError').removeClass('hidden').text(response.message);
                         console.error(response.message);
                     }
                 }
             },
             error: function (xhr, status, error) {
-                $('#formError').text('An unexpected error occurred: ' + error);
+                $('#formError').removeClass('hidden').text('An unexpected error occurred: ' + error);
                 console.error('AJAX error:', xhr.responseText);
             }
         });
@@ -57,22 +58,28 @@
 
     // AG Grid column definitions
     var columnDefs = [
-        { headerName: "ID", field: "id", sortable: true, filter: true, resizable: true, checkboxSelection: true },
-        { headerName: "Name", field: "name", sortable: true, filter: true, resizable: true },
-        { headerName: "Description", field: "description", sortable: true, filter: true, resizable: true },
+        { headerName: "ID", field: "id", sortable: true, filter: true, resizable: true, width: 100 },
+        { headerName: "Name", field: "name", sortable: true, filter: true, resizable: true, flex: 1 },
+        { headerName: "Description", field: "description", sortable: true, filter: true, resizable: true, flex: 1 },
         {
-            headerName: "Actions",
-            field: "id",
-            cellRenderer: function (params) {
+            headerName: 'Actions',
+            width: 180,
+            cellRenderer: (params) => {
                 return `
-                    <button class="btn btn-sm btn-primary btn-edit" data-id="${params.value}">Edit</button>
-                    <button class="btn btn-sm btn-danger btn-delete" data-id="${params.value}">Delete</button>
+                    <div class="flex gap-2">
+                        <button 
+                            class="px-3 py-1 text-sm rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition edit-btn"
+                            data-id="${params.data.id}">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button 
+                            class="px-3 py-1 text-sm rounded-lg bg-red-600 hover:bg-red-700 text-white transition delete-btn"
+                            data-id="${params.data.id}">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
                 `;
-            },
-            sortable: false,
-            filter: false,
-            resizable: false,
-            width: 150
+            }
         }
     ];
 
@@ -83,7 +90,6 @@
         pagination: true,
         paginationPageSize: 10,
         defaultColDef: {
-            flex: 1,
             minWidth: 100,
             sortable: true,
             filter: true,
@@ -91,10 +97,15 @@
         },
         rowSelection: 'single',
         animateRows: true,
-        getRowNodeId: data => data.id,
-        onGridReady: function () {
+        rowHeight: 50,
+        onGridReady: function (params) {
+            params.api.sizeColumnsToFit();
             loadDepartmentsGrid();
         },
+        onGridSizeChanged: function (params) {
+            params.api.sizeColumnsToFit();
+        },
+        getRowNodeId: data => data.id,
         getContextMenuItems: function (params) {
             var result = [
                 {
@@ -128,14 +139,17 @@
             url: '/Department/GetAll',
             type: 'GET',
             success: function (response) {
+                console.log('Departments response:', response);
                 if (response.success) {
                     gridOptions.api.setRowData(response.data);
                 } else {
                     console.error('Error loading departments:', response.message);
+                    toastr.error('Failed to load departments');
                 }
             },
             error: function (xhr, status, error) {
                 console.error('AJAX error loading departments:', xhr.responseText);
+                toastr.error('Error loading departments');
             }
         });
     }
@@ -144,28 +158,33 @@
     function editDepartment(data) {
         console.log('Editing department:', data);
 
-        // Populate modal fields with row data (no server call)
+        // Populate modal fields with row data
         $('#editDepartmentId').val(data.id);
         $('#editDepartmentName').val(data.name);
         $('#editDepartmentDescription').val(data.description || '');
 
         // Clear old errors
-        $('#editNameError').text('');
-        $('#editDescriptionError').text('');
-        $('#editFormError').text('');
+        $('#editNameError').addClass('hidden').text('');
+        $('#editDescriptionError').addClass('hidden').text('');
+        $('#editFormError').addClass('hidden').text('');
+        $('#editDepartmentName').removeClass('is-invalid');
+        $('#editDepartmentDescription').removeClass('is-invalid');
 
         // Show modal
-        $('#editDepartmentModal').modal('show');
+        window.showModal('editDepartmentModal');
     }
+
     // Handle Edit Department form submission
     $('#editDepartmentForm').submit(function (e) {
         e.preventDefault();
 
         var dto = {
-            Id: $('#editDepartmentId').val(),
+            Id: parseInt($('#editDepartmentId').val()),
             Name: $('#editDepartmentName').val(),
             Description: $('#editDepartmentDescription').val()
         };
+
+        console.log('Submitting edit:', dto);
 
         $.ajax({
             url: '/Department/Edit',
@@ -174,54 +193,44 @@
             data: JSON.stringify(dto),
             success: function (response) {
                 if (response.success) {
-                    // Close modal
-                    $('#editDepartmentModal').modal('hide');
-
-                    // Refresh AG Grid
+                    window.hideModal('editDepartmentModal');
                     loadDepartmentsGrid();
-
-                    // Optional success toast
-                    alert(response.message);
+                    toastr.success('Department updated successfully!');
                 } else {
-                    // Display validation errors if any
                     if (response.errors && response.errors.length > 0) {
                         console.log('Validation errors:', response.errors);
 
                         response.errors.forEach(function (err) {
-                            if (!err.propertyName) return; // safety check
+                            if (!err.propertyName) return;
 
-                            // Normalize property name (take last segment after dot)
                             var prop = err.propertyName.includes('.') ? err.propertyName.split('.').pop() : err.propertyName;
 
                             if (prop === "Name") {
-                                $('#editNameError').text(err.errorMessage).show();
+                                $('#editNameError').removeClass('hidden').text(err.errorMessage);
                                 $('#editDepartmentName').addClass('is-invalid');
                             }
                             if (prop === "Description") {
-                                $('#editDescriptionError').text(err.errorMessage).show();
+                                $('#editDescriptionError').removeClass('hidden').text(err.errorMessage);
                                 $('#editDepartmentDescription').addClass('is-invalid');
                             }
                         });
                     } else {
-                        // Generic error
-                        $('#editFormError').text(response.message).show();
+                        $('#editFormError').removeClass('hidden').text(response.message);
                         console.error('Edit error:', response.message, response.details || '');
                     }
                 }
             },
             error: function (xhr, status, error) {
-                $('#editFormError').text('An unexpected error occurred: ' + error).show();
+                $('#editFormError').removeClass('hidden').text('An unexpected error occurred: ' + error);
                 console.error('AJAX error:', xhr.responseText);
             }
         });
     });
 
-
     // Delete department handler
     function deleteDepartment(data) {
         if (!data || !data.id) return;
 
-        // Show confirmation
         if (!confirm(`Are you sure you want to delete department "${data.name}"?`)) return;
 
         $.ajax({
@@ -231,35 +240,60 @@
             data: JSON.stringify(data.id),
             success: function (response) {
                 if (response.success) {
-                    // Optional: show success toast or alert
-                    alert(response.message);
-
-                    // Refresh AG Grid
+                    toastr.success('Department deleted successfully!');
                     loadDepartmentsGrid();
                 } else {
-                    // Show error message
-                    alert(response.message || 'Failed to delete department.');
+                    toastr.error(response.message || 'Failed to delete department.');
                     console.error('Delete error:', response.details || '');
                 }
             },
             error: function (xhr, status, error) {
-                alert('An unexpected error occurred while deleting the department.');
+                toastr.error('An unexpected error occurred while deleting the department.');
                 console.error('AJAX error:', xhr.responseText);
             }
         });
     }
 
+    // Event delegation for Edit/Delete buttons inside grid - FIXED
+    $(document).on('click', '.edit-btn', function (e) {
+        e.preventDefault();
+        const id = parseInt($(this).data('id'));
+        console.log('Edit clicked for ID:', id);
 
-    // Event delegation for Edit/Delete buttons inside grid
-    $('#departmentsGrid').on('click', '.btn-edit', function () {
-        var id = $(this).data('id');
-        var rowData = gridOptions.api.getRowNode(id)?.data;
-        if (rowData) editDepartment(rowData);
+        // Find the row data by iterating through all rows
+        let foundData = null;
+        gridOptions.api.forEachNode(function (node) {
+            if (node.data && node.data.id === id) {
+                foundData = node.data;
+            }
+        });
+
+        if (foundData) {
+            console.log('Found data:', foundData);
+            editDepartment(foundData);
+        } else {
+            console.error('Could not find department with ID:', id);
+        }
     });
 
-    $('#departmentsGrid').on('click', '.btn-delete', function () {
-        var id = $(this).data('id');
-        var rowData = gridOptions.api.getRowNode(id)?.data;
-        if (rowData) deleteDepartment(rowData);
+    $(document).on('click', '.delete-btn', function (e) {
+        e.preventDefault();
+        const id = parseInt($(this).data('id'));
+        console.log('Delete clicked for ID:', id);
+
+        // Find the row data by iterating through all rows
+        let foundData = null;
+        gridOptions.api.forEachNode(function (node) {
+            if (node.data && node.data.id === id) {
+                foundData = node.data;
+            }
+        });
+
+        if (foundData) {
+            console.log('Found data:', foundData);
+            deleteDepartment(foundData);
+        } else {
+            console.error('Could not find department with ID:', id);
+        }
     });
 });

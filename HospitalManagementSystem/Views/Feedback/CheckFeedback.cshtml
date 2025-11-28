@@ -2,80 +2,97 @@
     ViewData["Title"] = "Check Feedback";
 }
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<div class="min-h-screen bg-gray-900 p-6">
+    <div class="max-w-6xl mx-auto space-y-10">
 
-<div class="container py-4">
-    <div class="card shadow-sm p-4 mb-4">
-        <h3 class="mb-3 text-primary"><i class="fa-solid fa-comments"></i> Doctor Feedback</h3>
-        <div class="row g-3 align-items-end">
-            <div class="col-md-8">
-                <label for="doctorSelect" class="form-label fw-semibold">Select Doctor</label>
-                <select id="doctorSelect" class="form-select">
-                    <option value="">-- Select a Doctor --</option>
-                </select>
-            </div>
-            <div class="col-md-4 text-end">
-                <button id="checkFeedbackBtn" class="btn btn-success w-100">
-                    <i class="fa-solid fa-magnifying-glass"></i> Check Feedback
-                </button>
+        <!-- HEADER -->
+        <header class="text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-white">Doctor Feedback Viewer</h1>
+            <p class="text-gray-400 mt-1">View feedback ratings for doctors across the hospital</p>
+        </header>
+
+        <!-- SEARCH / FILTER CARD -->
+        <div class="bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-700">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div class="md:col-span-3">
+                    <label for="doctorSelect" class="block text-gray-300 font-medium mb-2">Select Doctor</label>
+                    <select id="doctorSelect"
+                            class="w-full bg-gray-700 border border-gray-600 text-gray-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition">
+                        <option value="">-- Select a Doctor --</option>
+                    </select>
+                </div>
+                <div>
+                    <button id="checkFeedbackBtn"
+                            class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition transform hover:scale-105 active:scale-95">
+                        <i class="fas fa-search mr-2"></i> Check Feedback
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="feedbackContainer" class="row gy-4">
-        <!-- Feedback cards will appear here dynamically -->
+        <!-- FEEDBACK CARDS -->
+        <div id="feedbackContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Feedback cards will appear here dynamically -->
+            <!-- Example card structure for reference -->
+            <!--
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 shadow hover:shadow-purple-900/30 transition">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-white font-semibold">Dr. John Doe</h3>
+                    <span class="text-gray-400 text-sm">Cardiology</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="flex space-x-1">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star-half-alt text-yellow-400"></i>
+                        <i class="far fa-star text-yellow-400"></i>
+                    </div>
+                    <span class="text-gray-300 ml-2 text-sm">3.5 / 5</span>
+                </div>
+                <p class="text-gray-300 mt-2 text-sm line-clamp-3">"Dr. Doe was very attentive and explained everything clearly..."</p>
+            </div>
+            -->
+        </div>
+
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        /* Optional: subtle fade-in for cards */
+        .feedback-card {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s forwards;
+        }
+
+            .feedback-card:nth-child(1) {
+                animation-delay: 0.1s;
+            }
+
+            .feedback-card:nth-child(2) {
+                animation-delay: 0.2s;
+            }
+
+            .feedback-card:nth-child(3) {
+                animation-delay: 0.3s;
+            }
+
+        @@keyframes fadeInUp {
+            to
+
+        {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+    </style>
+}
 
 @section Scripts {
     <script src="~/js/Feedback/checkfeedback.js"></script>
 }
-
-<style>
-    /* 🌟 Card Styling */
-    .feedback-card {
-        border: none;
-        border-radius: 1rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-    }
-
-        .feedback-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-        }
-
-    .feedback-header {
-        background: linear-gradient(90deg, #007bff, #6610f2);
-        color: white;
-        padding: 1rem;
-        border-radius: 1rem 1rem 0 0;
-    }
-
-    .feedback-rating i {
-        font-size: 1.2rem;
-        margin-right: 2px;
-        cursor: pointer;
-    }
-
-    .star-filled {
-        color: #ffb400; /* Orange stars */
-    }
-
-    .star-empty {
-        color: #ddd; /* Gray stars */
-    }
-
-    .feedback-body {
-        background-color: #fff;
-        padding: 1rem 1.2rem;
-        border-radius: 0 0 1rem 1rem;
-    }
-
-    .no-feedback {
-        text-align: center;
-        font-style: italic;
-        color: #6c757d;
-        margin-top: 2rem;
-    }
-</style>

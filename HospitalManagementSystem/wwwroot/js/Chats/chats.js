@@ -10,7 +10,6 @@ $(function () {
     loadUsers();
     loadRecentChats();
     setupSearch();
-    setupSend();
     setupTypingDetection();
 });
 
@@ -43,7 +42,7 @@ function initSignalR() {
 
 // ===================== Users =====================
 function loadUsers(query) {
-    $('#users-list').html('<div>Loading...</div>');
+    $('#users-list').html('<div class="text-slate-400 text-sm p-2">Loading...</div>');
     $.get(apiBase + '/GetUsers', { query: query || '' })
         .done(users => renderUsers(users));
 }
@@ -52,45 +51,52 @@ function renderUsers(users) {
     const container = $('#users-list').empty();
 
     if (!users || users.length === 0) {
-        container.append('<div class="text-muted">No users</div>');
+        container.append('<div class="text-slate-400 text-sm p-2">No users</div>');
         return;
     }
 
     users.forEach(u => {
         if (u.id === currentUserId) return;
         const el = $(`
-            <div class="user-item p-2 border-bottom d-flex justify-content-between align-items-center" data-userid="${u.id}">
-                <div>
-                    <div class="fw-bold">${escapeHtml(u.fullName)}</div>
-                    <div class="small text-muted">
-                        ${escapeHtml(u.email)} · ${escapeHtml(u.username)}
+            <div class="user-item bg-dark-card rounded-lg p-3 border border-dark-border transition-all hover:bg-slate-700" data-userid="${u.id}">
+                <div class="flex justify-between items-start">
+                    <div class="flex-1">
+                        <div class="font-bold text-slate-200">${escapeHtml(u.fullName)}</div>
+                        <div class="text-xs text-slate-400 mt-1">
+                            ${escapeHtml(u.email)} · ${escapeHtml(u.username)}
+                        </div>
+                        <small class="text-xs text-slate-400">
+                            Last seen: ${u.lastSeenAt ? new Date(u.lastSeenAt).toLocaleString() : 'Never'}
+                        </small>
+                        <div class="flex items-center status-indicator mt-1">
+                            <span class="online-dot" style="display:none;"></span>
+                            <span class="online-text" style="display:none;">Online</span>
+                        </div>
+                        <div class="last-seen text-xs text-slate-400"></div>
+                        <div class="typing-indicator text-xs" style="display:none;"></div>
                     </div>
-                     <small class="text-muted">
-                         Last seen: ${u.lastSeenAt ? new Date(u.lastSeenAt).toLocaleString() : 'Never'}
-                    </small>
-                    <div class="d-flex align-items-center status-indicator" style="margin-top:2px;">
-                        <span class="online-dot" style="display:none; width:8px; height:8px; border-radius:50%; background-color:#28a745; margin-right:5px;"></span>
-                        <span class="online-text" style="display:none; font-size:0.75rem; color:#28a745;">Online</span>
+                    <div>
+                       <button class="start-chat bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-green-400">
+                            Chat
+                        </button>
                     </div>
-                    <div class="last-seen small text-muted" style="font-size:0.7rem;"></div>
-                    <div class="typing-indicator small text-muted" style="display:none;"></div>
-                </div>
-                <div>
-                    <button class="btn btn-sm btn-outline-primary start-chat">Chat</button>
                 </div>
             </div>
         `);
 
         const lastSeenEl = el.find('.last-seen');
-        if (!u.IsOnline && u.LastSeenAt) {
-            const lastSeen = new Date(u.LastSeenAt);
+        if (!u.isOnline && u.lastSeenAt) {
+            const lastSeen = new Date(u.lastSeenAt);
             lastSeenEl.text(`Last seen: ${lastSeen.toLocaleString()}`);
         } else {
             lastSeenEl.text('');
         }
 
         // Hook up the chat button click
-        el.find('.start-chat').on('click', () => startChatWithUser(u));
+        el.find('.start-chat').on('click', (e) => {
+            e.stopPropagation();
+            startChatWithUser(u);
+        });
 
         container.append(el);
 
@@ -103,23 +109,23 @@ function renderUsers(users) {
 
 // ===================== Recent Chats =====================
 function loadRecentChats() {
-    $('#recent-chats').html('<div>Loading...</div>');
+    $('#recent-chats').html('<div class="text-slate-400 text-sm p-2">Loading...</div>');
     $.get(apiBase + '/GetRecentChats')
         .done(data => {
             const container = $('#recent-chats').empty();
             if (!data || data.length === 0) {
-                container.append('<div class="text-muted">No recent chats</div>');
+                container.append('<div class="text-slate-400 text-sm p-2">No recent chats</div>');
                 return;
             }
 
             data.forEach(c => {
                 const el = $(`
-                    <div class="recent-chat p-2 border-bottom d-flex justify-content-between align-items-center" data-chatid="${c.chatRoomId}">
+                    <div class="recent-chat bg-dark-card rounded-lg p-3 border border-dark-border transition-all hover:bg-slate-700 cursor-pointer" data-chatid="${c.chatRoomId}">
                         <div>
-                            <div class="fw-bold">${escapeHtml(c.title)}</div>
-                            <div class="small text-muted">
-                                ${escapeHtml(c.lastMessageSnippet)} 
-                                ${c.unreadCount > 0 ? `<span class="badge bg-danger">${c.unreadCount}</span>` : ''}
+                            <div class="font-bold text-slate-200">${escapeHtml(c.title)}</div>
+                            <div class="text-xs text-slate-400 mt-1 flex items-center justify-between">
+                                <span>${escapeHtml(c.lastMessageSnippet)}</span>
+                                ${c.unreadCount > 0 ? `<span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full ml-2">${c.unreadCount}</span>` : ''}
                             </div>
                         </div>
                     </div>
@@ -154,8 +160,16 @@ function isEmailOrUsername(q) {
 
 // ===================== Chat operations =====================
 function startChatWithUser(user) {
+    console.log('Starting chat with user:', user);
     $.post(apiBase + '/StartChat', { userId: user.id })
-        .done(chat => openChat(chat.chatRoomId, chat.title));
+        .done(chat => {
+            console.log('Chat started:', chat);
+            openChat(chat.chatRoomId, chat.title);
+        })
+        .fail(xhr => {
+            console.error('Failed to start chat:', xhr);
+            alert(xhr.responseText || 'Failed to start chat');
+        });
 }
 
 function startChatByIdentifier(identifier) {
@@ -176,11 +190,19 @@ function markMessagesAsSeen(chatRoomId) {
 }
 
 function openChat(chatRoomId, title) {
+    console.log('Opening chat:', chatRoomId, title);
     currentChatRoomId = chatRoomId;
-    $('#chat-header').text(title);
+    $('#chat-header').html(`
+        <h3 class="text-lg font-semibold text-purple-secondary flex items-center">
+            <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+            </svg>
+            ${escapeHtml(title)}
+        </h3>
+    `);
     $('#message-input').prop('disabled', false);
     $('#send-btn').prop('disabled', false);
-    $('#messages').html('<div>Loading messages...</div>');
+    $('#messages').html('<div class="text-slate-400 text-center p-4">Loading messages...</div>');
 
     $('.typing-indicator').hide().text('');
 
@@ -188,9 +210,13 @@ function openChat(chatRoomId, title) {
 
     $.get(apiBase + '/GetMessages', { chatRoomId })
         .done(messages => {
-            console.log(messages);
+            console.log('Messages loaded:', messages);
             renderMessages(messages);
             markMessagesAsSeen(chatRoomId);
+        })
+        .fail(err => {
+            console.error('Failed to load messages:', err);
+            $('#messages').html('<div class="text-red-400 text-center p-4">Failed to load messages</div>');
         });
 }
 
@@ -217,8 +243,8 @@ function renderMessages(messages) {
     Object.values(groupedMessages).forEach(m => {
         const alignment = m.senderId === currentUserId ? 'message-right' : 'message-left';
         const statusIcon = getMessageStatusIcon(m, currentUserId);
-        const editedLabel = m.isEdited ? '<small class="text-muted ms-1">(edited)</small>' : '';
-        const deletedContent = m.isDeletedForEveryone ? '<em class="text-muted">Message deleted</em>' : escapeHtml(m.content);
+        const editedLabel = m.isEdited ? '<small class="text-slate-400 ml-1">(edited)</small>' : '';
+        const deletedContent = m.isDeletedForEveryone ? '<em class="text-slate-400">Message deleted</em>' : escapeHtml(m.content);
 
         const el = $(`
             <div class="message ${alignment}" data-messageid="${m.id}" data-senderid="${m.senderId}" data-content="${escapeHtml(m.content)}">
@@ -246,7 +272,7 @@ function getMessageStatusIcon(message, currentUserId) {
     console.log(message.statuses)
 
     if (!recipientStatus) {
-        return '<span class="text-muted" title="Sending...">⏱️</span>';
+        return '<span class="text-slate-400" title="Sending...">⏱️</span>';
     }
 
     if (recipientStatus.isSeen) {
@@ -255,10 +281,10 @@ function getMessageStatusIcon(message, currentUserId) {
     }
 
     if (recipientStatus.isDelivered) {
-        return '<span class="text-muted" title="Delivered">✓✓</span>';
+        return '<span class="text-slate-400" title="Delivered">✓✓</span>';
     }
 
-    return '<span class="text-muted" title="Sent">✓</span>';
+    return '<span class="text-slate-400" title="Sent">✓</span>';
 }
 
 function onMessageStatusUpdated(payload) {
@@ -292,13 +318,21 @@ $('#send-btn').on('click', async () => {
     }
 });
 
+// Allow Enter key to send message
+$('#message-input').on('keypress', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        $('#send-btn').click();
+    }
+});
+
 
 // ===================== Receive messages =====================
 function onReceiveMessage(payload) {
     if (payload.chatRoomId === currentChatRoomId) {
         const alignment = payload.senderId === currentUserId ? 'message-right' : 'message-left';
-        const statusIcon = payload.senderId === currentUserId ? `<div class="message-status"><span class="text-muted" title="Sent">✓</span></div>` : '';
-        const editedLabel = payload.isEdited ? '<small class="text-muted ms-1">(edited)</small>' : '';
+        const statusIcon = payload.senderId === currentUserId ? `<div class="message-status"><span class="text-slate-400" title="Sent">✓</span></div>` : '';
+        const editedLabel = payload.isEdited ? '<small class="text-slate-400 ml-1">(edited)</small>' : '';
 
         $('#messages').append(`
             <div class="message ${alignment}" data-messageid="${payload.id}" data-senderid="${payload.senderId}" data-content="${escapeHtml(payload.content)}">
@@ -322,7 +356,7 @@ function onMessageEdited(payload) {
     const el = $(`[data-messageid="${payload.id}"]`);
     if (el.length) {
         el.attr('data-content', escapeHtml(payload.content));
-        el.find('.message-content').html(`${escapeHtml(payload.content)} <small class="text-muted ms-1">(edited)</small>`);
+        el.find('.message-content').html(`${escapeHtml(payload.content)} <small class="text-slate-400 ml-1">(edited)</small>`);
     }
 }
 
@@ -330,7 +364,7 @@ function onMessageDeleted(payload) {
     const el = $(`[data-messageid="${payload.id}"]`);
     if (el.length) {
         if (payload.isDeletedForEveryone) {
-            el.find('.message-content').html('<em class="text-muted">Message deleted</em>');
+            el.find('.message-content').html('<em class="text-slate-400">Message deleted</em>');
         }
     }
 }
@@ -360,13 +394,13 @@ function setupContextMenu() {
         // Remove existing context menu
         $('#message-context-menu').remove();
 
-        // Create context menu
+        // Create context menu with dark theme
         const contextMenu = $(`
-            <div id="message-context-menu" style="z-index: 10; position: absolute; top: ${e.pageY}px; left: ${e.pageX}px; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 9999; min-width: 150px;">
-                <div class="context-menu-item" data-action="edit" style="padding: 10px 15px; cursor: pointer; border-bottom: 1px solid #eee;">
+            <div id="message-context-menu" style="position: absolute; top: ${e.pageY}px; left: ${e.pageX}px; background: #1e293b; border: 1px solid #334155; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 9999; min-width: 150px;">
+                <div class="context-menu-item" data-action="edit" style="padding: 10px 15px; cursor: pointer; border-bottom: 1px solid #334155; color: #e2e8f0;">
                     <i class="bi bi-pencil"></i> Edit
                 </div>
-                <div class="context-menu-item" data-action="delete" style="padding: 10px 15px; cursor: pointer; color: #dc3545;">
+                <div class="context-menu-item" data-action="delete" style="padding: 10px 15px; cursor: pointer; color: #ef4444;">
                     <i class="bi bi-trash"></i> Delete for Everyone
                 </div>
             </div>
@@ -376,9 +410,9 @@ function setupContextMenu() {
 
         // Hover effect
         contextMenu.find('.context-menu-item').on('mouseenter', function () {
-            $(this).css('background-color', '#f0f0f0');
+            $(this).css('background-color', '#334155');
         }).on('mouseleave', function () {
-            $(this).css('background-color', 'white');
+            $(this).css('background-color', '#1e293b');
         });
 
         // Handle menu item clicks
@@ -401,27 +435,31 @@ function openEditMessageModal(messageId, currentContent) {
     // Remove existing modal if any
     $('#edit-message-modal').remove();
 
-    // Create modal
+    // Create modal with Tailwind CSS (no Bootstrap)
     const modal = $(`
-        <div class="modal fade" id="edit-message-modal" tabindex="-1" aria-labelledby="editMessageModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editMessageModalLabel">Edit Message</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div id="edit-message-modal" class="fixed inset-0 z-50 flex items-center justify-center" style="background-color: rgba(0, 0, 0, 0.75);">
+            <div class="bg-dark-card rounded-lg shadow-xl w-full max-w-md mx-4" style="background-color: #1e293b; border: 1px solid #334155;">
+                <div class="px-6 py-4 border-b" style="border-color: #334155;">
+                    <div class="flex items-center justify-between">
+                        <h5 class="text-lg font-semibold" style="color: #a78bfa;">Edit Message</h5>
+                        <button type="button" class="text-slate-400 hover:text-slate-200 close-modal">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
                     </div>
-                    <div class="modal-body">
-                        <form id="edit-message-form">
-                            <div class="mb-3">
-                                <label for="edit-message-content" class="form-label">Message Content</label>
-                                <textarea class="form-control" id="edit-message-content" rows="4" required>${currentContent}</textarea>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="save-edit-btn">Save Changes</button>
-                    </div>
+                </div>
+                <div class="px-6 py-4">
+                    <form id="edit-message-form">
+                        <div class="mb-3">
+                            <label for="edit-message-content" class="block text-sm font-medium text-slate-300 mb-2">Message Content</label>
+                            <textarea class="w-full px-3 py-2 rounded-lg text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-primary" id="edit-message-content" rows="4" required style="background-color: #0f172a; border: 1px solid #334155;">${escapeHtml(currentContent)}</textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="px-6 py-4 border-t flex justify-end gap-2" style="border-color: #334155;">
+                    <button type="button" class="px-4 py-2 rounded-lg text-white close-modal" style="background-color: #475569;">Cancel</button>
+                    <button type="button" class="px-4 py-2 rounded-lg text-white" id="save-edit-btn" style="background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);">Save Changes</button>
                 </div>
             </div>
         </div>
@@ -429,9 +467,17 @@ function openEditMessageModal(messageId, currentContent) {
 
     $('body').append(modal);
 
-    // Show modal
-    const bsModal = new bootstrap.Modal(document.getElementById('edit-message-modal'));
-    bsModal.show();
+    // Close modal handlers
+    modal.find('.close-modal').on('click', function () {
+        modal.remove();
+    });
+
+    // Close on backdrop click
+    modal.on('click', function (e) {
+        if (e.target === this) {
+            modal.remove();
+        }
+    });
 
     // Handle save button
     $('#save-edit-btn').on('click', function () {
@@ -443,7 +489,7 @@ function openEditMessageModal(messageId, currentContent) {
         }
 
         if (newContent === currentContent) {
-            bsModal.hide();
+            modal.remove();
             return;
         }
 
@@ -457,19 +503,13 @@ function openEditMessageModal(messageId, currentContent) {
             },
             success: function (response) {
                 console.log('Message edited successfully:', response);
-                bsModal.hide();
-                // The SignalR event will update the UI
+                modal.remove();
             },
             error: function (xhr, status, error) {
                 console.error('Failed to edit message:', error);
                 alert('Failed to edit message. Please try again.');
             }
         });
-    });
-
-    // Clean up modal after hiding
-    $('#edit-message-modal').on('hidden.bs.modal', function () {
-        $(this).remove();
     });
 }
 

@@ -2,123 +2,332 @@
     ViewData["Title"] = "Ward Management";
 }
 
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="text-dark">Ward Management</h3>
-        <button id="btnAddWard" class="btn btn-primary">+ Add Ward</button>
-    </div>
-
-    <!-- 🧱 AG GRID TABLE -->
-    <div id="wardGrid" class="ag-theme-alpine" style="height: 400px; width: 100%;"></div>
-</div>
-
-<!-- 🩺 ADD WARD MODAL -->
-<div class="modal fade" id="addWardModal" tabindex="-1" aria-labelledby="addWardLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content rounded-3 shadow">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="addWardLabel">Add New Ward</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+<div class="min-h-screen bg-gray-900 p-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 overflow-hidden">
+            <!-- Header -->
+            <div class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-2xl font-bold text-purple-400 flex items-center gap-2">
+                        <i class="fas fa-hospital"></i>
+                        Ward Management
+                    </h4>
+                    <button class="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold px-4 py-2 rounded-lg shadow-lg transition-all flex items-center gap-2"
+                            id="btnAddWard">
+                        <i class="fas fa-plus-circle"></i>
+                        Add Ward
+                    </button>
+                </div>
             </div>
-            <div class="modal-body">
-                <form id="wardForm">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Ward Code</label>
-                            <input type="text" name="WardCode" class="form-control" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Ward Name</label>
-                            <input type="text" name="WardName" class="form-control" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Ward Type</label>
-                            <input type="text" name="WardType" class="form-control" placeholder="General / ICU / Private" required />
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Capacity</label>
-                            <input type="number" name="Capacity" class="form-control" min="1" required />
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Occupied Beds</label>
-                            <input type="number" name="OccupiedBeds" class="form-control" min="0" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Location</label>
-                            <input type="text" name="Location" class="form-control" placeholder="e.g., Block A - 2nd Floor" required />
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Description</label>
-                            <textarea name="Description" class="form-control" rows="2"></textarea>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button id="btnSaveWard" class="btn btn-primary">Save Ward</button>
+
+            <!-- Grid Body -->
+            <div class="p-6">
+                <div id="wardGrid" class="ag-theme-alpine-dark" style="height: 600px; width: 100%;"></div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- ✅ Edit Ward Modal -->
-<div class="modal fade" id="editWardModal" tabindex="-1" aria-labelledby="editWardModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form id="editWardForm">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title" id="editWardModalLabel">Edit Ward</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" id="editWardId">
+<!-- Add Ward Modal -->
+<div class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden"
+     id="addWardModal"
+     tabindex="-1">
+    <div class="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-3xl transform transition-all max-h-[90vh] overflow-y-auto">
+        <!-- Modal Header -->
+        <div class="bg-purple-600 px-6 py-4 flex items-center justify-between rounded-t-2xl sticky top-0 z-10">
+            <h5 class="text-xl font-bold text-white flex items-center gap-2">
+                <i class="fas fa-plus-circle"></i>
+                Add New Ward
+            </h5>
+            <button type="button"
+                    class="text-white hover:text-gray-200 text-2xl transition-colors"
+                    onclick="document.getElementById('addWardModal').classList.add('hidden')">
+                &times;
+            </button>
+        </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label>Ward Code</label>
-                            <input type="text" id="editWardCode" class="form-control" readonly>
-                        </div>
-                        <div class="col-md-6">
-                            <label>Ward Name</label>
-                            <input type="text" id="editWardName" class="form-control">
-                        </div>
+        <!-- Modal Body -->
+        <div class="p-6">
+            <form id="wardForm" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Ward Code -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">
+                            <i class="fas fa-barcode text-purple-400 mr-2"></i>Ward Code
+                        </label>
+                        <input type="text" name="WardCode"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               placeholder="e.g., W001"
+                               required>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label>Ward Type</label>
-                            <input type="text" id="editWardType" class="form-control">
-                        </div>
-                        <div class="col-md-3">
-                            <label>Capacity</label>
-                            <input type="number" id="editCapacity" class="form-control">
-                        </div>
-                        <div class="col-md-3">
-                            <label>Occupied Beds</label>
-                            <input type="number" id="editOccupiedBeds" class="form-control">
-                        </div>
+                    <!-- Ward Name -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">
+                            <i class="fas fa-hospital-alt text-purple-400 mr-2"></i>Ward Name
+                        </label>
+                        <input type="text" name="WardName"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               placeholder="e.g., General Ward A"
+                               required>
                     </div>
 
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label>Location</label>
-                            <input type="text" id="editLocation" class="form-control">
-                        </div>
-                        <div class="col-md-6">
-                            <label>Description</label>
-                            <textarea id="editDescription" class="form-control"></textarea>
-                        </div>
+                    <!-- Ward Type -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">
+                            <i class="fas fa-list-alt text-purple-400 mr-2"></i>Ward Type
+                        </label>
+                        <input type="text" name="WardType"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               placeholder="General / ICU / Private"
+                               required>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-success">Save Changes</button>
+
+                    <!-- Capacity -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">
+                            <i class="fas fa-bed text-purple-400 mr-2"></i>Capacity
+                        </label>
+                        <input type="number" name="Capacity"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               min="1"
+                               placeholder="Total beds"
+                               required>
+                    </div>
+
+                    <!-- Occupied Beds -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">
+                            <i class="fas fa-user-injured text-purple-400 mr-2"></i>Occupied Beds
+                        </label>
+                        <input type="number" name="OccupiedBeds"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               min="0"
+                               placeholder="Currently occupied"
+                               required>
+                    </div>
+
+                    <!-- Location -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">
+                            <i class="fas fa-map-marker-alt text-purple-400 mr-2"></i>Location
+                        </label>
+                        <input type="text" name="Location"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               placeholder="e.g., Block A - 2nd Floor"
+                               required>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-300 font-semibold mb-2">
+                            <i class="fas fa-align-left text-purple-400 mr-2"></i>Description
+                        </label>
+                        <textarea name="Description"
+                                  class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+                                  rows="3"
+                                  placeholder="Additional information about the ward"></textarea>
+                    </div>
                 </div>
             </form>
         </div>
+
+        <!-- Modal Footer -->
+        <div class="bg-gray-800 border-t border-gray-700 px-6 py-4 flex items-center justify-end gap-3 rounded-b-2xl sticky bottom-0">
+            <button type="button"
+                    class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold rounded-lg transition-colors"
+                    onclick="document.getElementById('addWardModal').classList.add('hidden')">
+                Cancel
+            </button>
+            <button type="button"
+                    id="btnSaveWard"
+                    class="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg shadow-lg transition-all">
+                Save Ward
+            </button>
+        </div>
     </div>
 </div>
-@section Scripts{
+
+<!-- Edit Ward Modal -->
+<div class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden"
+     id="editWardModal"
+     tabindex="-1">
+    <div class="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-3xl transform transition-all max-h-[90vh] overflow-y-auto">
+        <!-- Modal Header -->
+        <div class="bg-purple-600 px-6 py-4 flex items-center justify-between rounded-t-2xl sticky top-0 z-10">
+            <h5 class="text-xl font-bold text-white flex items-center gap-2">
+                <i class="fas fa-edit"></i>
+                Edit Ward
+            </h5>
+            <button type="button"
+                    class="text-white hover:text-gray-200 text-2xl transition-colors"
+                    onclick="document.getElementById('editWardModal').classList.add('hidden')">
+                &times;
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6">
+            <form id="editWardForm" class="space-y-4">
+                <input type="hidden" id="editWardId">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Ward Code -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">Ward Code</label>
+                        <input type="text" id="editWardCode"
+                               class="w-full bg-gray-600 border border-gray-500 text-gray-300 rounded-lg px-4 py-2 cursor-not-allowed"
+                               readonly>
+                    </div>
+
+                    <!-- Ward Name -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">Ward Name</label>
+                        <input type="text" id="editWardName"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               required>
+                    </div>
+
+                    <!-- Ward Type -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">Ward Type</label>
+                        <input type="text" id="editWardType"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               required>
+                    </div>
+
+                    <!-- Capacity -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">Capacity</label>
+                        <input type="number" id="editCapacity"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               min="1"
+                               required>
+                    </div>
+
+                    <!-- Occupied Beds -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">Occupied Beds</label>
+                        <input type="number" id="editOccupiedBeds"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               min="0"
+                               required>
+                    </div>
+
+                    <!-- Location -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">Location</label>
+                        <input type="text" id="editLocation"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               required>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-300 font-semibold mb-2">Description</label>
+                        <textarea id="editDescription"
+                                  class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+                                  rows="3"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="bg-gray-800 border-t border-gray-700 px-6 py-4 flex items-center justify-end gap-3 rounded-b-2xl sticky bottom-0">
+            <button type="button"
+                    class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold rounded-lg transition-colors"
+                    onclick="document.getElementById('editWardModal').classList.add('hidden')">
+                Cancel
+            </button>
+            <button type="submit"
+                    form="editWardForm"
+                    class="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg shadow-lg transition-all">
+                Save Changes
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <!-- AG Grid CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/styles/ag-grid.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/styles/ag-theme-alpine.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* AG Grid Dark Theme Customization */
+        .ag-theme-alpine-dark {
+            --ag-background-color: #1f2937;
+            --ag-header-background-color: #374151;
+            --ag-odd-row-background-color: #1f2937;
+            --ag-row-hover-color: #374151;
+            --ag-foreground-color: #e5e7eb;
+            --ag-border-color: #4b5563;
+            --ag-header-foreground-color: #a78bfa;
+        }
+
+            .ag-theme-alpine-dark ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            .ag-theme-alpine-dark ::-webkit-scrollbar-track {
+                background: #1f2937;
+            }
+
+            .ag-theme-alpine-dark ::-webkit-scrollbar-thumb {
+                background: #6b7280;
+                border-radius: 4px;
+            }
+
+                .ag-theme-alpine-dark ::-webkit-scrollbar-thumb:hover {
+                    background: #9333ea;
+                }
+    </style>
+}
+
+@section Scripts {
+    <!-- AG Grid JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/dist/ag-grid-community.min.js"></script>
+
+    <script>
+        // Modal helper functions
+        window.showModal = function(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        };
+
+        window.hideModal = function(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        };
+
+        // Add Ward button click
+        document.getElementById('btnAddWard').addEventListener('click', function() {
+            showModal('addWardModal');
+        });
+
+        // Close modals on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideModal('addWardModal');
+                hideModal('editWardModal');
+            }
+        });
+
+        // Close modals on backdrop click
+        document.getElementById('addWardModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideModal('addWardModal');
+            }
+        });
+
+        document.getElementById('editWardModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideModal('editWardModal');
+            }
+        });
+    </script>
+
     <script src="~/js/Ward/ward.js"></script>
 }

@@ -1,4 +1,17 @@
-﻿$(document).ready(function () {
+﻿// Show modal
+function showModal(modalId) {
+    document.getElementById(modalId).classList.remove('hidden');
+    document.body.classList.add('overflow-hidden'); // Prevent background scroll
+}
+
+// Hide modal
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+    document.body.classList.remove('overflow-hidden');
+}
+
+$(document).ready(function () {
+
     const patientId = $('#PatientId').val();
     if (!patientId) {
         console.error("No Patient ID found in page.");
@@ -29,15 +42,19 @@
             width: 150,
             cellRenderer: params => {
                 return `
-                    <button class="btn btn-sm btn-warning me-1 edit-bill" data-id="${params.data.id}">
-                        <i class="bi bi-pencil"></i> 
-                    </button>
-                    <button class="btn btn-sm btn-danger delete-bill" data-id="${params.data.id}">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                `;
+                <button class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold text-xs px-2 py-1 rounded mr-1 edit-bill"
+                        data-id="${params.data.id}">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button class="bg-red-600 hover:bg-red-700 text-white font-semibold text-xs px-2 py-1 rounded delete-bill"
+                        data-id="${params.data.id}">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+
             }
         }
+
     ];
 
     // Grid options
@@ -113,9 +130,10 @@
     });
 
     // Open the modal
-    $('#btnAddBill').on('click', function () {
-        $('#addBillModal').modal('show');
+    document.getElementById('btnAddBill').addEventListener('click', () => {
+        showModal('addBillModal');
     });
+
 
     // --- Dynamic total calculation ---
     function calculateBillTotals() {
@@ -178,7 +196,7 @@
             success: function (response) {
                 if (response.success) {
                     alert(response.message);
-                    $('#addBillModal').modal('hide');
+                    closeModal('addBillModal');
                     $('#addBillForm')[0].reset();
                     loadBillsGrid(); // Optional: refresh AG Grid
                 } else {
@@ -234,7 +252,8 @@
         $('#EditNotes').val(selectedRow.notes);
 
         // ✅ Show modal
-        $('#editBillModal').modal('show');
+        document.getElementById('editBillModal').classList.remove('hidden');
+
     });
 
     // Dynamic total calculation (Edit form)
@@ -261,7 +280,7 @@
         const billData = {
             id: parseInt($('#EditBillId').val()),
             patientId: parseInt($('#EditPatientId').val()),
-            visitId: parseInt($('#EditVisitId').val()),
+            visitId: $('#EditVisitId').val() ? parseInt($('#EditVisitId').val()) : null,
             billDate: $('#EditBillDate').val(),
             paymentStatus: $('#EditPaymentStatus').val(),
             paymentMode: $('#EditPaymentMode').val(),
@@ -292,7 +311,7 @@
             success: function (response) {
                 if (response.success) {
                     alert(response.message);
-                    $('#editBillModal').modal('hide');
+                    document.getElementById('editBillModal').classList.add('hidden');
                     loadBillsGrid();
                 } else {
                     alert(response.message || "Failed to update bill.");
@@ -308,10 +327,11 @@
     });
 
     // Show modal
-    $("#btnAllotBed").on("click", function () {
-        $("#allotBedModal").modal("show");
+    document.getElementById("btnAllotBed").addEventListener("click", function () {
+        document.getElementById("allotBedModal").classList.remove("hidden");
         loadWards();
     });
+
 
     // Load wards
     function loadWards() {
@@ -385,7 +405,7 @@
             contentType: 'application/json',
             data: JSON.stringify(dto),
             success: function (response) {
-                $('#allotBedModal').modal('hide');
+                document.getElementById("allotBedModal").classList.add("hidden");
                 alert(response);
                 $('#inpatientVisitGrid').agGridGridOptions.api.refreshServerSideStore(); // if using server-side grid
             },
@@ -394,9 +414,17 @@
                 if (xhr.responseText) message = xhr.responseText;
                 else if (xhr.responseJSON) message = xhr.responseJSON;
                 $('#errorMessage').remove();
-                $('#allotBedModal .modal-body').prepend(
-                    `<div id="errorMessage" class="alert alert-danger mb-2">${message}</div>`
-                );
+                document
+                    .querySelector("#allotBedModal .modal-body")
+                    .insertAdjacentHTML(
+                        "afterbegin",
+                        `
+                            <div id="errorMessage" class="mb-2 p-3 rounded-lg bg-red-600 text-white text-sm">
+                                ${message}
+                            </div>
+        `
+                    );
+
             }
         });
     });
@@ -463,8 +491,8 @@
             bedContainer.append(bedDiv);
         }
 
-        const modal = new bootstrap.Modal(document.getElementById('checkBedModal'));
-        modal.show();
+        document.getElementById("checkBedModal").classList.remove("hidden");
+
     }
     $('#removeWardBed').on('click', function () {
         const patientBedWardId = $(this).attr('data-patient-bed-ward-id');
@@ -529,7 +557,7 @@
                 });
 
                 // Show modal after dropdown is populated
-                $('#doctorRoundModal').modal('show');
+                document.getElementById("doctorRoundModal").classList.remove("hidden");
             },
             error: function (xhr, status, error) {
                 console.error(error);
@@ -539,24 +567,19 @@
     });
 
     // Close modal
-    $('#btnCloseDoctorRound').on('click', function () {
-        $('#doctorRoundModal').modal('hide');
+    document.getElementById("btnCloseDoctorRound").addEventListener("click", function () {
+        document.getElementById("doctorRoundModal").classList.add("hidden");
+
+        // Reset the form
+        document.getElementById("doctorRoundForm").reset();
+
+        // Reset doctor dropdown
+        const doctorSelect = document.getElementById("DoctorId");
+        if (doctorSelect) {
+            doctorSelect.innerHTML = '<option value="">Select Doctor</option>';
+        }
     });
 
-    // Optional: clear form on close
-    $('#doctorRoundModal').on('hidden.bs.modal', function () {
-        $('#doctorRoundForm')[0].reset();
-        $('#DoctorId').empty().append('<option value="">Select Doctor</option>');
-    });
-    // Close modal on close button click
-    $('#btnCloseDoctorRound').on('click', function () {
-        $('#doctorRoundModal').modal('hide');
-    });
-
-    // Optional: Clear form when modal is closed
-    $('#doctorRoundModal').on('hidden.bs.modal', function () {
-        $('#doctorRoundForm')[0].reset();
-    });
 
     // Form submission
     $('#doctorRoundForm').submit(function (e) {
@@ -581,7 +604,7 @@
                 if (response.success) {
                     $('#doctorRoundForm').prop('disabled', false);
                     alert(response.message); // replace with toast or nicer UI if you like
-                    $('#doctorRoundModal').modal('hide');
+                    document.getElementById("doctorRoundModal").classList.add("hidden");
                     $('#doctorRoundForm')[0].reset();
                     // Optionally refresh doctor rounds table here
                 } else {
@@ -663,7 +686,7 @@
                 console.log(response)
                 if (response.success) {
                     roundGridOptions.api.setRowData(response.data);
-                    $('#doctorRoundHistoryModal').modal('show');
+                    $("#doctorRoundHistoryModal").removeClass("hidden");
                 } else {
                     alert(response.message || "Failed to fetch round history.");
                 }
@@ -675,8 +698,12 @@
         });
     });
 
-    // Clear grid data when modal closes
-    $('#doctorRoundHistoryModal').on('hidden.bs.modal', function () {
+    // Example: close button for doctorRoundHistoryModal
+    document.getElementById("btnCloseDoctorRoundHistory")?.addEventListener("click", function () {
+        // Hide the modal
+        document.getElementById("doctorRoundHistoryModal").classList.add("hidden");
+
+        // Clear AG Grid data
         roundGridOptions.api.setRowData([]);
     });
 
@@ -706,16 +733,20 @@
         $('#EditFollowUpInstructions').val(rowData.followUpInstructions);
         $('#EditIsCritical').val(rowData.isCritical ? "true" : "false");
 
-        // Close previous modal and open edit modal
-        $('#doctorRoundHistoryModal').modal('hide');
-        $('#editDoctorRoundModal').modal('show');
+        // Close previous modal
+        document.getElementById("doctorRoundHistoryModal").classList.add("hidden");
+
+        // Open edit modal
+        document.getElementById("editDoctorRoundModal").classList.remove("hidden");
+
     });
 
 
-    // Close Edit Modal
-    $('#btnCloseEditDoctorRound').on('click', function () {
-        $('#editDoctorRoundModal').modal('hide');
+    $("#btnCloseEditDoctorRound").on("click", function () {
+        $("#editDoctorRoundModal").addClass("hidden");
     });
+    $("#editDoctorRoundModal").addClass("hidden");
+
 
     // Submit Edit Doctor Round Form
     $('#editDoctorRoundForm').submit(function (e) {
@@ -732,7 +763,7 @@
             success: function (response) {
                 if (response.success) {
                     alert(response.message);
-                    $('#editDoctorRoundModal').modal('hide');
+                    $("#editDoctorRoundModal").addClass("hidden");
 
                     // Update row in AG Grid without another server call
                     let rowNode = gridOptions.api.getRowNode(response.data.id);
@@ -829,7 +860,7 @@
                 if (response.success && response.data) {
                     console.log(response.data);
                     populateFinalBillModal(response.data);
-                    $('#finalBillModal').modal('show');
+                    $("#finalBillModal").removeClass("hidden");
                 } else {
                     alert(response.message || "Failed to generate bill.");
                 }
@@ -922,8 +953,7 @@
                 if (response.success) {
                     const data = response.data;
                     populateDischargeModal(data);
-                    const modal = new bootstrap.Modal(document.getElementById('dischargeSummaryModal'));
-                    modal.show();
+                    $("#dischargeSummaryModal").removeClass("hidden");
                 } else {
                     alert("No discharge summary found.");
                 }

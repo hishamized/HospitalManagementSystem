@@ -131,9 +131,9 @@
     // ========================
     $('#btnAddAdmin').click(function () {
         $('#addAdminForm')[0].reset();
-        $('#formErrors').addClass('d-none').empty();
+        $('#formErrors').addClass('hidden').empty();
         loadRoles();
-        $('#addAdminModal').modal('show');
+        window.showModal('addAdminModal');
     });
 
     // ========================
@@ -141,7 +141,7 @@
     // ========================
     $('#btnSaveAdmin').click(function () {
         const formData = Object.fromEntries(new FormData(document.querySelector('#addAdminForm')).entries());
-        $('#formErrors').addClass('d-none').empty();
+        $('#formErrors').addClass('hidden').empty();
 
         $.ajax({
             url: '/User/CreateAdmin',
@@ -150,15 +150,15 @@
             data: JSON.stringify(formData),
             success: function (response) {
                 if (response.success) {
-                    $('#addAdminModal').modal('hide');
+                    window.hideModal('addAdminModal');
                     loadAdmins();
                     alert(response.message);
                 } else {
-                    $('#formErrors').removeClass('d-none').html(response.message || "Failed to create admin.");
+                    $('#formErrors').removeClass('hidden').html(response.message || "Failed to create admin.");
                 }
             },
             error: function () {
-                $('#formErrors').removeClass('d-none').html("Unexpected error occurred.");
+                $('#formErrors').removeClass('hidden').html("Unexpected error occurred.");
             }
         });
     });

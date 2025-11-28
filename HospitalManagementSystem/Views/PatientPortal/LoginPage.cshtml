@@ -12,154 +12,159 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         body {
             font-family: 'Poppins', sans-serif;
         }
-
-        .bg-pink-gradient {
-            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
-        }
-
-        .text-pink {
-            color: #ec4899;
-        }
-
-        .btn-pink {
-            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
-            color: white;
-            border: none;
-        }
-
-            .btn-pink:hover {
-                background: linear-gradient(135deg, #be185d 0%, #9f1239 100%);
-                color: white;
-            }
-
-        .btn-outline-pink {
-            color: #ec4899;
-            border-color: #ec4899;
-        }
-
-            .btn-outline-pink:hover {
-                background-color: #ec4899;
-                color: white;
-            }
     </style>
 </head>
 
-<body class="bg-pink-gradient min-vh-100 d-flex align-items-center">
+<body class="min-h-screen bg-gradient-to-br from-gray-900 via-pink-900 to-gray-900 flex items-center justify-center p-4">
 
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-11 col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+    <div class="w-full max-w-md">
+        <div class="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 overflow-hidden">
 
-                <!-- Card -->
-                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-
-                    <!-- Header -->
-                    <div class="card-header bg-white text-center pt-5 pb-4 border-0">
-                        <div class="bg-pink-gradient rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width:90px;height:90px;">
-                            <i class="fas fa-heartbeat text-white" style="font-size:45px;"></i>
-                        </div>
-                        <h3 class="fw-bold text-pink m-0">Patient Portal</h3>
-                        <p class="text-muted small m-0">Sign in to access your records</p>
-                    </div>
-
-                    <!-- Body -->
-                    <div class="card-body px-4 px-sm-5 py-4">
-
-                        <!-- Alert Box -->
-                        <div id="loginMessage"></div>
-
-                        <form id="patientLoginForm" method="post">
-                            @Html.AntiForgeryToken()
-
-                            <!-- Identifier -->
-                            <div class="mb-4">
-                                <label class="form-label fw-semibold small text-dark mb-2">
-                                    <i class="fas fa-user text-pink me-2"></i>Email / Code / Contact
-                                </label>
-
-                                <div class="input-group input-group-lg">
-                                    <span class="input-group-text bg-light border-end-0 rounded-start-3">
-                                        <i class="fas fa-id-card-alt text-muted"></i>
-                                    </span>
-
-                                    <input asp-for="Identifier"
-                                           id="Identifier"
-                                           class="form-control bg-light border-start-0 rounded-end-3 ps-0"
-                                           placeholder="Enter your identifier" />
-                                </div>
-
-                                <span asp-validation-for="Identifier" class="text-danger small"></span>
-                            </div>
-
-                            <!-- Password -->
-                            <div class="mb-4">
-                                <label class="form-label fw-semibold small text-dark mb-2">
-                                    <i class="fas fa-lock text-pink me-2"></i>Password
-                                </label>
-
-                                <div class="input-group input-group-lg position-relative">
-                                    <span class="input-group-text bg-light border-end-0 rounded-start-3">
-                                        <i class="fas fa-key text-muted"></i>
-                                    </span>
-
-                                    <input asp-for="Password"
-                                           type="password"
-                                           id="Password"
-                                           class="form-control bg-light border-start-0 rounded-end-3 ps-0 pe-5"
-                                           placeholder="Enter your password" />
-
-                                    <button class="btn position-absolute end-0 top-50 translate-middle-y bg-transparent border-0 pe-3"
-                                            type="button" id="togglePassword">
-                                        <i class="fas fa-eye text-muted" id="eyeIcon"></i>
-                                    </button>
-                                </div>
-
-                                <span asp-validation-for="Password" class="text-danger small"></span>
-                            </div>
-
-                            <!-- Remember me -->
-                            <div class="d-flex justify-content-between align-items-center mb-4">
-                                <div class="form-check">
-                                    <input asp-for="RememberMe"
-                                           id="RememberMe"
-                                           class="form-check-input"
-                                           type="checkbox" />
-
-                                    <label class="form-check-label small text-muted" for="RememberMe">Remember Me</label>
-                                </div>
-
-                                <a href="#" class="text-pink small fw-semibold">Forgot Password?</a>
-                            </div>
-
-                            <!-- Login Button -->
-                            <button type="submit"
-                                    id="loginBtn"
-                                    class="btn btn-pink w-100 btn-lg fw-semibold py-3 shadow-sm">
-                                <i class="fas fa-sign-in-alt me-2"></i>Sign In
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                    <div class="card-footer bg-light text-center small py-3">
-                        <i class="fas fa-shield-alt text-success me-1"></i>Secure Login • Your data is protected
-                    </div>
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-pink-600 to-pink-700 text-center pt-8 pb-6">
+                <div class="bg-white/10 backdrop-blur-sm rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <i class="fas fa-heartbeat text-white text-5xl"></i>
                 </div>
+                <h3 class="text-3xl font-bold text-white mb-2">Patient Portal</h3>
+                <p class="text-pink-200 text-sm">Sign in to access your records</p>
+            </div>
+
+            <!-- Body -->
+            <div class="px-8 py-6">
+
+                <!-- Alert Box -->
+                <div id="loginMessage"></div>
+
+                <form id="patientLoginForm" method="post" class="space-y-5">
+                    @Html.AntiForgeryToken()
+
+                    <!-- Identifier -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2 text-sm">
+                            <i class="fas fa-user text-pink-400 mr-2"></i>Email / Code / Contact
+                        </label>
+
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fas fa-id-card-alt text-gray-400"></i>
+                            </div>
+                            <input asp-for="Identifier"
+                                   id="Identifier"
+                                   class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg pl-12 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+                                   placeholder="Enter your identifier" />
+                        </div>
+
+                        <span asp-validation-for="Identifier"
+                              class="text-red-400 text-xs mt-1 block"></span>
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2 text-sm">
+                            <i class="fas fa-lock text-pink-400 mr-2"></i>Password
+                        </label>
+
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fas fa-key text-gray-400"></i>
+                            </div>
+                            <input asp-for="Password"
+                                   type="password"
+                                   id="Password"
+                                   class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg pl-12 pr-12 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+                                   placeholder="Enter your password" />
+                            <button type="button"
+                                    id="togglePassword"
+                                    class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                                <i class="fas fa-eye text-gray-400 hover:text-pink-400 transition-colors" id="eyeIcon"></i>
+                            </button>
+                        </div>
+
+                        <span asp-validation-for="Password"
+                              class="text-red-400 text-xs mt-1 block"></span>
+                    </div>
+
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="flex justify-between items-center">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input asp-for="RememberMe"
+                                   id="RememberMe"
+                                   type="checkbox"
+                                   class="w-5 h-5 rounded bg-gray-700 border-gray-600 text-pink-600 focus:ring-pink-500 focus:ring-2 cursor-pointer" />
+                            <span class="text-gray-300 text-sm group-hover:text-pink-400 transition-colors">
+                                Remember Me
+                            </span>
+                        </label>
+
+                        <a href="#" class="text-pink-400 hover:text-pink-300 text-sm font-semibold transition-colors">
+                            Forgot Password?
+                        </a>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="pt-2">
+                        <button type="submit"
+                                class="w-full bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 text-white font-bold py-3 rounded-lg shadow-lg transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+                                id="loginBtn">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+                        </button>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="relative py-4">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-700"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-4 bg-gray-800 text-gray-400">New Patient?</span>
+                        </div>
+                    </div>
+
+                    <!-- Registration Link -->
+                    <div class="text-center">
+                        <a href="/Home/Index"
+                           class="inline-flex items-center justify-center px-6 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-white font-semibold rounded-lg transition-all border border-gray-600 hover:border-pink-500">
+                            <i class="fas fa-home mr-2"></i>HomePage
+                        </a>
+                    </div>
+                </form>
 
             </div>
+
+            <!-- Footer -->
+            <div class="bg-gray-900 border-t border-gray-700 text-center py-4">
+                <p class="text-gray-400 text-sm">
+                    <i class="fas fa-shield-alt text-green-500 mr-2"></i>
+                    Secure Login • Your data is protected
+                </p>
+            </div>
+
         </div>
+
+        <!-- Bottom Text -->
+        <div class="text-center mt-6 space-y-2">
+            <p class="text-white text-sm">
+                <i class="fas fa-headset mr-2"></i>Need Help? Contact Support
+            </p>
+            <p class="text-gray-400 text-xs">
+                © 2024 Hospital Management System. All rights reserved.
+            </p>
+        </div>
+
     </div>
 
-    <!-- Scripts -->
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
@@ -187,7 +192,10 @@
                 const oldText = btn.html();
 
                 btn.prop("disabled", true).html(
-                    `<span class="spinner-border spinner-border-sm me-2"></span>Signing in...`
+                    '<svg class="animate-spin inline-block w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">' +
+                    '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>' +
+                    '<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>' +
+                    '</svg>Signing in...'
                 );
 
                 const data = {
@@ -207,40 +215,92 @@
 
                     success: function (res) {
                         if (res.success) {
-                            $("#loginMessage").html(`
-                                <div class="alert alert-success rounded-3 shadow-sm">
-                                    <i class="fas fa-check-circle me-2"></i>
-                                    Login successful! Redirecting...
-                                </div>
-                            `);
+                            $("#loginMessage").html(
+                                '<div class="bg-green-600/20 border border-green-500 text-green-300 p-4 rounded-lg mb-4 flex items-center animate-fade-in">' +
+                                '<i class="fas fa-check-circle mr-3 text-xl"></i>' +
+                                '<span>Login successful! Redirecting...</span>' +
+                                '</div>'
+                            );
 
                             setTimeout(() => window.location.href = res.redirectUrl, 1200);
                         } else {
                             btn.prop("disabled", false).html(oldText);
 
-                            $("#loginMessage").html(`
-                                <div class="alert alert-danger rounded-3 shadow-sm">
-                                    <i class="fas fa-exclamation-triangle me-2"></i>${res.details}
-                                </div>
-                            `);
+                            $("#loginMessage").html(
+                                '<div class="bg-red-600/20 border border-red-500 text-red-300 p-4 rounded-lg mb-4 flex items-center animate-shake">' +
+                                '<i class="fas fa-exclamation-triangle mr-3 text-xl"></i>' +
+                                '<span>' + (res.details || res.message || 'Login failed') + '</span>' +
+                                '</div>'
+                            );
                         }
                     },
 
                     error: function (xhr) {
                         btn.prop("disabled", false).html(oldText);
 
-                        $("#loginMessage").html(`
-                            <div class="alert alert-danger rounded-3 shadow-sm">
-                                <i class="fas fa-times-circle me-2"></i>
-                                ${xhr.responseJSON?.message ?? "Something went wrong."}
-                            </div>
-                        `);
+                        const errorMsg = xhr.responseJSON?.message ?? "Something went wrong.";
+
+                        $("#loginMessage").html(
+                            '<div class="bg-red-600/20 border border-red-500 text-red-300 p-4 rounded-lg mb-4 flex items-center animate-shake">' +
+                            '<i class="fas fa-times-circle mr-3 text-xl"></i>' +
+                            '<span>' + errorMsg + '</span>' +
+                            '</div>'
+                        );
                     }
                 });
             });
 
+            // Focus effects on inputs
+            $('input').on('focus', function () {
+                $(this).addClass('ring-2 ring-pink-500 scale-[1.01]');
+            }).on('blur', function () {
+                $(this).removeClass('ring-2 ring-pink-500 scale-[1.01]');
+            });
+
         });
     </script>
+
+    <style>
+        @@keyframes fade-in {
+            from
+
+        {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        @@keyframes shake {
+            0%, 100%
+
+        {
+            transform: translateX(0);
+        }
+
+        10%, 30%, 50%, 70%, 90% {
+            transform: translateX(-5px);
+        }
+
+        20%, 40%, 60%, 80% {
+            transform: translateX(5px);
+        }
+
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.5s ease-out;
+        }
+
+        .animate-shake {
+            animation: shake 0.5s ease-in-out;
+        }
+    </style>
 
 </body>
 </html>

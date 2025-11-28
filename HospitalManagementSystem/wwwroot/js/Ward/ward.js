@@ -1,121 +1,126 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
+    // === AG Grid Column Definitions ===
     const columnDefs = [
-        { headerName: "Ward Code", field: "wardCode", flex: 1 },
-        { headerName: "Ward Name", field: "wardName", flex: 1 },
-        { headerName: "Ward Type", field: "wardType", flex: 1 },
-        { headerName: "Capacity", field: "capacity", width: 120 },
-        { headerName: "Occupied Beds", field: "occupiedBeds", width: 150 },
-        { headerName: "Location", field: "location", flex: 1 },
-        { headerName: "Description", field: "description", flex: 1 },
+        { headerName: "Ward Code", field: "wardCode", width: 120, sortable: true, filter: true },
+        { headerName: "Ward Name", field: "wardName", flex: 1, sortable: true, filter: true },
+        { headerName: "Ward Type", field: "wardType", width: 130, sortable: true, filter: true },
+        { headerName: "Capacity", field: "capacity", width: 110, sortable: true, filter: true },
+        { headerName: "Occupied", field: "occupiedBeds", width: 110, sortable: true, filter: true },
+        {
+            headerName: "Available",
+            width: 110,
+            valueGetter: params => {
+                return params.data.capacity - params.data.occupiedBeds;
+            },
+            cellStyle: params => {
+                const available = params.data.capacity - params.data.occupiedBeds;
+                return available === 0 ? { color: '#ef4444', fontWeight: 'bold' } :
+                    available < 5 ? { color: '#f59e0b', fontWeight: 'bold' } :
+                        { color: '#10b981', fontWeight: 'bold' };
+            }
+        },
+        { headerName: "Location", field: "location", flex: 1, sortable: true, filter: true },
+        { headerName: "Description", field: "description", flex: 1, sortable: true, filter: true },
         {
             headerName: "Actions",
+            width: 180,
             cellRenderer: params => {
                 return `
-                            <button class="btn btn-sm btn-warning me-2 edit-btn">Edit</button>
-                            <button class="btn btn-sm btn-danger delete-btn">Delete</button>
-                        `;
+                    <div class="flex gap-2">
+                        <button 
+                            class="px-3 py-1 text-sm rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition edit-btn"
+                            data-id="${params.data.id}">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button 
+                            class="px-3 py-1 text-sm rounded-lg bg-red-600 hover:bg-red-700 text-white transition delete-btn"
+                            data-id="${params.data.id}">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                `;
             },
-            width: 160,
-            cellStyle: { textAlign: "center" }
+            sortable: false,
+            filter: false
         }
     ];
 
-    // ✅ Initialize AG Grid
+    // === AG Grid Options ===
     const gridOptions = {
-        columnDefs,
+        columnDefs: columnDefs,
         rowData: [],
         pagination: true,
-        paginationPageSize: 10,
-        defaultColDef: { resizable: true, sortable: true, filter: true },
-        onGridReady: loadWards,
-        onCellClicked: onCellClicked,
-        onRowContextMenu: onRowContextMenu,
+        paginationPageSize: 20,
+        animateRows: true,
+        rowHeight: 50,
+        defaultColDef: {
+            resizable: true,
+            sortable: true,
+            filter: true,
+            minWidth: 100
+        },
+        onGridReady: function (params) {
+            params.api.sizeColumnsToFit();
+            loadWards();
+        },
+        onGridSizeChanged: function (params) {
+            params.api.sizeColumnsToFit();
+        },
+        getRowNodeId: data => data.id,
+        getContextMenuItems: function (params) {
+            return [
+                {
+                    name: 'Edit Ward',
+                    action: function () {
+                        openEditModal(params.node.data);
+                    },
+                    icon: '<i class="fas fa-edit"></i>'
+                },
+                {
+                    name: 'Delete Ward',
+                    action: function () {
+                        deleteWard(params.node.data.id, params.node.data.wardName);
+                    },
+                    icon: '<i class="fas fa-trash"></i>'
+                },
+                'separator',
+                'copy',
+                'export'
+            ];
+        }
     };
 
+    // === Initialize AG Grid ===
     const gridDiv = document.querySelector('#wardGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // ✅ Handle edit/delete buttons in the grid
-    function onCellClicked(params) {
-        const rowData = params.data;
-
-        if ($(params.event.target).hasClass('edit-btn')) {
-            openEditModal(rowData);
-        }
-
-        if ($(params.event.target).hasClass('delete-btn')) {
-            deleteWard(params.data.id, params.data.wardName);
-        }
-    }
-    // ✅ Right-click context menu
-    function onRowContextMenu(event) {
-        event.event.preventDefault();
-        const rowData = event.node.data;
-
-        // Remove any existing menu
-        $("#contextMenu").remove();
-
-        // Build context menu
-        const contextMenu = $(`
-        <div id="contextMenu" class="card shadow-sm"
-             style="position:fixed; top:${event.event.clientY}px; left:${event.event.clientX}px; z-index:99999; width:160px;">
-            <div class="list-group list-group-flush">
-                <button class="list-group-item list-group-item-action edit-context">✏️ Edit</button>
-                <button class="list-group-item list-group-item-action text-danger delete-context">🗑️ Delete</button>
-            </div>
-        </div>
-    `);
-
-        $("body").append(contextMenu);
-
-        // Remove menu when clicking outside
-        $(document).one("click.context", function (e) {
-            if (!$(e.target).closest("#contextMenu").length) {
-                $("#contextMenu").remove();
-            }
-        });
-
-        // Reuse same functions used by the column buttons
-        $(".edit-context").on("click", function () {
-            $("#contextMenu").remove();
-            openEditModal(rowData); // same as edit button
-        });
-
-        $(".delete-context").on("click", function () {
-            $("#contextMenu").remove();
-            deleteWard(rowData.id, rowData.wardName);
-        });
-
-    }
-
-    // 📥 Load wards (placeholder for backend)
+    // === Load Wards from Server ===
     function loadWards() {
         $.ajax({
             url: '/Ward/GetAll',
             type: 'GET',
             success: function (response) {
+                console.log('Wards response:', response);
                 if (response.success) {
                     gridOptions.api.setRowData(response.data);
                 } else {
-                    alert(response.message || "Failed to load data");
+                    showToast(response.message || "Failed to load wards", 'error');
                 }
             },
-            error: function () {
-                alert("Error loading ward data");
+            error: function (xhr) {
+                console.error('Error loading wards:', xhr);
+                showToast("Error loading ward data", 'error');
             }
         });
     }
 
-    // Initialize data (you can connect this when GetAll is implemented)
-    loadWards();
-
-    // 🟢 SHOW MODAL
+    // === Show Add Ward Modal ===
     $('#btnAddWard').on('click', function () {
         $('#wardForm')[0].reset();
-        $('#addWardModal').modal('show');
+        window.showModal('addWardModal');
     });
 
-    // 🟣 SAVE WARD
+    // === Save New Ward ===
     $('#btnSaveWard').on('click', function () {
         const formData = {
             WardCode: $('input[name="WardCode"]').val(),
@@ -136,21 +141,66 @@
             data: JSON.stringify(formData),
             success: function (response) {
                 if (response.success) {
-                    alert(response.message);
-                    $('#addWardModal').modal('hide');
+                    window.hideModal('addWardModal');
                     loadWards();
+                    showToast(response.message || 'Ward created successfully!', 'success');
                 } else {
-                    alert('Error: ' + response.message);
+                    showToast('Error: ' + response.message, 'error');
                 }
             },
             error: function (xhr) {
-                alert('An error occurred while saving the ward.');
+                console.error('Error saving ward:', xhr);
+                showToast('An error occurred while saving the ward.', 'error');
             }
         });
     });
 
-    // ✅ Open Edit Modal and prefill fields (no server call)
+    // === Handle Edit Button Click ===
+    $(document).on('click', '.edit-btn', function (e) {
+        e.preventDefault();
+        const wardId = parseInt($(this).data('id'));
+        console.log('Edit clicked for ward ID:', wardId);
+
+        let foundData = null;
+        gridOptions.api.forEachNode(function (node) {
+            if (node.data && node.data.id === wardId) {
+                foundData = node.data;
+            }
+        });
+
+        if (foundData) {
+            openEditModal(foundData);
+        } else {
+            console.error('Could not find ward with ID:', wardId);
+            showToast('Error: Ward not found', 'error');
+        }
+    });
+
+    // === Handle Delete Button Click ===
+    $(document).on('click', '.delete-btn', function (e) {
+        e.preventDefault();
+        const wardId = parseInt($(this).data('id'));
+        console.log('Delete clicked for ward ID:', wardId);
+
+        let foundData = null;
+        gridOptions.api.forEachNode(function (node) {
+            if (node.data && node.data.id === wardId) {
+                foundData = node.data;
+            }
+        });
+
+        if (foundData) {
+            deleteWard(foundData.id, foundData.wardName);
+        } else {
+            console.error('Could not find ward with ID:', wardId);
+            showToast('Error: Ward not found', 'error');
+        }
+    });
+
+    // === Open Edit Modal and Prefill Fields ===
     function openEditModal(data) {
+        console.log('Opening edit modal for:', data);
+
         $('#editWardId').val(data.id);
         $('#editWardCode').val(data.wardCode);
         $('#editWardName').val(data.wardName);
@@ -158,11 +208,12 @@
         $('#editCapacity').val(data.capacity);
         $('#editOccupiedBeds').val(data.occupiedBeds);
         $('#editLocation').val(data.location);
-        $('#editDescription').val(data.description);
-        $('#editWardModal').modal('show');
+        $('#editDescription').val(data.description || '');
+
+        window.showModal('editWardModal');
     }
 
-
+    // === Handle Edit Form Submission ===
     $('#editWardForm').on('submit', function (e) {
         e.preventDefault();
 
@@ -177,7 +228,9 @@
             Description: $('#editDescription').val().trim()
         };
 
-        const command = { Ward: ward }; // ✅ wrap in Ward property
+        console.log('Updating ward:', ward);
+
+        const command = { Ward: ward };
 
         $.ajax({
             url: '/Ward/UpdateWard',
@@ -186,30 +239,32 @@
             data: JSON.stringify(command),
             success: function (response) {
                 if (response.success) {
-                    $('#editWardModal').modal('hide');
-                    alert(response.message);
+                    window.hideModal('editWardModal');
                     loadWards();
+                    showToast(response.message || 'Ward updated successfully!', 'success');
                 } else {
-                    alert(response.message || 'Failed to update ward.');
+                    showToast(response.message || 'Failed to update ward.', 'error');
                 }
             },
             error: function (xhr) {
+                console.error('Error updating ward:', xhr);
                 if (xhr.status === 400 && xhr.responseJSON?.errors) {
                     let errorMsg = 'Validation Errors:\n';
                     xhr.responseJSON.errors.forEach(err => {
                         errorMsg += `- ${err.PropertyName}: ${err.ErrorMessage}\n`;
                     });
-                    alert(errorMsg);
+                    showToast(errorMsg, 'error');
                 } else {
-                    alert('An unexpected error occurred while updating the ward.');
+                    showToast('An unexpected error occurred while updating the ward.', 'error');
                 }
             }
         });
     });
-    // ✅ Reusable delete function
+
+    // === Delete Ward Function ===
     function deleteWard(id, wardName) {
         if (!id || id <= 0) {
-            alert("Invalid Ward ID.");
+            showToast("Invalid Ward ID.", 'error');
             return;
         }
 
@@ -224,24 +279,34 @@
             data: JSON.stringify({ Id: id }),
             success: function (response) {
                 if (response.success) {
-                    alert(response.message);
-                    loadWards(); // 🔄 refresh AG Grid data
+                    loadWards();
+                    showToast(response.message || 'Ward deleted successfully!', 'success');
                 } else {
-                    alert(response.message || 'Failed to delete the ward.');
+                    showToast(response.message || 'Failed to delete the ward.', 'error');
                 }
             },
             error: function (xhr) {
+                console.error('Error deleting ward:', xhr);
                 if (xhr.status === 400 && xhr.responseJSON?.errors) {
                     let errorMsg = 'Validation Errors:\n';
                     xhr.responseJSON.errors.forEach(err => {
                         errorMsg += `- ${err.PropertyName}: ${err.ErrorMessage}\n`;
                     });
-                    alert(errorMsg);
+                    showToast(errorMsg, 'error');
                 } else {
-                    alert('An unexpected error occurred while deleting the ward.');
+                    showToast('An unexpected error occurred while deleting the ward.', 'error');
                 }
             }
         });
     }
 
+    // === Toast Notification Helper ===
+    function showToast(message, type) {
+        // Using toastr if available, otherwise fallback to alert
+        if (typeof toastr !== 'undefined') {
+            toastr[type](message);
+        } else {
+            alert(message);
+        }
+    }
 });

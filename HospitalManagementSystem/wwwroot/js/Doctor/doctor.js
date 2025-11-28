@@ -6,27 +6,39 @@
 
     // === AG Grid Column Definitions ===
     const columnDefs = [
-        { headerName: "Doctor Code", field: "doctorCode", sortable: true, filter: true, resizable: true },
-        { headerName: "Full Name", field: "fullName", sortable: true, filter: true, resizable: true },
-        { headerName: "Gender", field: "gender", sortable: true, filter: true, resizable: true },
-        { headerName: "Specialization", field: "specialization", sortable: true, filter: true, resizable: true },
-        { headerName: "Qualification", field: "qualification", sortable: true, filter: true, resizable: true },
-        { headerName: "Experience (Years)", field: "experienceYears", sortable: true, filter: true, resizable: true },
-        { headerName: "Email", field: "email", sortable: true, filter: true, resizable: true },
-        { headerName: "Phone", field: "phoneNumber", sortable: true, filter: true, resizable: true },
-        { headerName: "City", field: "city", sortable: true, filter: true, resizable: true },
-        { headerName: "Slot", field: "slotName", sortable: true, filter: true, resizable: true },           // 🆕
-        { headerName: "Department", field: "departmentName", sortable: true, filter: true, resizable: true }, // 🆕
+        { headerName: "Doctor Code", field: "doctorCode", sortable: true, filter: true, resizable: true, width: 150 },
+        { headerName: "Full Name", field: "fullName", sortable: true, filter: true, resizable: true, flex: 1 },
+        { headerName: "Gender", field: "gender", sortable: true, filter: true, resizable: true, width: 100 },
+        { headerName: "Specialization", field: "specialization", sortable: true, filter: true, resizable: true, flex: 1 },
+        { headerName: "Qualification", field: "qualification", sortable: true, filter: true, resizable: true, flex: 1 },
+        { headerName: "Experience", field: "experienceYears", sortable: true, filter: true, resizable: true, width: 120 },
+        { headerName: "Email", field: "email", sortable: true, filter: true, resizable: true, flex: 1 },
+        { headerName: "Phone", field: "phoneNumber", sortable: true, filter: true, resizable: true, width: 150 },
+        { headerName: "City", field: "city", sortable: true, filter: true, resizable: true, width: 120 },
+        { headerName: "Slot", field: "slotName", sortable: true, filter: true, resizable: true, width: 150 },
+        { headerName: "Department", field: "departmentName", sortable: true, filter: true, resizable: true, width: 150 },
         {
             headerName: "Actions",
+            width: 180,
             cellRenderer: function (params) {
                 return `
-                        <button class="btn btn-sm btn-warning me-1 edit-btn" data-id="${params.data.id}">Edit</button>
-                        <button class="btn btn-sm btn-danger delete-btn" data-id="${params.data.id}">Delete</button>
-                    `;
+                    <div class="flex gap-2">
+                        <button 
+                            class="px-3 py-1 text-sm rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition edit-btn"
+                            data-id="${params.data.id}">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button 
+                            class="px-3 py-1 text-sm rounded-lg bg-red-600 hover:bg-red-700 text-white transition delete-btn"
+                            data-id="${params.data.id}">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                `;
             },
-            width: 180,
-            suppressMenu: true
+            suppressMenu: true,
+            sortable: false,
+            filter: false
         }
     ];
 
@@ -35,15 +47,24 @@
         columnDefs: columnDefs,
         rowData: [],
         pagination: true,
-        paginationPageSize: 10,
+        paginationPageSize: 20,
         animateRows: true,
+        rowHeight: 50,
         getRowNodeId: data => data.id,
-        defaultColDef: { flex: 1, minWidth: 120 },
-        onGridReady: function () {
+        defaultColDef: {
+            minWidth: 100,
+            sortable: true,
+            filter: true,
+            resizable: true
+        },
+        onGridReady: function (params) {
+            params.api.sizeColumnsToFit();
             loadDoctors();
         },
+        onGridSizeChanged: function (params) {
+            params.api.sizeColumnsToFit();
+        },
         getContextMenuItems: function (params) {
-            // Add Edit/Delete to right-click context menu
             return [
                 {
                     name: 'Edit Doctor',
@@ -77,6 +98,7 @@
                 showMessage('Loading doctors, please wait...', 'info');
             },
             success: function (response) {
+                console.log('Doctors response:', response);
                 if (response.success && response.data && response.data.length > 0) {
                     gridOptions.api.setRowData(response.data);
                     clearMessage();
@@ -92,22 +114,48 @@
         });
     }
 
-    // === Edit/Delete Handlers ===
-    $(document).on('click', '.edit-btn', function () {
-        const doctorId = $(this).data('id');
-        handleEdit(doctorId);
+    // === Edit/Delete Button Handlers ===
+    $(document).on('click', '.edit-btn', function (e) {
+        e.preventDefault();
+        const doctorId = parseInt($(this).data('id'));
+        console.log('Edit clicked for ID:', doctorId);
+
+        let foundData = null;
+        gridOptions.api.forEachNode(function (node) {
+            if (node.data && node.data.id === doctorId) {
+                foundData = node.data;
+            }
+        });
+
+        if (foundData) {
+            handleEdit(foundData);
+        } else {
+            console.error('Could not find doctor with ID:', doctorId);
+        }
     });
 
-    $(document).on('click', '.delete-btn', function () {
-        const doctorId = $(this).data('id');
-        handleDelete(doctorId);
+    $(document).on('click', '.delete-btn', function (e) {
+        e.preventDefault();
+        const doctorId = parseInt($(this).data('id'));
+        console.log('Delete clicked for ID:', doctorId);
+
+        let foundData = null;
+        gridOptions.api.forEachNode(function (node) {
+            if (node.data && node.data.id === doctorId) {
+                foundData = node.data;
+            }
+        });
+
+        if (foundData) {
+            handleDelete(foundData.id);
+        } else {
+            console.error('Could not find doctor with ID:', doctorId);
+        }
     });
 
-    function handleEdit(id) {
-        const rowNode = gridOptions.api.getRowNode(id.toString());
-        if (!rowNode) return;
-
-        const doctor = rowNode.data;
+    // === Handle Edit ===
+    function handleEdit(doctor) {
+        console.log('Editing doctor:', doctor);
 
         $('#editDoctorId').val(doctor.id);
         const names = doctor.fullName.split(' ');
@@ -121,162 +169,147 @@
         $('#editExperienceYears').val(doctor.experienceYears);
         $('#editCity').val(doctor.city);
 
+        // Clear errors
+        $('#editDoctorErrors').addClass('hidden').html('');
+
         // Load slots and departments with current selections
-        loadSlotsAndDepartments(doctor.slotId, doctor.departmentId);
+        loadSlotsAndDepartments(doctor.slotId, doctor.departmentId, true);
 
         // Show modal
-        const modal = new bootstrap.Modal(document.getElementById('editDoctorModal'));
-        modal.show();
+        window.showModal('editDoctorModal');
     }
 
-
-
+    // === Handle Delete ===
     function handleDelete(id) {
         if (!confirm("Are you sure you want to delete this doctor?")) {
-            return; // User cancelled
+            return;
         }
 
         $.ajax({
-            url: `/Doctor/DeleteDoctor/${id}`, // Controller action route
+            url: `/Doctor/DeleteDoctor/${id}`,
             type: 'DELETE',
             success: function (response) {
                 if (response.success) {
-                    // Optionally, show success toast/message
                     showMessage(response.message, 'success');
-
-                    // Refresh AG Grid or remove row directly
                     loadDoctors();
                 } else {
-                    // Show server-returned error
                     showMessage(response.message, 'danger');
                 }
             },
             error: function (xhr) {
                 let errorMsg = "An error occurred while deleting the doctor.";
-
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     errorMsg = xhr.responseJSON.message;
                 }
-
                 showMessage(errorMsg, 'danger');
                 console.error("AJAX Error:", xhr);
             }
         });
     }
 
-
     // === Helper Functions ===
     function showMessage(message, type) {
         const alertHtml = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>`;
+            <div class="bg-${type === 'success' ? 'green' : type === 'danger' ? 'red' : type === 'warning' ? 'yellow' : 'blue'}-600/20 border border-${type === 'success' ? 'green' : type === 'danger' ? 'red' : type === 'warning' ? 'yellow' : 'blue'}-500 text-${type === 'success' ? 'green' : type === 'danger' ? 'red' : type === 'warning' ? 'yellow' : 'blue'}-300 p-4 rounded-lg mb-4 flex items-center justify-between">
+                <span>${message}</span>
+                <button onclick="this.parentElement.remove()" class="text-${type === 'success' ? 'green' : type === 'danger' ? 'red' : type === 'warning' ? 'yellow' : 'blue'}-300 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>`;
         messageContainer.html(alertHtml);
+
+        // Auto-hide after 5 seconds
+        setTimeout(clearMessage, 5000);
     }
 
     function clearMessage() {
         messageContainer.html('');
     }
 
-    // Initialize Bootstrap modal
-    var addDoctorModal = new bootstrap.Modal(document.getElementById('addDoctorModal'));
+    // === Load Slots and Departments ===
+    function loadSlotsAndDepartments(selectedSlotId = null, selectedDeptId = null, isEdit = false) {
+        // Load Slots
+        $.ajax({
+            url: '/Slot/GetAllSlots',
+            type: 'GET',
+            success: function (res) {
+                console.log('Slots response:', res);
+                const slots = res.data || res;
 
-    function loadSlotsAndDepartments(selectedSlotId = null, selectedDeptId = null) {
-    // Load Slots
-    $.ajax({
-        url: '/Slot/GetAllSlots',
-        type: 'GET',
-        success: function (res) {
-            if (res.success) {
-                const slotSelect = $('#editSlotId');
-                const mainSlotSelect = $('#SlotId');
-
+                const slotSelect = isEdit ? $('#editSlotId') : $('#SlotId');
                 slotSelect.empty().append('<option value="">Select Slot</option>');
-                res.data.forEach(slot => {
-                    const selected = slot.id == selectedSlotId ? 'selected' : '';
-                    slotSelect.append(`<option value="${slot.id}" ${selected}>${slot.reportingTime} (${slot.daysOfWeek})</option>`);
-                });
 
-                mainSlotSelect.empty().append('<option value="">Select Slot</option>');
-                res.data.forEach(slot => {
-                    const selected = slot.id == selectedSlotId ? 'selected' : '';
-                    mainSlotSelect.append(`<option value="${slot.id}" ${selected}>${slot.reportingTime} (${slot.daysOfWeek})</option>`);
-                });
+                if (Array.isArray(slots)) {
+                    slots.forEach(slot => {
+                        const selected = slot.id == selectedSlotId ? 'selected' : '';
+                        slotSelect.append(`<option value="${slot.id}" ${selected}>${slot.reportingTime} - ${slot.leavingTime}</option>`);
+                    });
+                }
+            },
+            error: function () {
+                console.error('Failed to load slots');
             }
-        },
-        error: function () {
-            console.error('Failed to load slots');
-        }
-    });
+        });
 
-    // Load Departments
-    $.ajax({
-        url: '/Department/GetAll',
-        type: 'GET',
-        success: function (res) {
-            if (res.success) {
-                const deptSelect = $('#editDepartmentId');
-                const mainDeptSelect = $('#DepartmentId');
+        // Load Departments
+        $.ajax({
+            url: '/Department/GetAll',
+            type: 'GET',
+            success: function (res) {
+                console.log('Departments response:', res);
+                const departments = res.data || res;
 
-
+                const deptSelect = isEdit ? $('#editDepartmentId') : $('#DepartmentId');
                 deptSelect.empty().append('<option value="">Select Department</option>');
-                res.data.forEach(dep => {
-                    const selected = dep.id == selectedDeptId ? 'selected' : '';
-                    deptSelect.append(`<option value="${dep.id}" ${selected}>${dep.name}</option>`);
-                });
 
-                mainDeptSelect.empty().append('<option value="">Select Department</option>');
-                res.data.forEach(dep => {
-                    const selected = dep.id == selectedDeptId ? 'selected' : '';
-                    mainDeptSelect.append(`<option value="${dep.id}" ${selected}>${dep.name}</option>`);
-                });
+                if (Array.isArray(departments)) {
+                    departments.forEach(dep => {
+                        const selected = dep.id == selectedDeptId ? 'selected' : '';
+                        deptSelect.append(`<option value="${dep.id}" ${selected}>${dep.name}</option>`);
+                    });
+                }
+            },
+            error: function () {
+                console.error('Failed to load departments');
             }
-        },
-        error: function () {
-            console.error('Failed to load departments');
-        }
-    });
+        });
     }
 
-    // Show modal on Add button click
+    // === Show Add Modal ===
     $('#btnAddDoctor').click(function () {
-        $('#addDoctorForm')[0].reset();      // Reset form
-        $('#doctorFormErrors').addClass('d-none').text(''); // Clear previous errors
-        addDoctorModal.show();
-
-        // Populate dropdowns
+        $('#addDoctorForm')[0].reset();
+        $('#doctorFormErrors').addClass('hidden').html('');
+        window.showModal('addDoctorModal');
         loadSlotsAndDepartments();
     });
 
-
-    // Handle Save button click
+    // === Save New Doctor ===
     $('#saveDoctorBtn').click(function () {
-        var formData = $('#addDoctorForm').serialize(); // Serialize form data
+        var formData = $('#addDoctorForm').serialize();
 
         $.ajax({
-            url: '/Doctor/AddDoctor', // Controller method
+            url: '/Doctor/AddDoctor',
             type: 'POST',
             data: formData,
             success: function (response) {
                 if (response.success) {
-                    addDoctorModal.hide();   // Hide modal
+                    window.hideModal('addDoctorModal');
                     loadDoctors();
-                    alert('Doctor added successfully!');
+                    showMessage('Doctor added successfully!', 'success');
                 } else {
-                    // Show errors in modal
-                    $('#doctorFormErrors').removeClass('d-none').text(response.message || 'An error occurred.');
+                    $('#doctorFormErrors').removeClass('hidden').html(response.message || 'An error occurred.');
                 }
             },
             error: function (xhr, status, error) {
-                $('#doctorFormErrors').removeClass('d-none').text('Server error: ' + error);
+                $('#doctorFormErrors').removeClass('hidden').html('Server error: ' + error);
             }
         });
     });
 
+    // === Update Doctor ===
     $('#editDoctorBtn').on('click', function () {
         const dto = {
-            id: $('#editDoctorId').val(),
+            id: parseInt($('#editDoctorId').val()),
             firstName: $('#editFirstName').val(),
             lastName: $('#editLastName').val(),
             gender: $('#editGender').val(),
@@ -290,9 +323,10 @@
             departmentId: parseInt($('#editDepartmentId').val()) || null
         };
 
+        console.log('Updating doctor:', dto);
 
         // Clear previous errors
-        $('#editDoctorErrors').html('').addClass('d-none');
+        $('#editDoctorErrors').html('').addClass('hidden');
 
         $.ajax({
             url: '/Doctor/EditDoctor',
@@ -301,29 +335,19 @@
             data: JSON.stringify(dto),
             success: function (response) {
                 if (response.success) {
-                    // Close modal
-                    const modalEl = document.getElementById('editDoctorModal');
-                    const modal = bootstrap.Modal.getInstance(modalEl);
-                    modal.hide();
-
-                    // Optionally, refresh the grid or update row directly
-                    loadDoctors(); // reload data from server
-
-                    // Optionally, show success toast
-                    showMessage(response.message, 'success');
+                    window.hideModal('editDoctorModal');
+                    loadDoctors();
+                    showMessage(response.message || 'Doctor updated successfully!', 'success');
                 } else {
-                    // Show server-returned error
-                    $('#editDoctorErrors').html(response.message).removeClass('d-none');
+                    $('#editDoctorErrors').html(response.message).removeClass('hidden');
                 }
             },
             error: function (xhr) {
                 let errorMsg = "An error occurred while updating the doctor.";
-
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     errorMsg = xhr.responseJSON.message;
                 }
-
-                $('#editDoctorErrors').html(errorMsg).removeClass('d-none');
+                $('#editDoctorErrors').html(errorMsg).removeClass('hidden');
                 console.error("AJAX Error:", xhr);
             }
         });

@@ -1,146 +1,354 @@
 ﻿@{
-    ViewData["Title"] = "Beds";
+    ViewData["Title"] = "Bed Management";
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3>Bed Management</h3>
-        <button id="btnShowAll" class="btn btn-outline-primary btn-sm">
-            <i class="bi bi-list-ul"></i> Show All Beds
-        </button>
-        <button type="button" class="btn btn-primary" id="btnAddBed">Add Bed</button>
-    </div>
+<div class="min-h-screen bg-gray-900 p-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 overflow-hidden">
+            <!-- Header -->
+            <div class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-2xl font-bold text-purple-400 flex items-center gap-2">
+                        <i class="fas fa-bed"></i>
+                        Bed Management
+                    </h4>
+                    <div class="flex gap-3">
+                        <button class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold px-4 py-2 rounded-lg shadow-lg transition-all flex items-center gap-2"
+                                id="btnShowAll">
+                            <i class="fas fa-list"></i>
+                            Show All Beds
+                        </button>
+                        <button class="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold px-4 py-2 rounded-lg shadow-lg transition-all flex items-center gap-2"
+                                id="btnAddBed">
+                            <i class="fas fa-plus-circle"></i>
+                            Add Bed
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-    <div id="bedGrid" class="ag-theme-alpine" style="height: 500px; width: 100%;"></div>
+            <!-- Grid Body -->
+            <div class="p-6">
+                <div id="bedGrid" class="ag-theme-alpine-dark" style="height: 600px; width: 100%;"></div>
+            </div>
 
-    <div class="d-flex justify-content-between align-items-center mt-3">
-        <button id="prevPage" class="btn btn-secondary">Previous</button>
-        <span id="pageInfo"></span>
-        <button id="nextPage" class="btn btn-secondary">Next</button>
+            <!-- Pagination Controls -->
+            <div class="bg-gray-800 border-t border-gray-700 px-6 py-4 flex items-center justify-between">
+                <button id="prevPage"
+                        class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold rounded-lg transition-colors flex items-center gap-2">
+                    <i class="fas fa-chevron-left"></i>
+                    Previous
+                </button>
+                <span id="pageInfo" class="text-gray-300 font-medium"></span>
+                <button id="nextPage"
+                        class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold rounded-lg transition-colors flex items-center gap-2">
+                    Next
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4>Beds</h4>
- 
-    </div>
+<!-- Add Bed Modal -->
+<div class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden"
+     id="bedModal"
+     tabindex="-1">
+    <div class="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-3xl transform transition-all max-h-[90vh] overflow-y-auto">
+        <!-- Modal Header -->
+        <div class="bg-purple-600 px-6 py-4 flex items-center justify-between rounded-t-2xl sticky top-0 z-10">
+            <h5 class="text-xl font-bold text-white flex items-center gap-2">
+                <i class="fas fa-plus-circle"></i>
+                Add Bed
+            </h5>
+            <button type="button"
+                    class="text-white hover:text-gray-200 text-2xl transition-colors"
+                    onclick="document.getElementById('bedModal').classList.add('hidden')">
+                &times;
+            </button>
+        </div>
 
-    <div id="bedGrid" class="ag-theme-alpine" style="height: 500px; width: 100%;"></div>
-</div>
+        <!-- Modal Body -->
+        <div class="p-6">
+            <form id="bedForm" class="space-y-4">
+                @Html.AntiForgeryToken()
 
-<div class="modal fade" id="bedModal" tabindex="-1" aria-labelledby="bedModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="bedModalLabel">Add Bed</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="bedForm">
-                    @Html.AntiForgeryToken()
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Bed Code</label>
-                            <input type="text" class="form-control" id="BedCode" name="BedCode" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Bed Number</label>
-                            <input type="text" class="form-control" id="BedNumber" name="BedNumber" required>
-                        </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Bed Code -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">
+                            <i class="fas fa-barcode text-purple-400 mr-2"></i>Bed Code
+                        </label>
+                        <input type="text"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               id="BedCode"
+                               name="BedCode"
+                               placeholder="e.g., B001"
+                               required>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Ward</label>
-                            <select class="form-select" id="WardId" name="WardId" required></select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Bed Type</label>
-                            <input type="text" class="form-control" id="BedType" name="BedType">
-                        </div>
+
+                    <!-- Bed Number -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">
+                            <i class="fas fa-hashtag text-purple-400 mr-2"></i>Bed Number
+                        </label>
+                        <input type="text"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               id="BedNumber"
+                               name="BedNumber"
+                               placeholder="e.g., 101"
+                               required>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Status</label>
-                            <input type="text" class="form-control" id="Status" name="Status">
-                        </div>
-                        <div class="col-md-6 d-flex align-items-center">
-                            <div class="form-check mt-3">
-                                <input class="form-check-input" type="checkbox" id="IsOccupied" name="IsOccupied">
-                                <label class="form-check-label">Occupied</label>
-                            </div>
-                        </div>
+
+                    <!-- Ward -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">
+                            <i class="fas fa-hospital text-purple-400 mr-2"></i>Ward
+                        </label>
+                        <select class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                                id="WardId"
+                                name="WardId"
+                                required>
+                            <option value="">Select Ward</option>
+                        </select>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Description</label>
-                        <textarea class="form-control" id="Description" name="Description" rows="2"></textarea>
+
+                    <!-- Bed Type -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">
+                            <i class="fas fa-bed text-purple-400 mr-2"></i>Bed Type
+                        </label>
+                        <input type="text"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               id="BedType"
+                               name="BedType"
+                               placeholder="e.g., ICU, General">
                     </div>
-                    <div class="text-end">
-                        <button type="submit" class="btn btn-success">Save Bed</button>
+
+                    <!-- Status -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">
+                            <i class="fas fa-info-circle text-purple-400 mr-2"></i>Status
+                        </label>
+                        <input type="text"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               id="Status"
+                               name="Status"
+                               placeholder="e.g., Available, Maintenance">
                     </div>
-                </form>
-            </div>
+
+                    <!-- Is Occupied -->
+                    <div class="flex items-end">
+                        <label class="flex items-center gap-3 p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors cursor-pointer w-full">
+                            <input class="w-5 h-5 rounded bg-gray-600 border-gray-500 text-purple-600 focus:ring-purple-500 focus:ring-2"
+                                   type="checkbox"
+                                   id="IsOccupied"
+                                   name="IsOccupied">
+                            <span class="text-gray-300 font-semibold">
+                                <i class="fas fa-user-injured text-purple-400 mr-2"></i>Currently Occupied
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-300 font-semibold mb-2">
+                            <i class="fas fa-align-left text-purple-400 mr-2"></i>Description
+                        </label>
+                        <textarea class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+                                  id="Description"
+                                  name="Description"
+                                  rows="3"
+                                  placeholder="Additional information about the bed"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-4">
+                    <button type="submit"
+                            class="px-6 py-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg shadow-lg transition-all">
+                        Save Bed
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 <!-- Edit Bed Modal -->
-<div class="modal fade" id="editBedModal" tabindex="-1" aria-labelledby="editBedModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="editBedModalLabel">Edit Bed</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editBedForm">
-                    <input type="hidden" id="editBedId" />
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="editBedCode" class="form-label">Bed Code</label>
-                            <input type="text" class="form-control" id="editBedCode" readonly />
-                        </div>
-                        <div class="col-md-6">
-                            <label for="editBedNumber" class="form-label">Bed Number</label>
-                            <input type="text" class="form-control" id="editBedNumber" />
-                        </div>
+<div class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden"
+     id="editBedModal"
+     tabindex="-1">
+    <div class="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-3xl transform transition-all max-h-[90vh] overflow-y-auto">
+        <!-- Modal Header -->
+        <div class="bg-purple-600 px-6 py-4 flex items-center justify-between rounded-t-2xl sticky top-0 z-10">
+            <h5 class="text-xl font-bold text-white flex items-center gap-2">
+                <i class="fas fa-edit"></i>
+                Edit Bed
+            </h5>
+            <button type="button"
+                    class="text-white hover:text-gray-200 text-2xl transition-colors"
+                    onclick="document.getElementById('editBedModal').classList.add('hidden')">
+                &times;
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6">
+            <form id="editBedForm" class="space-y-4">
+                <input type="hidden" id="editBedId" />
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Bed Code -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">Bed Code</label>
+                        <input type="text"
+                               class="w-full bg-gray-600 border border-gray-500 text-gray-300 rounded-lg px-4 py-2 cursor-not-allowed"
+                               id="editBedCode"
+                               readonly>
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="editWardName" class="form-label">Ward</label>
-                            <input type="text" class="form-control" id="editWardName" readonly />
-                        </div>
-                        <div class="col-md-6">
-                            <label for="editBedType" class="form-label">Bed Type</label>
-                            <input type="text" class="form-control" id="editBedType" />
-                        </div>
+
+                    <!-- Bed Number -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">Bed Number</label>
+                        <input type="text"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               id="editBedNumber">
                     </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="editIsOccupied" class="form-label">Occupied</label>
-                            <select id="editIsOccupied" class="form-select">
-                                <option value="true">Yes</option>
-                                <option value="false">No</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="editStatus" class="form-label">Status</label>
-                            <input type="text" class="form-control" id="editStatus" />
-                        </div>
+
+                    <!-- Ward Name -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">Ward</label>
+                        <input type="text"
+                               class="w-full bg-gray-600 border border-gray-500 text-gray-300 rounded-lg px-4 py-2 cursor-not-allowed"
+                               id="editWardName"
+                               readonly>
                     </div>
-                    <div class="mb-3">
-                        <label for="editDescription" class="form-label">Description</label>
-                        <textarea class="form-control" id="editDescription" rows="3"></textarea>
+
+                    <!-- Bed Type -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">Bed Type</label>
+                        <input type="text"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               id="editBedType">
                     </div>
-                    <button type="submit" class="btn btn-success">Save Changes</button>
-                </form>
-            </div>
+
+                    <!-- Is Occupied -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">Occupied</label>
+                        <select class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                                id="editIsOccupied">
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+
+                    <!-- Status -->
+                    <div>
+                        <label class="block text-gray-300 font-semibold mb-2">Status</label>
+                        <input type="text"
+                               class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                               id="editStatus">
+                    </div>
+
+                    <!-- Description -->
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-300 font-semibold mb-2">Description</label>
+                        <textarea class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+                                  id="editDescription"
+                                  rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-4">
+                    <button type="submit"
+                            class="px-6 py-2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-lg shadow-lg transition-all">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
+@section Styles {
+    <!-- AG Grid CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/styles/ag-grid.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/styles/ag-theme-alpine.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <style>
+        /* AG Grid Dark Theme Customization */
+        .ag-theme-alpine-dark {
+            --ag-background-color: #1f2937;
+            --ag-header-background-color: #374151;
+            --ag-odd-row-background-color: #1f2937;
+            --ag-row-hover-color: #374151;
+            --ag-foreground-color: #e5e7eb;
+            --ag-border-color: #4b5563;
+            --ag-header-foreground-color: #a78bfa;
+        }
+
+            .ag-theme-alpine-dark ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            .ag-theme-alpine-dark ::-webkit-scrollbar-track {
+                background: #1f2937;
+            }
+
+            .ag-theme-alpine-dark ::-webkit-scrollbar-thumb {
+                background: #6b7280;
+                border-radius: 4px;
+            }
+
+                .ag-theme-alpine-dark ::-webkit-scrollbar-thumb:hover {
+                    background: #9333ea;
+                }
+    </style>
+}
 
 @section Scripts {
+    <!-- AG Grid JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/dist/ag-grid-community.min.js"></script>
+
+    <script>
+        // Modal helper functions
+        window.showModal = function(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        };
+
+        window.hideModal = function(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        };
+
+        // Add Bed button click
+        document.getElementById('btnAddBed').addEventListener('click', function() {
+            showModal('bedModal');
+        });
+
+        // Close modals on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideModal('bedModal');
+                hideModal('editBedModal');
+            }
+        });
+
+        // Close modals on backdrop click
+        document.getElementById('bedModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideModal('bedModal');
+            }
+        });
+
+        document.getElementById('editBedModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideModal('editBedModal');
+            }
+        });
+    </script>
+
     <script src="~/js/Bed/bed.js"></script>
 }

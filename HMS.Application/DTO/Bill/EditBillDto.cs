@@ -10,7 +10,7 @@ namespace HMS.Application.DTO.Bill
     {
         public int Id { get; set; }
         public int PatientId { get; set; }
-        public int VisitId { get; set; }
+        public int? VisitId { get; set; }
 
         public DateTime BillDate { get; set; }
 

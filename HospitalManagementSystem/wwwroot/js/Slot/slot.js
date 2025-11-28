@@ -1,316 +1,232 @@
-﻿$(document).ready(function () {
+﻿document.addEventListener("DOMContentLoaded", function () {
 
-    // Helper: Convert bitmask to day names
-    function getDaysOfWeekText(bitmask) {
-        const days = [
-            { value: 1, name: 'Sunday' },
-            { value: 2, name: 'Monday' },
-            { value: 4, name: 'Tuesday' },
-            { value: 8, name: 'Wednesday' },
-            { value: 16, name: 'Thursday' },
-            { value: 32, name: 'Friday' },
-            { value: 64, name: 'Saturday' }
-        ];
-        return days.filter(d => (bitmask & d.value) !== 0).map(d => d.name).join(', ');
-    }
+    /* ------------------------------
+       AG GRID COLUMN DEFINITIONS
+    ------------------------------ */
+    const columnDefs = [
+        { field: "id", headerName: "ID", width: 90 },
+        { field: "reportingTime", headerName: "Reporting Time", flex: 1 },
+        { field: "leavingTime", headerName: "Leaving Time", flex: 1 },
 
-    // AG Grid column definitions
-    var columnDefs = [
-        { headerName: "ID", field: "id", checkboxSelection: true },
-        { headerName: "Reporting Time", field: "reportingTime" },
-        { headerName: "Leaving Time", field: "leavingTime" },
         {
-            headerName: "Days Of Week",
             field: "daysOfWeek",
-            valueFormatter: function (params) {
-                return getDaysOfWeekText(params.value);
+            headerName: "Days",
+            flex: 1,
+            valueFormatter: (params) => {
+                if (!params.value) return 'None';
+
+                const days = [];
+                const dayNames = [
+                    { bit: 1, name: 'Sun' },
+                    { bit: 2, name: 'Mon' },
+                    { bit: 4, name: 'Tue' },
+                    { bit: 8, name: 'Wed' },
+                    { bit: 16, name: 'Thu' },
+                    { bit: 32, name: 'Fri' },
+                    { bit: 64, name: 'Sat' }
+                ];
+
+                dayNames.forEach(day => {
+                    if (params.value & day.bit) days.push(day.name);
+                });
+
+                return days.length > 0 ? days.join(', ') : 'None';
             }
         },
+
         {
             headerName: "Actions",
-            field: "actions",
-            cellRenderer: function (params) {
-                // Add data-row-id to buttons
+            width: 180,
+            cellRenderer: (params) => {
+                const id = params.data.id;
+
+                // IMPORTANT: store row data in HTML (for edit)
+                const rowJson = encodeURIComponent(JSON.stringify(params.data));
+
                 return `
-                    <button class="btn btn-sm btn-primary edit-btn" data-row-id="${params.data.id}">Edit</button>
-                    <button class="btn btn-sm btn-danger delete-btn" data-row-id="${params.data.id}">Delete</button>
+                    <div class="flex gap-2">
+                        <button 
+                            class="px-3 py-1 text-sm rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition edit-btn"
+                            data-row="${rowJson}">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+
+                        <button 
+                            class="px-3 py-1 text-sm rounded-lg bg-red-600 hover:bg-red-700 text-white transition delete-btn"
+                            data-id="${id}">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
                 `;
             }
         }
     ];
 
-    // AG Grid options
-    var gridOptions = {
-        columnDefs: columnDefs,
-        rowData: [],
-        pagination: true,
-        paginationPageSize: 10,
+    /* ------------------------------
+       GRID INITIALIZATION
+    ------------------------------ */
+    const gridOptions = {
+        columnDefs,
+        rowHeight: 50,
+        animateRows: true,
         defaultColDef: {
-            flex: 1,
-            minWidth: 100,
             sortable: true,
             filter: true,
             resizable: true
         },
-        rowSelection: 'single',
-        animateRows: true,
-        getRowNodeId: data => data.id,
-        onGridReady: function () {
-            loadSlotsGrid();
-        },
-        getContextMenuItems: function (params) {
-            return [
-                {
-                    name: 'Edit Slot',
-                    action: function () {
-                        openEditModal(params.node.data);
-                    }
-                },
-                {
-                    name: 'Delete Slot',
-                    action: function () {
-                        deleteSlotById(params.node.data.id); 
-                    }
-                },
-                'separator', 'copy', 'copyWithHeaders', 'paste'
-            ];
-        }
+        onGridReady: (p) => p.api.sizeColumnsToFit(),
+        onGridSizeChanged: (p) => p.api.sizeColumnsToFit()
     };
 
-    // Initialize AG Grid
-    var eGridDiv = document.querySelector('#slotsGrid');
-    new agGrid.Grid(eGridDiv, gridOptions);
+    new agGrid.Grid(document.querySelector("#slotsGrid"), gridOptions);
+    loadSlots();
 
-    // Load data via AJAX
-    function loadSlotsGrid() {
-        $.ajax({
-            url: '/Slot/GetAllSlots',
-            type: 'GET',
-            success: function (res) {
-                if (res.success) {
-                    gridOptions.api.setRowData(res.data);
-                } else {
-                    alert(res.message);
-                }
-            },
-            error: function (xhr) {
-                alert('Failed to load slots.');
-                console.error(xhr.responseText);
-            }
-        });
+
+    function loadSlots() {
+        fetch("/Slot/GetAllSlots")
+            .then(res => res.json())
+            .then(response => {
+                const slots = response.data || [];
+                gridOptions.api.setRowData(slots);
+            })
+            .catch(err => {
+                console.error("Error loading slots:", err);
+                gridOptions.api.setRowData([]);
+            });
     }
 
-    $('#btnAddSlot').on('click', function () {
-        var addModalEl = document.getElementById('addSlotModal');
-        var modal = new bootstrap.Modal(addModalEl);
-        modal.show();
+
+    /* ------------------------------
+       ADD SLOT
+    ------------------------------ */
+    document.getElementById("btnAddSlot")?.addEventListener("click", () => {
+        document.getElementById("addSlotForm").reset();
+        window.showModal("addSlotModal");
     });
 
-    // Submit form via AJAX
-    $('#addSlotForm').submit(function (e) {
+    document.getElementById("addSlotForm").addEventListener("submit", function (e) {
         e.preventDefault();
 
-        // Compute DaysOfWeek bitmask
         let daysOfWeek = 0;
-        $('.day-checkbox:checked').each(function () {
-            daysOfWeek += parseInt($(this).val());
+        document.querySelectorAll(".day-checkbox:checked").forEach(cb => {
+            daysOfWeek += parseInt(cb.value);
         });
 
-        // Prepare DTO
-        const dto = {
-            ReportingTime: $('#ReportingTime').val(),
-            LeavingTime: $('#LeavingTime').val(),
+        const formData = {
+            ReportingTime: document.getElementById("ReportingTime").value,
+            LeavingTime: document.getElementById("LeavingTime").value,
             DaysOfWeek: daysOfWeek
         };
 
-        $.ajax({
-            url: '/Slot/Add',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(dto),
-            success: function (res) {
+        fetch("/Slot/Add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        })
+            .then(r => r.json())
+            .then(res => {
                 if (res.success) {
-                    $('#addSlotModal').modal('hide');
-                    alert(res.message);
-                    loadSlotsGrid();
-                } else {
-                    // Clear previous errors
-                    $('.text-danger').text('');
+                    window.hideModal("addSlotModal");
+                    loadSlots();
+                    toastr.success("Slot created!");
+                } else toastr.error(res.message);
+            })
+            .catch(() => toastr.error("Error creating slot"));
+    });
 
-                    if (res.errors) {
-                        // Display validation errors inline
-                        if (res.errors.ReportingTime) {
-                            $('#ReportingTime_error').text(res.errors.ReportingTime);
-                        }
-                        if (res.errors.LeavingTime) {
-                            $('#LeavingTime_error').text(res.errors.LeavingTime);
-                        }
-                        if (res.errors.DaysOfWeek) {
-                            $('#DaysOfWeek_error').text(res.errors.DaysOfWeek);
-                        }
+
+    /* ------------------------------
+       EDIT + DELETE (delegation)
+    ------------------------------ */
+    document.addEventListener("click", function (e) {
+
+        /* --------- EDIT --------- */
+        const editBtn = e.target.closest(".edit-btn");
+        if (editBtn) {
+            e.stopPropagation();  // Prevent AG Grid interference
+
+            const rowData = JSON.parse(decodeURIComponent(editBtn.dataset.row));
+
+            // Populate modal
+            document.getElementById("editSlotId").value = rowData.id;
+            document.getElementById("editReportingTime").value = rowData.reportingTime;
+            document.getElementById("editLeavingTime").value = rowData.leavingTime;
+
+            document.querySelectorAll(".edit-day-checkbox").forEach(cb => {
+                cb.checked = (rowData.daysOfWeek & parseInt(cb.value)) !== 0;
+            });
+
+            window.showModal("editSlotModal");
+            return;
+        }
+
+
+        /* --------- DELETE --------- */
+        const delBtn = e.target.closest(".delete-btn");
+        if (delBtn) {
+            e.stopPropagation();
+
+            const id = parseInt(delBtn.dataset.id);
+            console.log(id);
+
+            if (!confirm("Are you sure you want to delete this slot?")) return;
+
+            $.ajax({
+                url: "/Slot/Delete",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(id),
+                success: function (res) {
+                    if (res.success) {
+                        loadSlots();
+                        toastr.success("Slot deleted!");
                     } else {
-                        alert(res.message);
+                        toastr.error(res.message);
                     }
+                },
+                error: function () {
+                    toastr.error("Error deleting slot");
                 }
-            },
-            error: function (xhr) {
-                alert('Something went wrong. Please try again.');
-                console.error(xhr.responseText);
-            }
-        });
-    });
-    // Open Edit modal
-    function openEditModal(rowData) {
-        if (!rowData) return;
+            });
 
-        $('#editSlotId').val(rowData.id);
-        $('#editReportingTime').val(rowData.reportingTime);
-        $('#editLeavingTime').val(rowData.leavingTime);
+            return;
+        }
 
-        // Clear checkboxes
-        $('.edit-day-checkbox').prop('checked', false);
-
-        // Check checkboxes according to bitmask
-        $('.edit-day-checkbox').each(function () {
-            var value = parseInt($(this).val());
-            if ((rowData.daysOfWeek & value) !== 0) $(this).prop('checked', true);
-        });
-
-        // Clear error messages
-        $('#editReportingTime_error').text('');
-        $('#editLeavingTime_error').text('');
-        $('#editDaysOfWeek_error').text('');
-
-        // Show Bootstrap 4 modal
-        $('#editSlotModal').modal('show');
-    }
-
-    // Edit button handler
-    $('#slotsGrid').on('click', '.edit-btn', function () {
-        var rowId = $(this).data('row-id');
-        var rowData = gridOptions.api.getRowNode(rowId).data;
-        openEditModal(rowData);
     });
 
- 
 
-    // Handle Edit Slot form submission
-    $('#editSlotForm').on('submit', function (e) {
+    /* ------------------------------
+       EDIT SLOT (SUBMIT)
+    ------------------------------ */
+    document.getElementById("editSlotForm").addEventListener("submit", function (e) {
         e.preventDefault();
 
-        // Collect selected days into bitmask
         let daysOfWeek = 0;
-        $('.edit-day-checkbox:checked').each(function () {
-            daysOfWeek |= parseInt($(this).val());
+        document.querySelectorAll(".edit-day-checkbox:checked").forEach(cb => {
+            daysOfWeek += parseInt(cb.value);
         });
 
-        // Prepare DTO
-        const dto = {
-            id: parseInt($('#editSlotId').val()),
-            reportingTime: $('#editReportingTime').val(),
-            leavingTime: $('#editLeavingTime').val(),
-            daysOfWeek: daysOfWeek
+        const formData = {
+            Id: parseInt(document.getElementById("editSlotId").value),
+            ReportingTime: document.getElementById("editReportingTime").value,
+            LeavingTime: document.getElementById("editLeavingTime").value,
+            DaysOfWeek: daysOfWeek
         };
 
-        // Clear previous errors
-        $('#editReportingTime_error').text('');
-        $('#editLeavingTime_error').text('');
-        $('#editDaysOfWeek_error').text('');
-
-        $.ajax({
-            url: '/Slot/EditSlot',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(dto),
-            success: function (response) {
-                if (response.success) {
-                    // Close modal
-                    var editModalEl = document.getElementById('editSlotModal');
-                    var modal = bootstrap.Modal.getInstance(editModalEl);
-                    modal.hide();
-
-                    // Update row in AG Grid
-                    const rowNode = gridOptions.api.getRowNode(dto.id);
-                    if (rowNode) {
-                        rowNode.setData({
-                            id: dto.id,
-                            reportingTime: dto.reportingTime,
-                            leavingTime: dto.leavingTime,
-                            daysOfWeek: dto.daysOfWeek
-                        });
-                    }
-
-                    alert(response.message);
-                } else {
-                    // Show validation errors
-                    if (response.errors && response.errors.length > 0) {
-                        response.errors.forEach(function (err) {
-                            if (err.toLowerCase().includes('reporting')) {
-                                $('#editReportingTime_error').text(err);
-                            } else if (err.toLowerCase().includes('leaving')) {
-                                $('#editLeavingTime_error').text(err);
-                            } else if (err.toLowerCase().includes('day')) {
-                                $('#editDaysOfWeek_error').text(err);
-                            }
-                        });
-                    } else {
-                        alert(response.message);
-                    }
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error(error);
-                alert('An unexpected error occurred.');
-            }
-        });
-    });
-
-
-    function deleteSlotById(rowId) {
-        if (!rowId) return;
-
-        swal({
-            title: "Are you sure?",
-            text: "Once deleted, you will not be able to recover this slot!",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        }).then((willDelete) => {
-            if (willDelete) {
-                $.ajax({
-                    url: '/Slot/Delete',
-                    type: 'POST',
-                    data: { id: rowId },
-                    success: function (res) {
-                        if (res.success) {
-                            // Remove from AG Grid
-                            var node = gridOptions.api.getRowNode(rowId);
-                            if (node) gridOptions.api.applyTransaction({ remove: [node.data] });
-
-                            swal("Deleted!", res.message, "success");
-                        } else {
-                            // Handle server-side validation or unexpected errors
-                            let msg = res.message || "Failed to delete slot.";
-                            if (res.detail) msg += "\n" + res.detail;
-                            swal("Error!", msg, "error");
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("AJAX Error:");
-                        console.error("Status:", status);
-                        console.error("Error:", error);
-                        console.error("Response Text:", xhr.responseText);
-                        swal("Error!", "Something went wrong while deleting. Please check console for details.", "error");
-                    }
-
-                });
-            }
-        });
-    }
-
-    $('#slotsGrid').on('click', '.delete-btn', function () {
-        var rowId = $(this).data('row-id');
-        deleteSlotById(rowId);  // call the reusable function
+        fetch("/Slot/EditSlot", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    window.hideModal("editSlotModal");
+                    loadSlots();
+                    toastr.success("Slot updated!");
+                } else toastr.error(res.message);
+            })
+            .catch(() => toastr.error("Update failed"));
     });
 
 });

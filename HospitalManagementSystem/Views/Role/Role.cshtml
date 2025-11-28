@@ -2,98 +2,253 @@
     ViewData["Title"] = "Role Management";
 }
 
-<div class="container-fluid mt-4">
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-light">
-            <h4 class="card-title mb-0">Role Management</h4>
-            <div class="d-flex justify-content-end mb-3">
-                <button class="btn btn-primary" id="btnAddRole">
-                    <i class="bi bi-plus-circle"></i> Add New Role
-                </button>
+<div class="min-h-screen bg-gray-900 p-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 overflow-hidden">
+            <!-- Header -->
+            <div class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-2xl font-bold text-purple-400 flex items-center gap-2">
+                        <i class="bi bi-shield-lock"></i>
+                        Role Management
+                    </h4>
+                    <button class="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold px-4 py-2 rounded-lg shadow-lg transition-all flex items-center gap-2"
+                            id="btnAddRole">
+                        <i class="bi bi-plus-circle"></i>
+                        Add New Role
+                    </button>
+                </div>
             </div>
 
-        </div>
-        <div class="card-body">
-            <div id="roleGrid" class="ag-theme-alpine" style="height: 500px; width: 100%;"></div>
+            <!-- Grid Body -->
+            <div class="flex flex-col p-6">
+                <div id="roleGrid" class="ag-theme-alpine-dark w-full" style="height: 600px;"></div>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Right-click Context Menu -->
-<ul id="contextMenu" class="dropdown-menu shadow-sm" style="display:none; position:absolute; z-index:9999;">
-    <li><a class="dropdown-item context-edit" href="#">✏️ Edit</a></li>
-    <li><a class="dropdown-item context-delete text-danger" href="#">🗑️ Delete</a></li>
+<ul id="contextMenu"
+    class="bg-gray-800 border border-gray-700 rounded-lg shadow-2xl py-2 hidden absolute z-50"
+    style="display:none; position:absolute; z-index:9999;">
+    <li>
+        <a class="context-edit flex items-center gap-2 px-4 py-2 text-gray-300 hover:bg-purple-600 hover:text-white transition-colors cursor-pointer"
+           href="#">
+            <i class="bi bi-pencil-square"></i>
+            Edit
+        </a>
+    </li>
+    <li>
+        <a class="context-delete flex items-center gap-2 px-4 py-2 text-red-400 hover:bg-red-600 hover:text-white transition-colors cursor-pointer"
+           href="#">
+            <i class="bi bi-trash"></i>
+            Delete
+        </a>
+    </li>
 </ul>
 
 <!-- Add Role Modal -->
-<div class="modal fade" id="addRoleModal" tabindex="-1" aria-labelledby="addRoleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-sm">
-            <div class="modal-header bg-light">
-                <h5 class="modal-title fw-semibold" id="addRoleModalLabel">Add New Role</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+<div class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden"
+     id="addRoleModal"
+     tabindex="-1">
+    <div class="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-md transform transition-all">
+        <!-- Modal Header -->
+        <div class="bg-gray-800 border-b border-gray-700 px-6 py-4 flex items-center justify-between">
+            <h5 class="text-xl font-bold text-purple-400 flex items-center gap-2">
+                <i class="bi bi-plus-circle"></i>
+                Add New Role
+            </h5>
+            <button type="button"
+                    class="text-gray-400 hover:text-gray-200 text-2xl transition-colors"
+                    data-bs-dismiss="modal"
+                    onclick="document.getElementById('addRoleModal').classList.add('hidden')">
+                &times;
+            </button>
+        </div>
 
-            <div class="modal-body">
-                <form id="addRoleForm">
-                    <div class="mb-3">
-                        <label for="roleName" class="form-label">Role Name</label>
-                        <input type="text" class="form-control" id="roleName" name="Name" placeholder="Enter role name" required />
-                        <div class="invalid-feedback" id="error-roleName"></div>
-                    </div>
+        <!-- Modal Body -->
+        <div class="p-6">
+            <form id="addRoleForm" class="space-y-4">
+                <div>
+                    <label for="roleName" class="block text-gray-300 font-semibold mb-2">Role Name</label>
+                    <input type="text"
+                           class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                           id="roleName"
+                           name="Name"
+                           placeholder="Enter role name"
+                           required />
+                    <div class="text-red-400 text-sm mt-1 hidden" id="error-roleName"></div>
+                </div>
 
-                    <div class="mb-3">
-                        <label for="roleDescription" class="form-label">Description</label>
-                        <textarea class="form-control" id="roleDescription" name="Description" placeholder="Enter role description" rows="3" required></textarea>
-                        <div class="invalid-feedback" id="error-roleDescription"></div>
-                    </div>
-                </form>
-            </div>
+                <div>
+                    <label for="roleDescription" class="block text-gray-300 font-semibold mb-2">Description</label>
+                    <textarea class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+                              id="roleDescription"
+                              name="Description"
+                              placeholder="Enter role description"
+                              rows="4"
+                              required></textarea>
+                    <div class="text-red-400 text-sm mt-1 hidden" id="error-roleDescription"></div>
+                </div>
+            </form>
+        </div>
 
-            <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" id="btnSaveRole" class="btn btn-primary">Save Role</button>
-            </div>
+        <!-- Modal Footer -->
+        <div class="bg-gray-800 border-t border-gray-700 px-6 py-4 flex items-center justify-end gap-3">
+            <button type="button"
+                    class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold rounded-lg transition-colors"
+                    data-bs-dismiss="modal"
+                    onclick="document.getElementById('addRoleModal').classList.add('hidden')">
+                Cancel
+            </button>
+            <button type="button"
+                    id="btnSaveRole"
+                    class="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg shadow-lg transition-all">
+                Save Role
+            </button>
         </div>
     </div>
 </div>
 
 <!-- Edit Role Modal -->
-<div class="modal fade" id="editRoleModal" tabindex="-1" aria-labelledby="editRoleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="editRoleModalLabel">Edit Role</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editRoleForm">
-                    <input type="hidden" id="editRoleId" />
+<div class="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 hidden"
+     id="editRoleModal"
+     tabindex="-1">
+    <div class="bg-gray-800 rounded-2xl shadow-2xl border border-gray-700 w-full max-w-md transform transition-all">
+        <!-- Modal Header -->
+        <div class="bg-purple-600 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+            <h5 class="text-xl font-bold text-white flex items-center gap-2">
+                <i class="bi bi-pencil-square"></i>
+                Edit Role
+            </h5>
+            <button type="button"
+                    class="text-white hover:text-gray-200 text-2xl transition-colors"
+                    data-bs-dismiss="modal"
+                    onclick="document.getElementById('editRoleModal').classList.add('hidden')">
+                &times;
+            </button>
+        </div>
 
-                    <div class="mb-3">
-                        <label for="editRoleName" class="form-label">Role Name</label>
-                        <input type="text" id="editRoleName" class="form-control" required />
-                        <div class="invalid-feedback" id="error-editRoleName"></div>
-                    </div>
+        <!-- Modal Body -->
+        <div class="p-6">
+            <form id="editRoleForm" class="space-y-4">
+                <input type="hidden" id="editRoleId" />
 
-                    <div class="mb-3">
-                        <label for="editRoleDescription" class="form-label">Description</label>
-                        <textarea id="editRoleDescription" class="form-control" rows="3"></textarea>
-                        <div class="invalid-feedback" id="error-editRoleDescription"></div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" id="btnUpdateRole" class="btn btn-primary">Save Changes</button>
-            </div>
+                <div>
+                    <label for="editRoleName" class="block text-gray-300 font-semibold mb-2">Role Name</label>
+                    <input type="text"
+                           id="editRoleName"
+                           class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                           required />
+                    <div class="text-red-400 text-sm mt-1 hidden" id="error-editRoleName"></div>
+                </div>
+
+                <div>
+                    <label for="editRoleDescription" class="block text-gray-300 font-semibold mb-2">Description</label>
+                    <textarea id="editRoleDescription"
+                              class="w-full bg-gray-700 border border-gray-600 text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all resize-none"
+                              rows="4"></textarea>
+                    <div class="text-red-400 text-sm mt-1 hidden" id="error-editRoleDescription"></div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="bg-gray-800 border-t border-gray-700 px-6 py-4 flex items-center justify-end gap-3 rounded-b-2xl">
+            <button type="button"
+                    class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold rounded-lg transition-colors"
+                    data-bs-dismiss="modal"
+                    onclick="document.getElementById('editRoleModal').classList.add('hidden')">
+                Cancel
+            </button>
+            <button type="button"
+                    id="btnUpdateRole"
+                    class="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold rounded-lg shadow-lg transition-all">
+                Save Changes
+            </button>
         </div>
     </div>
 </div>
 
+@section Styles {
+    <!-- AG Grid CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/styles/ag-grid.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/styles/ag-theme-alpine.css">
 
+    <style>
+        /* AG Grid Dark Theme Customization */
+        .ag-theme-alpine-dark {
+            --ag-background-color: #1f2937;
+            --ag-header-background-color: #374151;
+            --ag-odd-row-background-color: #1f2937;
+            --ag-row-hover-color: #374151;
+            --ag-foreground-color: #e5e7eb;
+            --ag-border-color: #4b5563;
+            --ag-header-foreground-color: #a78bfa;
+        }
+
+            /* Custom scrollbar for dark theme */
+            .ag-theme-alpine-dark ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            .ag-theme-alpine-dark ::-webkit-scrollbar-track {
+                background: #1f2937;
+            }
+
+            .ag-theme-alpine-dark ::-webkit-scrollbar-thumb {
+                background: #6b7280;
+                border-radius: 4px;
+            }
+
+                .ag-theme-alpine-dark ::-webkit-scrollbar-thumb:hover {
+                    background: #9333ea;
+                }
+    </style>
+}
 
 @section Scripts {
+    <!-- AG Grid JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/dist/ag-grid-community.min.js"></script>
+    
+    <script>
+        // Modal helper functions for vanilla JS modal control
+        window.showModal = function(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        };
+
+        window.hideModal = function(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        };
+
+        // Add event listener for Add Role button
+        document.getElementById('btnAddRole').addEventListener('click', function() {
+            showModal('addRoleModal');
+        });
+
+        // Close modals on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideModal('addRoleModal');
+                hideModal('editRoleModal');
+            }
+        });
+
+        // Close modals on backdrop click
+        document.getElementById('addRoleModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideModal('addRoleModal');
+            }
+        });
+
+        document.getElementById('editRoleModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideModal('editRoleModal');
+            }
+        });
+    </script>
 
     <!-- Custom Script -->
     <script src="~/js/Role/role.js"></script>

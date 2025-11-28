@@ -1,9 +1,15 @@
-﻿// Column Definitions
+﻿// ---------------------------------------------
+// AG GRID COLUMN DEFINITIONS
+// ---------------------------------------------
 const columnDefs = [
     { headerName: 'Patient Code', field: 'patientCode' },
     { headerName: 'Full Name', field: 'fullName' },
     { headerName: 'Gender', field: 'gender' },
-    { headerName: 'DOB', field: 'dateOfBirth', valueFormatter: params => new Date(params.value).toLocaleDateString() },
+    {
+        headerName: 'DOB',
+        field: 'dateOfBirth',
+        valueFormatter: params => params.value ? new Date(params.value).toLocaleDateString() : ''
+    },
     { headerName: 'Email', field: 'email' },
     { headerName: 'Contact', field: 'contactNumber' },
     { headerName: 'Address', field: 'address' },
@@ -11,45 +17,83 @@ const columnDefs = [
     { headerName: 'State', field: 'state' },
     { headerName: 'Zip', field: 'zipCode' },
     { headerName: 'Blood Group', field: 'bloodGroup' },
-    { headerName: 'Emergency Contact', field: 'emergencyContact', cellRenderer: params => `${params.data.emergencyContactName} - ${params.data.emergencyContactNumber} (${params.data.relationshipWithEmergencyContact})` },
+    {
+        headerName: 'Emergency Contact',
+        cellRenderer: params =>
+            `${params.data.emergencyContactName} - ${params.data.emergencyContactNumber} (${params.data.relationshipWithEmergencyContact})`
+    },
     {
         headerName: 'Actions',
-        field: 'actions',
         cellRenderer: params => `
-            <button class="btn btn-sm btn-warning edit-btn" data-id="${params.data.id}">Edit</button>
-            <button class="btn btn-sm btn-danger delete-btn" data-id="${params.data.id}">Delete</button>
-            <button class="btn btn-sm btn-primary view-btn" data-id="${params.data.id}">View</button>
+            <div class="flex gap-2">
+                <button class="px-3 py-1 rounded bg-yellow-600 hover:bg-yellow-700 text-white text-sm edit-btn" data-id="${params.data.id}">Edit</button>
+                <button class="px-3 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-sm delete-btn" data-id="${params.data.id}">Delete</button>
+                <button class="px-3 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm view-btn" data-id="${params.data.id}">View</button>
+            </div>
         `
     }
 ];
 
-// Grid Options
+// ---------------------------------------------
+// GRID OPTIONS
+// ---------------------------------------------
 const gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs,
     rowData: [],
     pagination: true,
     paginationPageSize: 10,
-    defaultColDef: { sortable: true, filter: true, resizable: true },
-    onGridReady: params => params.api.sizeColumnsToFit()
+    defaultColDef: {
+        sortable: true,
+        filter: true,
+        resizable: true
+    }
 };
 
-// Initialize AG Grid
+let gridApi;
+
+// ---------------------------------------------
+// INITIALIZE AG GRID (Updated for AG Grid v29+)
+// ---------------------------------------------
 function initializeGrid() {
     const gridDiv = document.querySelector('#PatientsGrid');
-    new agGrid.Grid(gridDiv, gridOptions);
+    gridApi = agGrid.createGrid(gridDiv, gridOptions);
+
 }
 
-// Fetch Patients
+// ---------------------------------------------
+// FETCH PATIENT LIST
+// ---------------------------------------------
 function fetchPatientList() {
     $.ajax({
         url: '/Patient/GetAllPatients',
         type: 'GET',
-        success: data => gridOptions.api.setRowData(data),
-        error: (xhr, status, err) => console.error('Error fetching patients:', err)
+        success: data => gridApi.setGridOption('rowData', data),
+        error: err => console.error('Error fetching patients:', err)
     });
 }
 
-// Add Patient
+// ---------------------------------------------
+// TAILWIND MODAL HELPERS
+// ---------------------------------------------
+function openAddModal() {
+    document.getElementById('addPatientModal').classList.remove('hidden');
+}
+
+function closeAddModal() {
+    document.getElementById('addPatientModal').classList.add('hidden');
+}
+
+function openEditModal() {
+    document.getElementById('editPatientModal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+    document.getElementById('editPatientModal').classList.add('hidden');
+}
+
+// ---------------------------------------------
+// ADD PATIENT
+// ---------------------------------------------
 function addPatient() {
     const dto = {
         FullName: $('#fullName').val(),
@@ -75,13 +119,15 @@ function addPatient() {
         contentType: 'application/json',
         data: JSON.stringify(dto),
         success: () => {
-            $('#addPatientModal').modal('hide');
+            closeAddModal();
             fetchPatientList();
         }
     });
 }
 
-// Load Patient for Edit
+// ---------------------------------------------
+// LOAD PATIENT FOR EDIT
+// ---------------------------------------------
 function loadPatientForEdit(id) {
     $.ajax({
         url: `/Patient/GetPatientById?id=${id}`,
@@ -102,12 +148,15 @@ function loadPatientForEdit(id) {
             $('#editEmergencyContactName').val(data.emergencyContactName);
             $('#editEmergencyContactNumber').val(data.emergencyContactNumber);
             $('#editRelationshipWithEmergencyContact').val(data.relationshipWithEmergencyContact);
-            $('#editPatientModal').removeClass('d-none');
+
+            openEditModal();
         }
     });
 }
 
-// Update Patient
+// ---------------------------------------------
+// UPDATE PATIENT
+// ---------------------------------------------
 function updatePatient() {
     const dto = {
         Id: $('#editId').val(),
@@ -133,42 +182,45 @@ function updatePatient() {
         contentType: 'application/json',
         data: JSON.stringify(dto),
         success: () => {
-            $('#editPatientModal').modal('hide');
+            closeEditModal();
             fetchPatientList();
         }
     });
 }
 
-// Delete Patient
+// ---------------------------------------------
+// DELETE PATIENT
+// ---------------------------------------------
 function deletePatient(id) {
-    if (confirm('Are you sure?')) {
+    if (confirm('Are you sure you want to delete this patient?')) {
         $.ajax({
             url: `/Patient/DeletePatient?id=${id}`,
             type: 'DELETE',
-            success: fetchPatientList
+            success: () => fetchPatientList()
         });
     }
 }
 
-// Document Ready
+// ---------------------------------------------
+// DOCUMENT READY
+// ---------------------------------------------
 $(document).ready(function () {
     initializeGrid();
     fetchPatientList();
 
-    // Modals
-    // Show modal (like AG Grid popup)
-    $('#addPatientBtn').on('click', function () {
-        $('#addPatientModal').modal('show');
+    $('#addPatientBtn').on('click', openAddModal);
+    $('#savePatientBtn').on('click', addPatient);
+    $('#updatePatientBtn').on('click', updatePatient);
+
+    $(document).on('click', '.edit-btn', function () {
+        loadPatientForEdit($(this).data('id'));
     });
 
-    $('#savePatientBtn').click(addPatient);
+    $(document).on('click', '.delete-btn', function () {
+        deletePatient($(this).data('id'));
+    });
 
-    $('#updatePatientBtn').click(updatePatient);
-
-    // Dynamic buttons (edit, delete, view)
-    $(document).on('click', '.edit-btn', function () { $('#editPatientModal').modal('show'); loadPatientForEdit($(this).data('id')); });
-    $(document).on('click', '.delete-btn', function () { deletePatient($(this).data('id')); });
-    $(document).on('click', '.view-btn', function () { window.location.href = '/Patient/ViewPatient?id=' + $(this).data('id'); });
+    $(document).on('click', '.view-btn', function () {
+        window.location.href = '/Patient/ViewPatient?id=' + $(this).data('id');
+    });
 });
-
-

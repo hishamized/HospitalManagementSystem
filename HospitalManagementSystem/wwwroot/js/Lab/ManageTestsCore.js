@@ -1,4 +1,14 @@
-﻿$(document).ready(function () {
+﻿function showModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.remove('hidden');
+}
+function hideModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) modal.classList.add('hidden');
+}
+
+
+$(document).ready(function () {
     // Set CreatedAt to current UTC time when page loads
     $('#createdAt').val(new Date().toISOString());
 
@@ -264,7 +274,7 @@
         $('#editLabTestForm').find('.is-valid').removeClass('is-valid');
 
         // Show the modal
-        $('#editLabTestModal').modal('show');
+        showModal('editLabTestModal');
     }
 
     // ========================================
@@ -359,7 +369,7 @@
         $('#isActive').prop('checked', true);
 
         // Open the modal
-        $('#addLabTestModal').modal('show');
+        showModal('addLabTestModal');
     });
 
     // ========================================
